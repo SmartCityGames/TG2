@@ -1,16 +1,21 @@
-import { useEffect, useReducer, createContext, useContext } from "react";
-import { metamaskReducer } from "./reducer";
 import { ethers } from "ethers";
+import { createContext, useContext, useEffect, useReducer } from "react";
+import { metamaskReducer } from "./reducer";
 
 const MetamaskContext = createContext();
 
 const { ethereum } = window;
 
+export const metamaskInitialState = {
+  account: "",
+  provider: null,
+  signer: null,
+};
+
+export const useMetamask = () => useContext(MetamaskContext);
+
 export default function MetamaskProvider({ children }) {
-  const [state, dispatch] = useReducer(metamaskReducer, {
-    account: "",
-    provider: null,
-  });
+  const [state, dispatch] = useReducer(metamaskReducer, metamaskInitialState);
 
   useEffect(() => {
     ethereum
@@ -25,7 +30,9 @@ export default function MetamaskProvider({ children }) {
     if (!state.provider) return;
 
     console.log("initializing event listeners");
-    const { provider: internalProvider } = state.provider;
+
+    // https://ethereum.stackexchange.com/questions/102078/detecting-accountschanged-and-chainchanged-with-ethersjs
+    const { provider: eth } = state.provider;
 
     function subscribeNetworkChanges() {
       state.provider.on("network", (_newNetwork, oldNetwork) => {
@@ -36,7 +43,7 @@ export default function MetamaskProvider({ children }) {
     }
 
     function subscribeAccountChanges() {
-      internalProvider.on("accountsChanged", ([account]) => {
+      eth.on("accountsChanged", ([account]) => {
         console.log(`changing to account: ${account}`);
         dispatch({
           type: "LOGIN",
@@ -51,8 +58,8 @@ export default function MetamaskProvider({ children }) {
     return () => {
       console.log("removing event listeners");
 
-      state.provider.off("network");
-      internalProvider.off("accountsChanged");
+      state.provider.removeAllListeners("network");
+      eth.removeAllListeners("accountsChanged");
     };
   }, [state.provider]);
 
@@ -62,5 +69,3 @@ export default function MetamaskProvider({ children }) {
     </MetamaskContext.Provider>
   );
 }
-
-export const useMetamask = () => useContext(MetamaskContext);
