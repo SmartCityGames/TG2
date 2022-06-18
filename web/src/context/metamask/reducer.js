@@ -4,13 +4,16 @@ export function metamaskReducer(state, action) {
       return {
         ...state,
         provider: action.payload,
+        signer: action.payload.getSigner(),
       };
     }
     case "LOGIN": {
-      return {
-        ...state,
-        account: action.payload,
-      };
+      return state.account === action.payload
+        ? state
+        : {
+            ...state,
+            account: action.payload,
+          };
     }
     default:
       return state;
