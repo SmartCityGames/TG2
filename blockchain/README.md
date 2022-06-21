@@ -23,9 +23,9 @@ To get a local copy up and running follow these simple steps.
 ## Usage
 
 ```bash
-$ npm install -g truffle
-$ truffle develop
-truffle(dev)> migrate
+$ npm install -g truffle ganache-cli
+[1] $ ganache-cli
+[2] $ truffle migrate --reset # --reset only for development mode
 ```
 
 ## License
