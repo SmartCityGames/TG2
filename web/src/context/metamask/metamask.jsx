@@ -10,6 +10,9 @@ export const metamaskInitialState = {
   account: "",
   provider: null,
   signer: null,
+  contracts: {
+    hello: null,
+  },
 };
 
 export const useMetamask = () => useContext(MetamaskContext);
