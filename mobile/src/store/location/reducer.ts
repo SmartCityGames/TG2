@@ -1,7 +1,12 @@
 import { UserLocationState } from "./user-location";
 
 export interface UserLocationAction {
-  type: "UPDATE_POS" | "UPDATE_ZOOM" | "FIND_ME" | "ERROR";
+  type:
+    | "UPDATE_POS"
+    | "UPDATE_ZOOM"
+    | "FIND_ME"
+    | "ERROR"
+    | "UPDATE_USER_MARKER_INFO";
   payload?: Partial<UserLocationState>;
   error?: string;
 }
@@ -28,8 +33,15 @@ export function userLocationReducer(
     case "FIND_ME":
       return {
         ...state,
-        ...action.payload,
+        position: action.payload?.position!,
+        zoom: action.payload?.zoom!,
       };
+    case "UPDATE_USER_MARKER_INFO": {
+      return {
+        ...state,
+        marker: action.payload?.marker!,
+      };
+    }
     case "ERROR":
       return {
         ...state,

@@ -1,7 +1,7 @@
 import { UserAuthState } from "./user";
 
 export interface UserAuthAction {
-  type: "LOGIN" | "ERROR";
+  type: "LOGIN" | "ERROR" | "SIGNIN" | "SIGNUP";
   payload?: Partial<UserAuthState>;
   error?: string;
 }
@@ -11,10 +11,11 @@ export function userAuthReducer(
   action: UserAuthAction
 ): UserAuthState {
   switch (action.type) {
-    case "LOGIN":
+    case "SIGNIN":
       return {
         ...state,
-        ...action.payload,
+        user: action.payload?.user,
+        error: action.payload?.error
       };
     case "ERROR":
       return {

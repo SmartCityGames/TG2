@@ -1,12 +1,14 @@
-interface User {
+import { User as SupabaseUser } from "@supabase/supabase-js";
+
+export interface User extends SupabaseUser {
   experience: number;
   ongoingQuests: UserQuest[];
   availableQuests: UserQuest[];
   doneQuests: UserQuest[];
-  wallet: string;
+  wallet?: string;
 }
 
-interface UserQuest {
+export interface UserQuest {
   name: string;
   description: string;
   endDate: Date;
@@ -14,6 +16,6 @@ interface UserQuest {
 }
 
 export interface UserAuthState {
-  user: User | null;
-  error: string | null;
+  user?: User;
+  error?: string;
 }

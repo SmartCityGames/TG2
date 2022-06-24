@@ -3,7 +3,6 @@ import React, {
   Dispatch,
   PropsWithChildren,
   useContext,
-  useEffect,
   useReducer,
 } from "react";
 import { UserAuthAction, userAuthReducer } from "./reducer";
@@ -17,8 +16,8 @@ export interface UserAuthContextProps {
 const UserAuthContext = createContext<UserAuthContextProps>(undefined!);
 
 const userAuthInitialState: UserAuthState = {
-  user: null,
-  error: null,
+  user: undefined,
+  error: undefined,
 };
 
 export default function UserAuthProvider({ children }: PropsWithChildren<{}>) {

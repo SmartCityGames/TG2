@@ -1,28 +1,30 @@
 import { Dispatch } from "react";
 import { UserAuthAction } from "./reducer";
+import { supabase } from "../supabase";
+import { User } from "./user";
 
-async function fetchUser(
-  email: string,
-  password: string,
-  dispatch: Dispatch<UserAuthAction>
+export async function login(
+  dispatch: Dispatch<UserAuthAction>,
+  { email, password }: any
 ) {
-  const { data, status } = await Promise.resolve({
-    status: 200,
-    data: {
-      wallet: `${email}:${password}`,
-    } as any,
+  const { user: supaUser, error } = await supabase.auth.signIn({
+    email: email,
+    password: password,
   });
 
-  if (status !== 200) {
-    dispatch({
-      type: "ERROR",
-      error: data.message,
-    });
-    return;
-  }
+  const user = {
+    ...supaUser,
+    experience: 0,
+    ongoingQuests: [],
+    availableQuests: [],
+    doneQuests: [],
+  } as User;
 
   dispatch({
-    type: "LOGIN",
-    payload: data,
+    type: "SIGNIN",
+    payload: {
+      error: error?.message,
+      user,
+    },
   });
 }
