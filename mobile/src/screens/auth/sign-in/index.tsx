@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
-import { login } from "../../../store/auth/actions";
+import { login, signup } from "../../../store/auth/actions";
 import { useUserAuth } from "../../../store/auth/provider";
 
 export default function SignInScreen() {
@@ -39,6 +39,12 @@ export default function SignInScreen() {
         <Button
           title="Sign in"
           onPress={() => login(dispatch, { email, password })}
+        />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Button
+          title="Sign up"
+          onPress={() => signup(dispatch, { email, password })}
         />
       </View>
     </View>

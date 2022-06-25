@@ -28,3 +28,20 @@ export async function login(
     },
   });
 }
+
+export async function signup(
+  dispatch: Dispatch<UserAuthAction>,
+  { email, password }: any
+) {
+  const { error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+  });
+
+  dispatch({
+    type: "SIGNUP",
+    payload: {
+      error: error?.message,
+    },
+  });
+}

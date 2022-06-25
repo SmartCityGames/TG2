@@ -17,6 +17,11 @@ export function userAuthReducer(
         user: action.payload?.user,
         error: action.payload?.error
       };
+    case "SIGNUP":
+      return {
+        ...state,
+        error: action.payload?.error
+      };
     case "ERROR":
       return {
         ...state,
