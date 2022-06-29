@@ -14,13 +14,7 @@ export function userAuthReducer(
     case "SIGNIN":
       return {
         ...state,
-        user: action.payload?.user,
-        error: action.payload?.error
-      };
-    case "SIGNUP":
-      return {
-        ...state,
-        error: action.payload?.error
+        user: action.payload?.user
       };
     case "ERROR":
       return {

@@ -43,8 +43,9 @@ export default function SignUpScreen() {
         <Button
           title="Sign up"
           onPress={() => {
-            signup(dispatch, { email, password })
+            signup(dispatch, { email, password, navigation });
             setEmail(''); setPassword('');
+            console.log('Sign Up pressed');
           }}
         />
       </View>
