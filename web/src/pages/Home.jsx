@@ -1,11 +1,13 @@
 import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
-import { getAccount } from "../store/metamask/actions";
 import { useMetamask } from "../store/metamask/metamask";
 import { shortenAccount } from "../utils/shorten-account";
 
 export default function Home() {
-  const { state, dispatch } = useMetamask();
+  const {
+    state,
+    actions: { getAccount },
+  } = useMetamask();
   const [message, setMessage] = useState("default message");
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function Home() {
         {!state.account && (
           <button
             className="p-3 bg-red-400 rounded-lg"
-            onClick={() => getAccount(dispatch, state.provider)}
+            onClick={() => getAccount()}
           >
             login with Metamask
           </button>

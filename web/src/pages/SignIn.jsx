@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { login } from "../store/auth/actions";
 import { useUserAuth } from "../store/auth/provider";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { dispatch } = useUserAuth();
+  const {
+    actions: { login },
+  } = useUserAuth();
 
   async function handleLogin(e) {
     e.preventDefault();
-    login(dispatch, { email, password });
+    login({ email, password });
   }
 
   return (

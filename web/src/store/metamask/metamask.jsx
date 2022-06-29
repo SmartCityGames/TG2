@@ -1,5 +1,13 @@
+import { useToast } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
+import { startLoading } from "../../utils/start-loading-action";
 import { metamaskReducer } from "./reducer";
 
 const MetamaskContext = createContext();
@@ -8,25 +16,44 @@ const { ethereum } = window;
 
 export const metamaskInitialState = {
   account: "",
-  provider: null,
-  signer: null,
+  provider: undefined,
+  signer: undefined,
   contracts: {
-    hello: null,
+    hello: undefined,
   },
+  error: undefined,
+  loading: false,
 };
 
 export const useMetamask = () => useContext(MetamaskContext);
 
 export default function MetamaskProvider({ children }) {
   const [state, dispatch] = useReducer(metamaskReducer, metamaskInitialState);
+  const toast = useToast();
 
   useEffect(() => {
-    ethereum
-      ? dispatch({
-          type: "LOAD_PROVIDER",
-          payload: new ethers.providers.Web3Provider(ethereum, "any"),
-        })
-      : alert("Please install metamask");
+    if (!ethereum) {
+      toast({
+        title: "Failed to load metamask",
+        description: "please install metamask in your browser",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+
+      dispatch({
+        type: "ERROR",
+        payload: "please install metamask in your browser",
+      });
+
+      return;
+    }
+
+    dispatch({
+      type: "LOAD_PROVIDER",
+      payload: new ethers.providers.Web3Provider(ethereum, "any"),
+    });
   }, []);
 
   useEffect(() => {
@@ -66,8 +93,23 @@ export default function MetamaskProvider({ children }) {
     };
   }, [state.provider]);
 
+  async function getAccount() {
+    startLoading();
+
+    const [account] = await state.provider.send("eth_requestAccounts", []);
+
+    dispatch({
+      type: "LOGIN",
+      payload: account,
+    });
+  }
+
+  const actions = useMemo(() => ({
+    getAccount,
+  }));
+
   return (
-    <MetamaskContext.Provider value={{ state, dispatch }}>
+    <MetamaskContext.Provider value={{ state, actions }}>
       {children}
     </MetamaskContext.Provider>
   );
