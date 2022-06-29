@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
-import { useUserAuth } from "../context/auth/provider";
+import { useUserAuth } from "../store/auth/provider";
 import SignIn from "../pages/SignIn";
 import Home from "../pages/Home";
-import MetamaskProvider from "../context/metamask/metamask";
+import MetamaskProvider from "../store/metamask/metamask";
 
 export default function Router() {
   const {

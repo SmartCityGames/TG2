@@ -1,4 +1,4 @@
-import MetamaskProvider from "./context/metamask/metamask";
+import MetamaskProvider from "./store/metamask/metamask";
 import Home from "./pages/Home";
 
 export default function App() {

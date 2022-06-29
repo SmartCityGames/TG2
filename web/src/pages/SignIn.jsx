@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { login } from "../context/auth/actions";
-import { useUserAuth } from "../context/auth/provider";
+import { login } from "../store/auth/actions";
+import { useUserAuth } from "../store/auth/provider";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");

@@ -1,8 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
-import { getAccount } from "../context/metamask/actions";
-import { useMetamask } from "../context/metamask/metamask";
-import { shortenAccount } from "../utils/short-account";
+import { getAccount } from "../store/metamask/actions";
+import { useMetamask } from "../store/metamask/metamask";
+import { shortenAccount } from "../utils/shorten-account";
 
 export default function Home() {
   const { state, dispatch } = useMetamask();
