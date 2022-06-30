@@ -1,9 +1,12 @@
+import { Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
 import { useMetamask } from "../store/metamask/metamask";
 import { shortenAccount } from "../utils/shorten-account";
 
 export default function Home() {
+  const toast = useToast();
   const {
     state,
     actions: { getAccount },
@@ -13,12 +16,19 @@ export default function Home() {
   useEffect(() => {
     if (!state.contracts.hello) return;
 
-    async function getMessage() {
-      const msg = await state.contracts.hello.getMessage();
-      setMessage(msg);
-    }
-
-    getMessage();
+    state.contracts.hello
+      .getMessage()
+      .then(setMessage)
+      .catch((error) => {
+        toast({
+          title: `ERROR`,
+          description: error.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      });
   }, [state.contracts.hello]);
 
   async function setMessageBlockchain() {
@@ -27,34 +37,41 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-slate-900 min-h-screen flex justify-center">
-      <div className="flex flex-col items-center justify-center space-y-4">
-        {state.account && (
-          <>
-            <h1 className="text-xl text-teal-600">
-              Account: {shortenAccount(state.account)}
-            </h1>
-            <h1 className="text-2xl text-sky-600">
-              Contract Message: {message}
-            </h1>
+    <>
+      <Navbar />
+      <Flex align="center" justify="center" h="100vh">
+        <Flex columnGap={4} direction="column" align="center" justify="center">
+          {state.account && (
+            <>
+              <Text size="xl" color="teal.600">
+                Account: {shortenAccount(state.account)}
+              </Text>
+              <Text size="2xl" color="skyblue">
+                Contract Message: {message}
+              </Text>
 
-            <button
-              className="p-3 bg-emerald-600 rounded-lg"
-              onClick={() => setMessageBlockchain()}
+              <Button
+                p={3}
+                bg="pink.400"
+                rounded="lg"
+                onClick={() => setMessageBlockchain()}
+              >
+                Mudar
+              </Button>
+            </>
+          )}
+          {!state.account && (
+            <Button
+              p={3}
+              bg="orange.400"
+              rounded="lg"
+              onClick={() => getAccount()}
             >
-              Mudar
-            </button>
-          </>
-        )}
-        {!state.account && (
-          <button
-            className="p-3 bg-red-400 rounded-lg"
-            onClick={() => getAccount()}
-          >
-            login with Metamask
-          </button>
-        )}
-      </div>
-    </div>
+              login with Metamask
+            </Button>
+          )}
+        </Flex>
+      </Flex>
+    </>
   );
 }

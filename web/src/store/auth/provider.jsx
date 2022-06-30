@@ -4,15 +4,19 @@ import { authReducer } from "./reducer";
 import { supabase } from "../supabase";
 import { startLoading } from "../../utils/start-loading-action";
 
-const UserAuthContext = createContext(undefined);
+export const authInitialState = {
+  user: undefined,
+  error: undefined,
+  loading: false,
+};
+
+const UserAuthContext = createContext({ state: authInitialState });
+
+export const useUserAuth = () => useContext(UserAuthContext);
 
 export default function UserAuthProvider({ children }) {
   const toast = useToast();
-  const [state, dispatch] = useReducer(authReducer, {
-    user: undefined,
-    error: undefined,
-    loading: false,
-  });
+  const [state, dispatch] = useReducer(authReducer, authInitialState);
 
   async function login({ email, password }) {
     startLoading(dispatch);
@@ -30,6 +34,12 @@ export default function UserAuthProvider({ children }) {
     dispatch({
       type: "LOGIN",
       payload: user,
+    });
+  }
+
+  function logout() {
+    dispatch({
+      type: "LOGOUT",
     });
   }
 
@@ -52,6 +62,7 @@ export default function UserAuthProvider({ children }) {
   const actions = useMemo(
     () => ({
       login,
+      logout,
       showAuthError,
     }),
     []
@@ -63,5 +74,3 @@ export default function UserAuthProvider({ children }) {
     </UserAuthContext.Provider>
   );
 }
-
-export const useUserAuth = () => useContext(UserAuthContext);

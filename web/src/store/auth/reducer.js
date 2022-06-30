@@ -1,3 +1,5 @@
+import { authInitialState } from "./provider";
+
 export function authReducer(state, action) {
   console.log(`[AUTH] action of type ${action.type} fired`);
 
@@ -20,6 +22,8 @@ export function authReducer(state, action) {
         ...state,
         loading: true,
       };
+    case "LOGOUT":
+      return authInitialState;
     default:
       return state;
   }

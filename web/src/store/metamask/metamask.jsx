@@ -10,8 +10,6 @@ import {
 import { startLoading } from "../../utils/start-loading-action";
 import { metamaskReducer } from "./reducer";
 
-const MetamaskContext = createContext();
-
 const { ethereum } = window;
 
 export const metamaskInitialState = {
@@ -24,6 +22,10 @@ export const metamaskInitialState = {
   error: undefined,
   loading: false,
 };
+
+const MetamaskContext = createContext({
+  state: metamaskInitialState,
+});
 
 export const useMetamask = () => useContext(MetamaskContext);
 
@@ -94,7 +96,7 @@ export default function MetamaskProvider({ children }) {
   }, [state.provider]);
 
   async function getAccount() {
-    startLoading();
+    startLoading(dispatch);
 
     const [account] = await state.provider.send("eth_requestAccounts", []);
 
@@ -104,9 +106,12 @@ export default function MetamaskProvider({ children }) {
     });
   }
 
-  const actions = useMemo(() => ({
-    getAccount,
-  }));
+  const actions = useMemo(
+    () => ({
+      getAccount,
+    }),
+    []
+  );
 
   return (
     <MetamaskContext.Provider value={{ state, actions }}>
