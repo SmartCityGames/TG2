@@ -1,4 +1,4 @@
-import Router from "./components/router";
+import Router from "./components/Router";
 import UserAuthProvider from "./store/auth/provider";
 
 export default function App() {

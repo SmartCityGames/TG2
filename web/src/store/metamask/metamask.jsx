@@ -1,4 +1,5 @@
 import { useToast } from "@chakra-ui/react";
+import { faker } from "@faker-js/faker";
 import { ethers } from "ethers";
 import {
   createContext,
@@ -7,7 +8,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import { startLoading } from "../../utils/start-loading-action";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { metamaskReducer } from "./reducer";
 
 const { ethereum } = window;
@@ -23,9 +24,7 @@ export const metamaskInitialState = {
   loading: false,
 };
 
-const MetamaskContext = createContext({
-  state: metamaskInitialState,
-});
+const MetamaskContext = createContext({ state: metamaskInitialState });
 
 export const useMetamask = () => useContext(MetamaskContext);
 
@@ -35,18 +34,9 @@ export default function MetamaskProvider({ children }) {
 
   useEffect(() => {
     if (!ethereum) {
-      toast({
-        title: "Failed to load metamask",
+      showBlockchainError({
+        code: "Failed to load metamask",
         description: "please install metamask in your browser",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-
-      dispatch({
-        type: "ERROR",
-        payload: "please install metamask in your browser",
       });
 
       return;
@@ -96,7 +86,7 @@ export default function MetamaskProvider({ children }) {
   }, [state.provider]);
 
   async function getAccount() {
-    startLoading(dispatch);
+    toggleLoading(dispatch);
 
     const [account] = await state.provider.send("eth_requestAccounts", []);
 
@@ -106,15 +96,55 @@ export default function MetamaskProvider({ children }) {
     });
   }
 
+  async function getMessageBlockchain() {
+    try {
+      return state.contracts.hello.getMessage();
+    } catch (error) {
+      console.log({ error });
+      showBlockchainError({
+        ...error,
+        description: "failed to get contract message",
+      });
+    }
+  }
+
+  async function setMessageBlockchain() {
+    toggleLoading(dispatch);
+    await state.contracts.hello
+      .connect(state.signer)
+      .setMessage(faker.random.words(5));
+    toggleLoading(dispatch);
+  }
+
+  function showBlockchainError({ error }) {
+    toast({
+      title: `ERROR: ${error.code}`,
+      description: error.description ?? error.message,
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+      position: "top",
+    });
+    console.log({ error });
+    dispatch({ type: "ERROR", payload: error });
+  }
+
   const actions = useMemo(
     () => ({
       getAccount,
+      setMessageBlockchain,
+      getMessageBlockchain,
     }),
-    []
+    [state.provider]
   );
 
   return (
-    <MetamaskContext.Provider value={{ state, actions }}>
+    <MetamaskContext.Provider
+      value={{
+        state,
+        actions,
+      }}
+    >
       {children}
     </MetamaskContext.Provider>
   );

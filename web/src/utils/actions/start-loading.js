@@ -1,4 +1,4 @@
-export function startLoading(dispatch) {
+export function toggleLoading(dispatch) {
   dispatch({
     type: "LOADING",
   });

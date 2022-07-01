@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import HelloWorldContractJSON from "../../../../blockchain/build/contracts/HelloWorld.json";
+import { config } from "../../config";
 
 export function metamaskReducer(state, action) {
   console.log(`[METAMASK] action of type ${action.type} fired`);
@@ -13,8 +14,7 @@ export function metamaskReducer(state, action) {
         signer: provider.getSigner(),
         contracts: {
           hello: new ethers.Contract(
-            //! this is the hash os deployed contract (HelloWorld)
-            "0x31d3421477ea0a09f45287be3473782392c784f3",
+            config.CONTRACT_HEX,
             HelloWorldContractJSON.abi,
             provider
           ),
@@ -43,7 +43,7 @@ export function metamaskReducer(state, action) {
     case "LOADING": {
       return {
         ...state,
-        loading: true,
+        loading: !state.loading,
       };
     }
     default:

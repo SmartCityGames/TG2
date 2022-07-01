@@ -20,7 +20,7 @@ export function authReducer(state, action) {
     case "LOADING":
       return {
         ...state,
-        loading: true,
+        loading: !state.loading,
       };
     case "LOGOUT":
       return authInitialState;

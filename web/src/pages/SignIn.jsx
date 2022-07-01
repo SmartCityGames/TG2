@@ -13,6 +13,7 @@ import { useUserAuth } from "../store/auth/provider";
 
 export default function SignIn() {
   const {
+    state: { loading },
     actions: { login },
   } = useUserAuth();
 
@@ -42,7 +43,12 @@ export default function SignIn() {
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>
-                <Button type="submit" colorScheme="purple" width="full">
+                <Button
+                  type="submit"
+                  colorScheme="purple"
+                  width="full"
+                  disabled={loading}
+                >
                   Send Link
                 </Button>
               </VStack>

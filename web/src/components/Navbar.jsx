@@ -27,6 +27,11 @@ export default function Navbar() {
         fontSize={["lg", "4xl"]}
         bgGradient="linear(to-l, #7928CA, #FF0080)"
         bgClip="text"
+        onClick={() => navigate("/")}
+        _hover={{
+          bgGradient: "linear(to-r, #7929EA, #FDAA80)",
+          cursor: "pointer",
+        }}
       >
         Smarty City Games
       </Text>

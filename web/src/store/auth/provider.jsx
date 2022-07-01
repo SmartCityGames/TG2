@@ -1,4 +1,4 @@
-import { Spinner, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import {
   createContext,
   useContext,
@@ -6,8 +6,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import CenteredSpinner from "../../components/CenteredSpinner";
-import { startLoading } from "../../utils/start-loading-action";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { supabase } from "../supabase";
 import { authReducer } from "./reducer";
 
@@ -26,7 +25,7 @@ export default function UserAuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, authInitialState);
 
   useEffect(() => {
-    startLoading(dispatch);
+    toggleLoading(dispatch);
     dispatch({ type: "LOGIN", payload: supabase.auth.session() });
   }, []);
 
@@ -55,10 +54,12 @@ export default function UserAuthProvider({ children }) {
   }, []);
 
   async function login({ email }) {
+    toggleLoading(dispatch);
     const { error } = await supabase.auth.signIn(
       { email },
       { redirectTo: "/" }
     );
+    toggleLoading(dispatch);
 
     if (error) {
       showAuthError({ error });
@@ -85,13 +86,13 @@ export default function UserAuthProvider({ children }) {
   function showAuthError({ error }) {
     toast({
       title: `status: ${error.status}`,
-      description: error.message,
+      description: error.description ?? error.message,
       status: "error",
       duration: 5000,
       isClosable: true,
       position: "top",
     });
-
+    console.log({ error });
     dispatch({ type: "ERROR", payload: error });
   }
 
@@ -106,7 +107,7 @@ export default function UserAuthProvider({ children }) {
 
   return (
     <UserAuthContext.Provider value={{ state, actions }}>
-      {state.loading ? <CenteredSpinner h="100vh" /> : children}
+      {children}
     </UserAuthContext.Provider>
   );
 }
