@@ -6,10 +6,10 @@ import MetamaskProvider from "../store/metamask/metamask";
 
 export default function Router() {
   const {
-    state: { user },
+    state: { session },
   } = useUserAuth();
 
-  return user ? (
+  return session ? (
     <MetamaskProvider>
       <Routes>
         <Route path="/" element={<Home />} />

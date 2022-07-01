@@ -22,17 +22,15 @@ export default function SignIn() {
         <Formik
           initialValues={{
             email: "",
-            password: "",
-            rememberMe: false,
           }}
-          onSubmit={({ email, password }) => {
-            login({ email, password });
+          onSubmit={({ email }) => {
+            login({ email });
           }}
         >
           {({ handleSubmit, errors, touched }) => (
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
-                <FormControl>
+                <FormControl isInvalid={!!errors.email && touched.email}>
                   <FormLabel htmlFor="email">Email Address</FormLabel>
                   <Field
                     as={Input}
@@ -42,30 +40,10 @@ export default function SignIn() {
                     variant="filled"
                     autoComplete="username"
                   />
-                </FormControl>
-                <FormControl isInvalid={!!errors.password && touched.password}>
-                  <FormLabel htmlFor="password">Password</FormLabel>
-                  <Field
-                    as={Input}
-                    id="password"
-                    name="password"
-                    type="password"
-                    variant="filled"
-                    autoComplete="current-password"
-                    validate={(value) => {
-                      let error;
-
-                      if (value.length < 5) {
-                        error = "Password must contain at least 6 characters";
-                      }
-
-                      return error;
-                    }}
-                  />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>
                 <Button type="submit" colorScheme="purple" width="full">
-                  Login
+                  Send Link
                 </Button>
               </VStack>
             </form>
