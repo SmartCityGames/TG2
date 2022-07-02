@@ -9,6 +9,8 @@ import {
   useReducer,
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { useUserAuth } from "../auth/provider";
+import { useSupabase } from "../supabase/provider";
 import { metamaskReducer } from "./reducer";
 
 const { ethereum } = window;
@@ -31,6 +33,11 @@ export const useMetamask = () => useContext(MetamaskContext);
 export default function MetamaskProvider({ children }) {
   const [state, dispatch] = useReducer(metamaskReducer, metamaskInitialState);
   const toast = useToast();
+  const supabase = useSupabase();
+  const {
+    state: { session },
+    actions: { logout },
+  } = useUserAuth();
 
   useEffect(() => {
     if (!ethereum) {
@@ -85,10 +92,45 @@ export default function MetamaskProvider({ children }) {
     };
   }, [state.provider]);
 
-  async function getAccount() {
+  async function checkDbWalletWithMetamask(dbWallet) {
     toggleLoading(dispatch);
 
     const [account] = await state.provider.send("eth_requestAccounts", []);
+
+    if (!dbWallet) {
+      dispatch({
+        type: "LOGIN",
+        payload: account,
+      });
+
+      const { error } = await supabase.from("profiles").upsert(
+        {
+          id: session.user.id,
+          wallet: account,
+          updated_at: new Date(),
+        },
+        { returning: "minimal" }
+      );
+
+      if (error) {
+        showBlockchainError({ error });
+      }
+
+      return;
+    }
+
+    if (dbWallet !== account) {
+      logout();
+      toast({
+        title: "wrong metamask account",
+        description: "please select your binded wallet",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
 
     dispatch({
       type: "LOGIN",
@@ -131,7 +173,7 @@ export default function MetamaskProvider({ children }) {
 
   const actions = useMemo(
     () => ({
-      getAccount,
+      checkDbWalletWithMetamask,
       setMessageBlockchain,
       getMessageBlockchain,
     }),

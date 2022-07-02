@@ -1,14 +1,39 @@
 import { Button, Center, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useUserAuth } from "../store/auth/provider";
 import { useMetamask } from "../store/metamask/metamask";
+import { useSupabase } from "../store/supabase/provider";
 import { shortenAccount } from "../utils/shorten-account";
 
 export default function Home() {
   const {
     state: { contracts, account, loading },
-    actions: { getAccount, setMessageBlockchain, getMessageBlockchain },
+    actions: {
+      checkDbWalletWithMetamask,
+      setMessageBlockchain,
+      getMessageBlockchain,
+    },
   } = useMetamask();
+  const {
+    state: { session },
+  } = useUserAuth();
+  const supabase = useSupabase();
   const [message, setMessage] = useState("default message");
+  const [dbWallet, setDbWallet] = useState(null);
+
+  useEffect(() => {
+    async function getUserWallet() {
+      const response = await supabase
+        .from("profiles")
+        .select("wallet")
+        .eq("id", session.user.id);
+
+      if (!response.data.length) return;
+
+      setDbWallet(response.data[0].wallet);
+    }
+    getUserWallet();
+  }, []);
 
   useEffect(() => {
     if (!contracts.hello || !account) return;
@@ -18,7 +43,12 @@ export default function Home() {
   if (!account) {
     return (
       <Center>
-        <Button p={3} bg="orange.400" rounded="lg" onClick={() => getAccount()}>
+        <Button
+          p={3}
+          bg="orange.400"
+          rounded="lg"
+          onClick={() => checkDbWalletWithMetamask(dbWallet)}
+        >
           login with Metamask
         </Button>
       </Center>
