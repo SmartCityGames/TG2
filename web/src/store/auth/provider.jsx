@@ -7,7 +7,7 @@ import {
   useReducer,
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
-import { supabase } from "../supabase";
+import { useSupabase } from "../supabase/provider";
 import { authReducer } from "./reducer";
 
 export const authInitialState = {
@@ -23,6 +23,7 @@ export const useUserAuth = () => useContext(UserAuthContext);
 export default function UserAuthProvider({ children }) {
   const toast = useToast();
   const [state, dispatch] = useReducer(authReducer, authInitialState);
+  const supabase = useSupabase();
 
   useEffect(() => {
     toggleLoading(dispatch);
