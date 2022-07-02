@@ -116,6 +116,15 @@ export default function MetamaskProvider({ children }) {
         showBlockchainError({ error });
       }
 
+      toast({
+        title: "wallet binded",
+        description: "your account is now linked with this wallet",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+
       return;
     }
 
