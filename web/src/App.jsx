@@ -1,10 +1,10 @@
-import MetamaskProvider from "./context/metamask/metamask";
-import Home from "./pages/Home";
+import Router from "./components/Router";
+import UserAuthProvider from "./store/auth/provider";
 
 export default function App() {
   return (
-    <MetamaskProvider>
-      <Home />
-    </MetamaskProvider>
+    <UserAuthProvider>
+      <Router />
+    </UserAuthProvider>
   );
 }

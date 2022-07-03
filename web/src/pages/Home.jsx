@@ -1,58 +1,80 @@
-import { faker } from "@faker-js/faker";
+import { Button, Center, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { getAccount } from "../context/metamask/actions";
-import { useMetamask } from "../context/metamask/metamask";
-import { shortenAccount } from "../utils/short-account";
+import { useUserAuth } from "../store/auth/provider";
+import { useMetamask } from "../store/metamask/metamask";
+import { useSupabase } from "../store/supabase/provider";
+import { shortenAccount } from "../utils/shorten-account";
 
 export default function Home() {
-  const { state, dispatch } = useMetamask();
+  const {
+    state: { contracts, account, loading },
+    actions: {
+      checkDbWalletWithMetamask,
+      setMessageBlockchain,
+      getMessageBlockchain,
+    },
+  } = useMetamask();
+  const {
+    state: { session },
+  } = useUserAuth();
+  const supabase = useSupabase();
   const [message, setMessage] = useState("default message");
+  const [dbWallet, setDbWallet] = useState(null);
 
   useEffect(() => {
-    if (!state.contracts.hello) return;
+    async function getUserWallet() {
+      const response = await supabase
+        .from("profiles")
+        .select("wallet")
+        .eq("id", session.user.id);
 
-    async function getMessage() {
-      const msg = await state.contracts.hello.getMessage();
-      setMessage(msg);
+      if (!response.data.length) return;
+
+      setDbWallet(response.data[0].wallet);
     }
+    getUserWallet();
+  }, []);
 
-    getMessage();
-  }, [state.contracts.hello]);
+  useEffect(() => {
+    if (!contracts.hello || !account) return;
+    (async () => setMessage(await getMessageBlockchain()))();
+  }, [contracts.hello, account]);
 
-  async function setMessageBlockchain() {
-    const signer = await state.contracts.hello.connect(state.signer);
-    await signer.setMessage(faker.random.words(5));
+  if (!account) {
+    return (
+      <Center>
+        <Button
+          p={3}
+          bg="orange.400"
+          rounded="lg"
+          onClick={() => checkDbWalletWithMetamask(dbWallet)}
+        >
+          login with Metamask
+        </Button>
+      </Center>
+    );
   }
 
   return (
-    <div className="bg-slate-900 min-h-screen flex justify-center">
-      <div className="flex flex-col items-center justify-center space-y-4">
-        {state.account && (
-          <>
-            <h1 className="text-xl text-teal-600">
-              Account: {shortenAccount(state.account)}
-            </h1>
-            <h1 className="text-2xl text-sky-600">
-              Contract Message: {message}
-            </h1>
+    <Center>
+      <Flex gap={4} direction="column" align="center" justify="center">
+        <Text size="xl" color="teal.600">
+          Account: {shortenAccount(account)}
+        </Text>
+        <Text size="2xl" color="skyblue">
+          Contract Message: {message}
+        </Text>
 
-            <button
-              className="p-3 bg-emerald-600 rounded-lg"
-              onClick={() => setMessageBlockchain()}
-            >
-              Mudar
-            </button>
-          </>
-        )}
-        {!state.account && (
-          <button
-            className="p-3 bg-red-400 rounded-lg"
-            onClick={() => getAccount(dispatch, state.provider)}
-          >
-            login with Metamask
-          </button>
-        )}
-      </div>
-    </div>
+        <Button
+          p={3}
+          bg="pink.400"
+          rounded="lg"
+          onClick={() => setMessageBlockchain()}
+          disabled={loading}
+        >
+          Change stored message
+        </Button>
+      </Flex>
+    </Center>
   );
 }
