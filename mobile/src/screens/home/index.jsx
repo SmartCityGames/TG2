@@ -11,13 +11,13 @@ export default function HomeScreen() {
   const { state: authState } = useUserAuth();
 
   useEffect(() => {
+    console.log({ authState });
+
     locationDispatch({
       type: "UPDATE_USER_MARKER_INFO",
       payload: {
-        marker: {
-          ...marker,
-          id: authState.user!.email!,
-        },
+        ...marker,
+        id: authState.user.email,
       },
     });
   }, []);

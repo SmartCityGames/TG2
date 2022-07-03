@@ -1,14 +1,7 @@
-import { Dispatch } from "react";
-import { UserAuthAction } from "./reducer";
-import { supabase } from "../supabase";
-import { User } from "./user";
-import { ApiError } from "@supabase/supabase-js";
 import AsyncAlert from "../../components/utils/AsyncAlert";
+import { supabase } from "../supabase";
 
-export async function login(
-  dispatch: Dispatch<UserAuthAction>,
-  { email, password }: any
-) {
+export async function login(dispatch, { email, password }) {
   const { user: supaUser, error } = await supabase.auth.signIn({
     email: email,
     password: password,
@@ -25,21 +18,16 @@ export async function login(
     ongoingQuests: [],
     availableQuests: [],
     doneQuests: [],
-  } as User;
+  };
 
   dispatch({
     type: "SIGNIN",
-    payload: {
-      user,
-    },
+    payload: user,
   });
 }
 
-export async function signup(
-  dispatch: Dispatch<UserAuthAction>,
-  { email, password, navigation }: any
-) {
-  const { user: supaUser, error } = await supabase.auth.signUp({
+export async function signup(dispatch, { email, password, navigation }) {
+  const { error } = await supabase.auth.signUp({
     email: email,
     password: password,
   });
@@ -51,11 +39,10 @@ export async function signup(
 
   await AsyncAlert("Email Confirm", "Please confirm your email!");
 
-  navigation.navigate('SignIn');
-
+  navigation.navigate("SignIn");
 }
 
-export async function showAuthError(dispatch: Dispatch<UserAuthAction>, error: ApiError) {
+export async function showAuthError(dispatch, error) {
   await AsyncAlert(`Status: ${error.status}`, `Error: ${error.message}`);
   dispatch({
     type: "SIGNUP",

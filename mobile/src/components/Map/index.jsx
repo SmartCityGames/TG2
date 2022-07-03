@@ -1,5 +1,5 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { ActivityIndicator, Button, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { getUserPosition } from "../../store/location/actions";
 import { useUserLocation } from "../../store/location/provider";
 import { mapConfig } from "./config";
@@ -16,7 +16,7 @@ export default function LeafletMap() {
     <View style={mapStyles.container}>
       <ExpoLeaflet
         loadingIndicator={() => <ActivityIndicator />}
-        mapCenterPosition={position!}
+        mapCenterPosition={position}
         onMessage={(message) => processLeafletEvent(message, dispatch)}
         zoom={zoom}
         mapMarkers={[userMarker]}

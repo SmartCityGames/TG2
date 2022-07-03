@@ -14,7 +14,6 @@
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
     "@supabase/supabase-js": "^1.35.3",
-    "@types/leaflet": "^1.7.10",
     "expo": "~45.0.0",
     "expo-asset": "~8.5.0",
     "expo-file-system": "~14.0.0",
@@ -32,11 +31,7 @@
     "react-native-webview": "11.18.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@types/react": "~17.0.21",
-    "@types/react-native": "~0.66.13",
-    "babel-plugin-module-resolver": "^4.1.0",
-    "typescript": "~4.3.5"
+    "@babel/core": "^7.12.9"
   },
   "private": true
 }

@@ -2,12 +2,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
-import { SigninScreenNavigationProps } from "../../../components/routes/tab-navigator";
 import { signup } from "../../../store/auth/actions";
 import { useUserAuth } from "../../../store/auth/provider";
 
 export default function SignUpScreen() {
-  const navigation = useNavigation<SigninScreenNavigationProps>();
+  const navigation = useNavigation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
