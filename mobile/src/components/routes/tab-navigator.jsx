@@ -9,10 +9,10 @@ const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
   const {
-    state: { user },
+    state: { session },
   } = useUserAuth();
 
-  return user ? (
+  return session ? (
     <UserLocationProvider>
       <Tab.Navigator>
         <Tab.Screen
