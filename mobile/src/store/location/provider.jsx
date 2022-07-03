@@ -1,38 +1,24 @@
-import { LocationSubscription } from "expo-location";
-import React, {
-  createContext,
-  Dispatch,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useReducer,
-} from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { Text } from "react-native";
 import { requestUserLocation, watchUserPosition } from "./actions";
-import { UserLocationAction, userLocationReducer } from "./reducer";
-import { UserLocationState } from "./user-location";
+import { userLocationReducer } from "./reducer";
 
-export interface UserLocationContextProps {
-  state: UserLocationState;
-  dispatch: Dispatch<UserLocationAction>;
-}
-
-const UserLocationContext = createContext<UserLocationContextProps>(undefined!);
-
-const userLocationInitialState: UserLocationState = {
+const userLocationInitialState = {
   position: null,
   zoom: 17,
   marker: {
     icon: "🧔",
     id: "1",
-    position: undefined!,
+    position: undefined,
   },
   error: null,
 };
 
-export default function UserLocationProvider({
-  children,
-}: PropsWithChildren<{}>) {
+const UserLocationContext = createContext({
+  state: { userLocationInitialState },
+});
+
+export default function UserLocationProvider({ children }) {
   const [state, dispatch] = useReducer(
     userLocationReducer,
     userLocationInitialState

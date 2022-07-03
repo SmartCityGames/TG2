@@ -1,21 +1,16 @@
 import {
   getLastKnownPositionAsync,
-  LocationObject,
   PermissionStatus,
   requestForegroundPermissionsAsync,
   watchPositionAsync,
 } from "expo-location";
-import { Dispatch } from "react";
-import { UserLocationAction } from "./reducer";
 
-const locationObjectToLiteral = (loc: LocationObject) => ({
+const locationObjectToLiteral = (loc) => ({
   lat: loc.coords.latitude,
   lng: loc.coords.longitude,
 });
 
-export async function requestUserLocation(
-  dispatch: Dispatch<UserLocationAction>
-) {
+export async function requestUserLocation(dispatch) {
   const { status } = await requestForegroundPermissionsAsync();
 
   if (status === PermissionStatus.GRANTED) return;
@@ -26,27 +21,23 @@ export async function requestUserLocation(
   });
 }
 
-export async function watchUserPosition(
-  dispatch: Dispatch<UserLocationAction>
-) {
+export async function watchUserPosition(dispatch) {
   return watchPositionAsync({ accuracy: 0.7 }, (loc) => {
     dispatch({
       type: "UPDATE_POS",
-      payload: {
-        position: locationObjectToLiteral(loc),
-      },
+      payload: locationObjectToLiteral(loc),
     });
   });
 }
 
-export async function getUserPosition(dispatch: Dispatch<UserLocationAction>) {
-  console.log("fetching last know user position")
+export async function getUserPosition(dispatch) {
+  console.log("fetching last know user position");
   const loc = await getLastKnownPositionAsync();
 
   if (!loc) return;
 
   dispatch({
-    type: "FIND_ME",
+    type: "UPDATE_POS_ZOOM",
     payload: {
       position: locationObjectToLiteral(loc),
       zoom: 17,

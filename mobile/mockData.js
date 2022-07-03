@@ -1,6 +1,6 @@
 import { MapMarker, MapShape } from "expo-leaflet";
 
-export const circle: MapShape = {
+export const circle = {
   shapeType: "circle",
   color: "#123123",
   id: "1",
@@ -8,7 +8,7 @@ export const circle: MapShape = {
   radius: 2000,
 };
 
-export const circleMarker: MapShape = {
+export const circleMarker = {
   shapeType: "circle",
   color: "red",
   id: "2",
@@ -16,7 +16,7 @@ export const circleMarker: MapShape = {
   radius: 15,
 };
 
-export const polygon: MapShape = {
+export const polygon = {
   shapeType: "polygon",
   color: "blue",
   id: "3",
@@ -27,7 +27,7 @@ export const polygon: MapShape = {
   ],
 };
 
-export const multiPolygon: MapShape = {
+export const multiPolygon = {
   shapeType: "polygon",
   color: "violet",
   id: "4",
@@ -48,7 +48,7 @@ export const multiPolygon: MapShape = {
   ],
 };
 
-export const polyline: MapShape = {
+export const polyline = {
   shapeType: "polyline",
   color: "orange",
   id: "5",
@@ -59,7 +59,7 @@ export const polyline: MapShape = {
   ],
 };
 
-export const multiPolyline: MapShape = {
+export const multiPolyline = {
   shapeType: "polyline",
   color: "purple",
   id: "5a",
@@ -77,7 +77,7 @@ export const multiPolyline: MapShape = {
   ],
 };
 
-export const rectangle: MapShape = {
+export const rectangle = {
   shapeType: "rectangle",
   color: "yellow",
   id: "6",
@@ -87,7 +87,7 @@ export const rectangle: MapShape = {
   ],
 };
 
-export const mapShapes: Array<MapShape> = [
+export const mapShapes = [
   {
     shapeType: "circle",
     color: "#123123",
@@ -170,7 +170,7 @@ export const mapShapes: Array<MapShape> = [
   },
 ];
 
-export const mapMarkers: MapMarker[] = [
+export const mapMarkers = [
   {
     id: "1",
     position: { lat: 36.46410354, lng: -75.6432701 },

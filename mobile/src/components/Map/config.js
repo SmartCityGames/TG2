@@ -1,14 +1,6 @@
-import { MapLayer } from "expo-leaflet";
-import { MapOptions } from "leaflet";
 import { Platform } from "react-native";
 
-type MapConfig = {
-  mapLayers: MapLayer[];
-  mapOptions: MapOptions;
-  maxZoom: number;
-};
-
-export const mapConfig: MapConfig = {
+export const mapConfig = {
   mapLayers: [
     {
       attribution:

@@ -1,13 +1,7 @@
-import { LeafletWebViewEvent } from "expo-leaflet";
-import { Dispatch } from "react";
 import { Alert } from "react-native";
-import { UserLocationAction } from "../../store/location/reducer";
 import { mapConfig } from "./config";
 
-export function processLeafletEvent(
-  event: LeafletWebViewEvent,
-  dispatch: Dispatch<UserLocationAction>
-) {
+export function processLeafletEvent(event, dispatch) {
   console.log("incoming event:", JSON.stringify(event, null, 2));
 
   switch (event.tag) {
@@ -22,7 +16,7 @@ export function processLeafletEvent(
       break;
     case "onMoveEnd":
       dispatch({
-        type: "UPDATE_ZOOM",
+        type: "UPDATE_POS_ZOOM",
         payload: {
           position: event.mapCenter,
           zoom: Math.min(event.zoom, mapConfig.maxZoom),
