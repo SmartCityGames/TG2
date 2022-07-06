@@ -1,23 +1,49 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { getUserPosition } from "../../store/location/actions";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { useUserLocation } from "../../store/location/provider";
 import { mapConfig } from "./config";
-import { processLeafletEvent } from "./event-processor";
 import mapStyles from "./style";
 
 export default function LeafletMap() {
   const {
     state: { position, zoom, marker: userMarker },
-    dispatch,
+    actions: { onMoveEnd, getUserPosition },
   } = useUserLocation();
+
+  function processLeafletEvent(event) {
+    console.log("incoming event:", JSON.stringify(event, null, 2));
+
+    switch (event.tag) {
+      case "onMapMarkerClicked":
+        Alert.alert(
+          `Map Marker Touched, ID: ${event.mapMarkerId || "unknown"}`
+        );
+        break;
+      case "onMapClicked":
+        Alert.alert(
+          `Map Touched at:`,
+          `${event.location.lat}, ${event.location.lng}`
+        );
+        break;
+      case "onMoveEnd":
+        onMoveEnd({
+          position: event.mapCenter,
+          zoom: Math.min(event.zoom, mapConfig.maxZoom),
+        });
+        break;
+      default:
+        if (["onMove"].includes(event.tag)) {
+          return;
+        }
+    }
+  }
 
   return (
     <View style={mapStyles.container}>
       <ExpoLeaflet
         loadingIndicator={() => <ActivityIndicator />}
         mapCenterPosition={position}
-        onMessage={(message) => processLeafletEvent(message, dispatch)}
+        onMessage={processLeafletEvent}
         zoom={zoom}
         mapMarkers={[userMarker]}
         {...mapConfig}
@@ -31,7 +57,7 @@ export default function LeafletMap() {
           backgroundColor: "#ff249f",
           padding: 16,
         }}
-        onPress={() => getUserPosition(dispatch)}
+        onPress={() => getUserPosition()}
       >
         <Text style={{ color: "white" }}>Me</Text>
       </Pressable>

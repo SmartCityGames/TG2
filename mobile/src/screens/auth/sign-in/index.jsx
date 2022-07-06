@@ -2,7 +2,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
-import { login } from "../../../store/auth/actions";
 import { useUserAuth } from "../../../store/auth/provider";
 
 export default function SignInScreen() {
@@ -11,7 +10,9 @@ export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { dispatch } = useUserAuth();
+  const {
+    actions: { signin },
+  } = useUserAuth();
 
   return (
     <View>
@@ -39,16 +40,10 @@ export default function SignInScreen() {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title="Sign in"
-          onPress={() => login(dispatch, { email, password })}
-        />
+        <Button title="Sign in" onPress={() => signin({ email, password })} />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title="Sign up"
-          onPress={() => navigation.navigate('SignUp')}
-        />
+        <Button title="Sign up" onPress={() => navigation.navigate("SignUp")} />
       </View>
     </View>
   );
