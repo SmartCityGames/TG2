@@ -11,11 +11,13 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 
 const userLocationInitialState = {
+  granted: false,
   position: null,
   zoom: 17,
   marker: {
@@ -24,6 +26,7 @@ const userLocationInitialState = {
     position: undefined,
   },
   error: null,
+  loading: false,
 };
 
 const UserLocationContext = createContext({
@@ -40,6 +43,8 @@ export default function UserLocationProvider({ children }) {
   } = useUserAuth();
 
   useEffect(() => {
+    if (!state.granted) return;
+
     let subscription;
 
     async function getSubscription() {
@@ -54,25 +59,31 @@ export default function UserLocationProvider({ children }) {
     getSubscription();
 
     return () => {
-      subscription?.remove();
+      if (state.granted) subscription?.remove();
     };
-  }, []);
+  }, [state.granted]);
 
   useEffect(() => {
     updateUserMarkerInfo(session.user);
   }, [session]);
 
   async function requestUserLocation() {
+    toggleLoading(dispatch);
     const { status } = await requestForegroundPermissionsAsync();
 
     if (status !== PermissionStatus.GRANTED) {
       dispatch({
         type: "ERROR",
-        error: {
+        payload: {
           message: "user should grant location permissions",
         },
       });
+      return;
     }
+
+    dispatch({
+      type: "GRANTED_PERMISSION",
+    });
   }
 
   async function getUserPosition() {

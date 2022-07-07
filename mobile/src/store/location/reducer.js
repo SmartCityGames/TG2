@@ -29,10 +29,22 @@ export function userLocationReducer(state, action) {
         error: undefined,
       };
     }
+    case "GRANTED_PERMISSION":
+      return {
+        ...state,
+        granted: true,
+        loading: false,
+      };
     case "ERROR":
       return {
         ...state,
         error: action.payload ?? "something went wrong",
+        loading: false,
+      };
+    case "LOADING":
+      return {
+        ...state,
+        loading: !state.loading,
       };
     default:
       return state;
