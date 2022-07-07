@@ -92,6 +92,7 @@ export default function UserAuthProvider({ children }) {
 
     if (error) {
       await showAuthError({ error });
+      return;
     }
 
     dispatch({

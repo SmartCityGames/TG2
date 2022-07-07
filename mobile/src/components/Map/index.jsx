@@ -39,7 +39,7 @@ export default function LeafletMap() {
   }
 
   return (
-    <View style={mapStyles.container}>
+    <>
       <ExpoLeaflet
         loadingIndicator={() => <ActivityIndicator />}
         mapCenterPosition={position}
@@ -61,6 +61,6 @@ export default function LeafletMap() {
       >
         <Text style={{ color: "white" }}>Me</Text>
       </Pressable>
-    </View>
+    </>
   );
 }

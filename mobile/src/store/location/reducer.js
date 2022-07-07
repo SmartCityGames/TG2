@@ -29,12 +29,6 @@ export function userLocationReducer(state, action) {
         error: undefined,
       };
     }
-    case "GRANTED_PERMISSION":
-      return {
-        ...state,
-        granted: true,
-        loading: false,
-      };
     case "ERROR":
       return {
         ...state,

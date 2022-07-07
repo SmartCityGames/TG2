@@ -1,7 +1,6 @@
 import {
+  getForegroundPermissionsAsync,
   getLastKnownPositionAsync,
-  PermissionStatus,
-  requestForegroundPermissionsAsync,
   watchPositionAsync,
 } from "expo-location";
 import {
@@ -11,13 +10,11 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 
 const userLocationInitialState = {
-  granted: false,
   position: null,
   zoom: 17,
   marker: {
@@ -43,11 +40,12 @@ export default function UserLocationProvider({ children }) {
   } = useUserAuth();
 
   useEffect(() => {
-    if (!state.granted) return;
-
     let subscription;
 
     async function getSubscription() {
+      const { granted: ok } = await getForegroundPermissionsAsync();
+      if (!ok) return;
+
       subscription = await watchPositionAsync({ accuracy: 0.7 }, (loc) => {
         dispatch({
           type: "UPDATE_POS",
@@ -59,32 +57,13 @@ export default function UserLocationProvider({ children }) {
     getSubscription();
 
     return () => {
-      if (state.granted) subscription?.remove();
+      subscription?.remove();
     };
-  }, [state.granted]);
+  }, []);
 
   useEffect(() => {
     updateUserMarkerInfo(session.user);
   }, [session]);
-
-  async function requestUserLocation() {
-    toggleLoading(dispatch);
-    const { status } = await requestForegroundPermissionsAsync();
-
-    if (status !== PermissionStatus.GRANTED) {
-      dispatch({
-        type: "ERROR",
-        payload: {
-          message: "user should grant location permissions",
-        },
-      });
-      return;
-    }
-
-    dispatch({
-      type: "GRANTED_PERMISSION",
-    });
-  }
 
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();
@@ -118,7 +97,6 @@ export default function UserLocationProvider({ children }) {
 
   const actions = useMemo(
     () => ({
-      requestUserLocation,
       getUserPosition,
       onMoveEnd,
     }),
