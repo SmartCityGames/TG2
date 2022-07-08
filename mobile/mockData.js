@@ -1,5 +1,3 @@
-import { MapMarker, MapShape } from "expo-leaflet";
-
 export const circle = {
   shapeType: "circle",
   color: "#123123",

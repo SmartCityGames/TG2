@@ -7,12 +7,14 @@ import {
   useReducer,
 } from "react";
 import AsyncAlert from "../../components/utils/AsyncAlert";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { useSupabase } from "../supabase/provider";
 import { userAuthReducer } from "./reducer";
 
 export const userAuthInitialState = {
   session: undefined,
   error: undefined,
+  loading: false,
 };
 
 const UserAuthContext = createContext({ state: userAuthInitialState });
@@ -51,6 +53,8 @@ export default function UserAuthProvider({ children }) {
   }, []);
 
   async function signin({ email, password }) {
+    toggleLoading(dispatch);
+
     const { error, session } = await supabase.auth.signIn({
       email: email,
       password: password,
@@ -87,8 +91,13 @@ export default function UserAuthProvider({ children }) {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      showAuthError({ error });
+      await showAuthError({ error });
+      return;
     }
+
+    dispatch({
+      type: "LOGOUT",
+    });
   }
 
   async function showAuthError({ error }) {

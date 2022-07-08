@@ -33,6 +33,12 @@ export function userLocationReducer(state, action) {
       return {
         ...state,
         error: action.payload ?? "something went wrong",
+        loading: false,
+      };
+    case "LOADING":
+      return {
+        ...state,
+        loading: !state.loading,
       };
     default:
       return state;

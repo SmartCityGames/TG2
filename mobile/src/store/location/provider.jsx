@@ -1,7 +1,6 @@
 import {
+  getForegroundPermissionsAsync,
   getLastKnownPositionAsync,
-  PermissionStatus,
-  requestForegroundPermissionsAsync,
   watchPositionAsync,
 } from "expo-location";
 import {
@@ -24,6 +23,7 @@ const userLocationInitialState = {
     position: undefined,
   },
   error: null,
+  loading: false,
 };
 
 const UserLocationContext = createContext({
@@ -43,6 +43,9 @@ export default function UserLocationProvider({ children }) {
     let subscription;
 
     async function getSubscription() {
+      const { granted: ok } = await getForegroundPermissionsAsync();
+      if (!ok) return;
+
       subscription = await watchPositionAsync({ accuracy: 0.7 }, (loc) => {
         dispatch({
           type: "UPDATE_POS",
@@ -61,19 +64,6 @@ export default function UserLocationProvider({ children }) {
   useEffect(() => {
     updateUserMarkerInfo(session.user);
   }, [session]);
-
-  async function requestUserLocation() {
-    const { status } = await requestForegroundPermissionsAsync();
-
-    if (status !== PermissionStatus.GRANTED) {
-      dispatch({
-        type: "ERROR",
-        error: {
-          message: "user should grant location permissions",
-        },
-      });
-    }
-  }
 
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();
@@ -107,7 +97,6 @@ export default function UserLocationProvider({ children }) {
 
   const actions = useMemo(
     () => ({
-      requestUserLocation,
       getUserPosition,
       onMoveEnd,
     }),
