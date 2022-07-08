@@ -1,12 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getForegroundPermissionsAsync } from "expo-location";
-import { Button, Center, HStack, Text, VStack } from "native-base";
+import { requestForegroundPermissionsAsync } from "expo-location";
+import { Button } from "native-base";
 import { useEffect, useRef, useState } from "react";
-import { AppState, Linking } from "react-native";
+import { AppState } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import HomeScreen from "../../screens/home";
 import { useUserAuth } from "../../store/auth/provider";
 import UserLocationProvider from "../../store/location/provider";
+import Left from "../navbar/left";
+import NoLocationPermissions from "./no-location-permissions";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +21,7 @@ export default function LoggedTabs() {
   const appState = useRef(AppState.currentState);
 
   async function checkPermissions() {
-    const { granted } = await getForegroundPermissionsAsync();
+    const { granted } = await requestForegroundPermissionsAsync();
     setPerms(granted);
   }
 
@@ -45,37 +47,7 @@ export default function LoggedTabs() {
   }, []);
 
   if (!perms) {
-    return (
-      <Center flex={1} bg="purple.200">
-        <VStack space={5}>
-          <VStack space={3}>
-            <Text fontWeight="bold" fontSize="xl" color="gray.900">
-              This application needs your exact location!
-            </Text>
-            <Text fontSize="md" color="gray.600">
-              Go to settings and
-            </Text>
-            <VStack space={2}>
-              <HStack space={3}>
-                <Icon name="location-arrow" size={20} color="blue" />
-                <Text>Select location</Text>
-              </HStack>
-              <HStack space={3}>
-                <Icon name="check" size={16} color="green" />
-                <Text>
-                  Allow <Text>Always</Text> or <Text>During app use</Text>
-                </Text>
-              </HStack>
-            </VStack>
-          </VStack>
-          <Button p="3" bg="red.500" onPress={() => Linking.openSettings()}>
-            <Text fontSize="lg" fontWeight="bold" color="white">
-              Configurations
-            </Text>
-          </Button>
-        </VStack>
-      </Center>
-    );
+    return <NoLocationPermissions />;
   }
 
   return (
@@ -86,16 +58,26 @@ export default function LoggedTabs() {
           options={{
             headerTransparent: true,
             headerTitle: "",
+            headerLeft: (props) => <Left {...props} />,
             headerRight: (props) => (
               <Button
                 mr="3"
                 onPress={() => logout()}
-                leftIcon={<Icon name="sign-out" size={25} color="#ff5500" />}
+                leftIcon={<Icon name="sign-out" size={20} color="#ff5500" />}
                 variant="outline"
-                color="red.500"
+                rounded="full"
                 {...props}
               />
             ),
+            tabBarIcon: (props) => <Icon name="home" {...props} />,
+          }}
+          component={HomeScreen}
+        />
+        <Tab.Screen
+          name="Missions"
+          options={{
+            headerTransparent: true,
+            tabBarIcon: (props) => <Icon name="gamepad" {...props} />,
           }}
           component={HomeScreen}
         />

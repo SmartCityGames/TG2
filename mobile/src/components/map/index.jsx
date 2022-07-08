@@ -1,8 +1,9 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
 import { useUserLocation } from "../../store/location/provider";
 import { mapConfig } from "./config";
-import mapStyles from "./style";
+import { Box, Button, Center, Flex, Text } from "native-base";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function LeafletMap() {
   const {
@@ -11,7 +12,7 @@ export default function LeafletMap() {
   } = useUserLocation();
 
   function processLeafletEvent(event) {
-    console.log("incoming event:", JSON.stringify(event, null, 2));
+    console.log(`[LEAFLET] action of type ${event.tag} fired`);
 
     switch (event.tag) {
       case "onMapMarkerClicked":
@@ -39,7 +40,7 @@ export default function LeafletMap() {
   }
 
   return (
-    <>
+    <Flex flex={1}>
       <ExpoLeaflet
         loadingIndicator={() => <ActivityIndicator />}
         mapCenterPosition={position}
@@ -48,19 +49,16 @@ export default function LeafletMap() {
         mapMarkers={[userMarker]}
         {...mapConfig}
       />
-      <Pressable
-        style={{
-          position: "absolute",
-          bottom: 5,
-          right: 15,
-          borderRadius: 50,
-          backgroundColor: "#ff249f",
-          padding: 16,
-        }}
+      <Button
         onPress={() => getUserPosition()}
+        position="absolute"
+        right="3"
+        bottom="3"
+        variant="outline"
+        rounded="full"
       >
-        <Text style={{ color: "white" }}>Me</Text>
-      </Pressable>
-    </>
+        <Icon name="compass" size={30} />
+      </Button>
+    </Flex>
   );
 }
