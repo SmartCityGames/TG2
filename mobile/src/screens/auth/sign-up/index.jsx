@@ -1,5 +1,5 @@
-import { Button, Center, HStack, Image, Input, Stack, Text } from "native-base";
-import { useState, useRef } from "react";
+import { Button, Center, HStack, Input, Stack, Text } from "native-base";
+import { useRef, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserAuth } from "../../../store/auth/provider";
@@ -13,12 +13,12 @@ export default function SignUpScreen() {
 
   const {
     state: { loading },
-    actions: { signin },
+    actions: { signup },
   } = useUserAuth();
 
-  function tryToLogin() {
+  function tryToRegister() {
     if (!email || !password) return;
-    signin({ email, password });
+    signup({ email, password });
   }
 
   return (
@@ -63,9 +63,13 @@ export default function SignUpScreen() {
                 />
               </Center>
             }
-            onSubmitEditing={tryToLogin}
+            onSubmitEditing={tryToRegister}
           />
-          <Button colorScheme="darkBlue" isLoading={loading} onPress={tryToLogin}>
+          <Button
+            colorScheme="darkBlue"
+            isLoading={loading}
+            onPress={tryToRegister}
+          >
             <Text color="white" fontSize="lg">
               Sign Up
             </Text>

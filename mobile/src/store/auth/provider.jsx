@@ -25,6 +25,7 @@ export default function UserAuthProvider({ children }) {
   const supabase = useSupabase();
 
   useEffect(() => {
+    toggleLoading(dispatch);
     dispatch({ type: "SIGNIN", payload: supabase.auth.session() });
   }, []);
 
