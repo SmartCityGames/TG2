@@ -1,9 +1,9 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { ActivityIndicator, Alert } from "react-native";
+import { IconButton } from "native-base";
+import { ActivityIndicator, Alert, View } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserLocation } from "../../store/location/provider";
 import { mapConfig } from "./config";
-import { Box, Button, Center, Flex, Text } from "native-base";
-import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function LeafletMap() {
   const {
@@ -40,25 +40,25 @@ export default function LeafletMap() {
   }
 
   return (
-    <Flex flex={1}>
-      <ExpoLeaflet
-        loadingIndicator={() => <ActivityIndicator />}
-        mapCenterPosition={position}
-        onMessage={processLeafletEvent}
-        zoom={zoom}
-        mapMarkers={[userMarker]}
-        {...mapConfig}
-      />
-      <Button
+    <>
+      <View style={{ flex: 1, minHeight: "100%" }}>
+        <ExpoLeaflet
+          loadingIndicator={() => <ActivityIndicator />}
+          mapCenterPosition={position}
+          onMessage={processLeafletEvent}
+          zoom={zoom}
+          mapMarkers={[userMarker]}
+          {...mapConfig}
+        />
+      </View>
+      <IconButton
         onPress={() => getUserPosition()}
         position="absolute"
         right="3"
         bottom="3"
         variant="outline"
-        rounded="full"
-      >
-        <Icon name="compass" size={30} />
-      </Button>
-    </Flex>
+        icon={<Icon name="compass" size={30} color="blue" />}
+      />
+    </>
   );
 }

@@ -1,5 +1,7 @@
+import { logger } from "../../utils/logger";
+
 export function userLocationReducer(state, action) {
-  console.log(`[LOCATION] action of type ${action.type} fired`);
+  logger.info(`[LOCATION] action of type ${action.type} fired`);
 
   switch (action.type) {
     case "UPDATE_POS":

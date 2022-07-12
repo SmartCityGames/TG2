@@ -19,6 +19,8 @@ export const userAuthInitialState = {
 
 const UserAuthContext = createContext({ state: userAuthInitialState });
 
+export const useUserAuth = () => useContext(UserAuthContext);
+
 export default function UserAuthProvider({ children }) {
   const [state, dispatch] = useReducer(userAuthReducer, userAuthInitialState);
   const navigation = useNavigation();
@@ -124,5 +126,3 @@ export default function UserAuthProvider({ children }) {
     </UserAuthContext.Provider>
   );
 }
-
-export const useUserAuth = () => useContext(UserAuthContext);
