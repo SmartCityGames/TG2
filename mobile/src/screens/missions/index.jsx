@@ -9,7 +9,7 @@ import {
   HStack,
   Text,
 } from "native-base";
-import { RefreshControl } from "react-native";
+import { Platform, RefreshControl } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useQuests } from "../../store/quests/provider";
 
@@ -36,7 +36,7 @@ export default function MissionsScreen() {
   }
 
   return (
-    <Flex flex={1} mt="3">
+    <Flex flex={1} mt={Platform.OS === "ios" ? "3" : "5"}>
       <FlatList
         data={availableQuests}
         contentContainerStyle={{ flexGrow: 1 }}

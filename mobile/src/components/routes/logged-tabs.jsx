@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import HomeScreen from "../../screens/home";
 import MissionsScreen from "../../screens/missions";
@@ -71,7 +71,7 @@ export default function LoggedTabs() {
             options={{
               tabBarIcon: (props) => <Icon name="gamepad" {...props} />,
               headerBackgroundContainerStyle: {
-                height: 105,
+                height: Platform.OS === "ios" ? 105 : 100,
               },
             }}
             component={MissionsScreen}
