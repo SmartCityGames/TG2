@@ -49,7 +49,7 @@ export default function UserLocationProvider({ children }) {
       const { granted: ok } = await getForegroundPermissionsAsync();
       if (!ok) return;
 
-      subscription = await watchPositionAsync({ accuracy: LocationAccuracy.BestForNavigation }, (loc) => {
+      subscription = await watchPositionAsync({ accuracy: LocationAccuracy.High }, (loc) => {
         dispatch({
           type: "UPDATE_POS",
           payload: locationObjectToLiteral(loc),

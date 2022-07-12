@@ -1,5 +1,5 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { IconButton } from "native-base";
+import { Center, IconButton } from "native-base";
 import { ActivityIndicator, Alert, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserLocation } from "../../store/location/provider";
@@ -43,7 +43,11 @@ export default function LeafletMap() {
     <>
       <View style={{ flex: 1, minHeight: "100%" }}>
         <ExpoLeaflet
-          loadingIndicator={() => <ActivityIndicator />}
+          loadingIndicator={() => (
+            <Center flex={1}>
+              <ActivityIndicator />
+            </Center>
+          )}
           mapCenterPosition={position}
           onMessage={processLeafletEvent}
           zoom={zoom}
