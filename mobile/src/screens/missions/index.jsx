@@ -1,13 +1,22 @@
 import { differenceInHours, differenceInMinutes } from "date-fns";
 import { differenceInSeconds } from "date-fns/esm";
-import { Button, Divider, FlatList, Flex, HStack, Text } from "native-base";
+import {
+  Button,
+  Center,
+  Divider,
+  FlatList,
+  Flex,
+  HStack,
+  Text,
+} from "native-base";
+import { RefreshControl } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useQuests } from "../../store/quests/provider";
 
 export default function MissionsScreen() {
   const {
-    state: { availableQuests },
-    actions: { completeQuest },
+    state: { availableQuests, loading },
+    actions: { completeQuest, retrieveQuests },
   } = useQuests();
 
   function formatTimeLeft(q) {
@@ -30,6 +39,19 @@ export default function MissionsScreen() {
     <Flex flex={1} mt="3">
       <FlatList
         data={availableQuests}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ItemSeparatorComponent={(props) => <Divider {...props} />}
+        ListEmptyComponent={() => (
+          <Center flex={1}>
+            <Text fontSize={20} fontWeight="semibold">
+              No missions available 🚀
+            </Text>
+          </Center>
+        )}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={retrieveQuests} />
+        }
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Flex>
             <Text fontSize={28} fontWeight="bold" alignSelf="center" px={3}>
@@ -55,7 +77,6 @@ export default function MissionsScreen() {
                 </Text>
               </HStack>
             </Flex>
-            <Divider />
           </Flex>
         )}
       />
