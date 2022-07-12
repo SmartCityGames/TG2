@@ -10,8 +10,8 @@ export default function Right(props) {
   return (
     <Box {...props} mr="3" mt="3" height="10">
       <IconButton
-        icon={<Icon name="sign-out" size={20} color="#ff5500" />}
-        variant="outline"
+        icon={<Icon name="sign-out" size={23} color="#ff5500" />}
+        rounded="full"
         onPress={() => logout()}
       />
     </Box>

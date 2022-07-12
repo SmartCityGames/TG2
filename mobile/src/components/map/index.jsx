@@ -56,8 +56,8 @@ export default function LeafletMap() {
         position="absolute"
         right="3"
         bottom="3"
-        variant="outline"
-        icon={<Icon name="compass" size={30} color="blue" />}
+        rounded="full"
+        icon={<Icon name="compass" size={35} color="#0047AB" />}
       />
     </>
   );
