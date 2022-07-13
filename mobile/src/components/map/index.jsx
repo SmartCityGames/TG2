@@ -41,13 +41,9 @@ export default function LeafletMap() {
 
   return (
     <>
-      <View style={{ flex: 1, minHeight: "100%" }}>
+      <View style={{ flex: 1 }}>
         <ExpoLeaflet
-          loadingIndicator={() => (
-            <Center flex={1}>
-              <ActivityIndicator />
-            </Center>
-          )}
+          loadingIndicator={() => <ActivityIndicator />}
           mapCenterPosition={position}
           onMessage={processLeafletEvent}
           zoom={zoom}
