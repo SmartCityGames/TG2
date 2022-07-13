@@ -31,6 +31,13 @@ export function userLocationReducer(state, action) {
         error: undefined,
       };
     }
+    case "LOAD_GEOJSON":
+      return {
+        ...state,
+        geojson: action.payload,
+        loading: false,
+        error: undefined,
+      };
     case "ERROR":
       return {
         ...state,

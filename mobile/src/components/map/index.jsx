@@ -1,5 +1,5 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { IconButton } from "native-base";
+import { Center, IconButton } from "native-base";
 import { ActivityIndicator, Alert, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserLocation } from "../../store/location/provider";
@@ -7,7 +7,7 @@ import { mapConfig } from "./config";
 
 export default function LeafletMap() {
   const {
-    state: { position, zoom, marker: userMarker },
+    state: { position, zoom, marker: userMarker, loading, geojson },
     actions: { onMoveEnd, getUserPosition },
   } = useUserLocation();
 
@@ -39,6 +39,14 @@ export default function LeafletMap() {
     }
   }
 
+  if (loading) {
+    return (
+      <Center flex={1}>
+        <ActivityIndicator />
+      </Center>
+    );
+  }
+
   return (
     <>
       <View style={{ flex: 1, minHeight: "100%" }}>
@@ -48,6 +56,16 @@ export default function LeafletMap() {
           onMessage={processLeafletEvent}
           zoom={zoom}
           mapMarkers={[userMarker]}
+          mapShapes={
+            geojson?.features.map((f, i) => ({
+              id: i,
+              shapeType: "polygon",
+              positions: f.geometry.coordinates[0].map(([lng, lat]) => ({
+                lng,
+                lat,
+              })),
+            })) ?? []
+          }
           {...mapConfig}
         />
       </View>

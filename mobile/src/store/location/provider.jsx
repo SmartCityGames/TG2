@@ -11,7 +11,9 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
+import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 
@@ -23,6 +25,7 @@ const userLocationInitialState = {
     id: undefined,
     position: undefined,
   },
+  geojson: undefined,
   error: null,
   loading: false,
 };
@@ -41,6 +44,7 @@ export default function UserLocationProvider({ children }) {
   const {
     state: { session },
   } = useUserAuth();
+  const supabase = useSupabase();
 
   useEffect(() => {
     let subscription;
@@ -49,12 +53,15 @@ export default function UserLocationProvider({ children }) {
       const { granted: ok } = await getForegroundPermissionsAsync();
       if (!ok) return;
 
-      subscription = await watchPositionAsync({ accuracy: LocationAccuracy.High }, (loc) => {
-        dispatch({
-          type: "UPDATE_POS",
-          payload: locationObjectToLiteral(loc),
-        });
-      });
+      subscription = await watchPositionAsync(
+        { accuracy: LocationAccuracy.High },
+        (loc) => {
+          dispatch({
+            type: "UPDATE_POS",
+            payload: locationObjectToLiteral(loc),
+          });
+        }
+      );
     }
 
     getSubscription();
@@ -62,6 +69,27 @@ export default function UserLocationProvider({ children }) {
     return () => {
       subscription?.remove();
     };
+  }, []);
+
+  useEffect(() => {
+    async function getGeojson() {
+      toggleLoading(dispatch);
+
+      const { signedURL } = await supabase.storage
+        .from("assets")
+        .createSignedUrl("geojson/polygon-subdistrict.geojson", 60);
+
+      const geojson = await fetch(signedURL).then((response) =>
+        response.json()
+      );
+
+      dispatch({
+        type: "LOAD_GEOJSON",
+        payload: geojson,
+      });
+    }
+
+    getGeojson();
   }, []);
 
   useEffect(() => {
