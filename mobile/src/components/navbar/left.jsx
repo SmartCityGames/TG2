@@ -23,7 +23,7 @@ export default function Left(props) {
 
       if (!data[0].avatar_url) return;
 
-      setAvatarUrl(response.data[0].avatar_url);
+      setAvatarUrl(data[0].avatar_url);
     }
     getUserProfile();
   }, [session.user.id]);
