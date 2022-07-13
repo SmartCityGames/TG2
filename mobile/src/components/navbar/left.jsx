@@ -14,12 +14,14 @@ export default function Left(props) {
 
   useEffect(() => {
     async function getUserProfile() {
-      const response = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("avatar_url")
         .eq("id", session.user.id);
 
-      if (!response.data.length) return;
+      if (error || !data.length) return;
+
+      if (!data[0].avatar_url) return;
 
       setAvatarUrl(response.data[0].avatar_url);
     }
