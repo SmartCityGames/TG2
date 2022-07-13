@@ -1,6 +1,7 @@
 import {
   getForegroundPermissionsAsync,
   getLastKnownPositionAsync,
+  LocationAccuracy,
   watchPositionAsync,
 } from "expo-location";
 import {
@@ -19,7 +20,7 @@ const userLocationInitialState = {
   zoom: 17,
   marker: {
     icon: "🧔",
-    id: "1",
+    id: undefined,
     position: undefined,
   },
   error: null,
@@ -29,6 +30,8 @@ const userLocationInitialState = {
 const UserLocationContext = createContext({
   state: { userLocationInitialState },
 });
+
+export const useUserLocation = () => useContext(UserLocationContext);
 
 export default function UserLocationProvider({ children }) {
   const [state, dispatch] = useReducer(
@@ -46,7 +49,7 @@ export default function UserLocationProvider({ children }) {
       const { granted: ok } = await getForegroundPermissionsAsync();
       if (!ok) return;
 
-      subscription = await watchPositionAsync({ accuracy: 0.7 }, (loc) => {
+      subscription = await watchPositionAsync({ accuracy: LocationAccuracy.High }, (loc) => {
         dispatch({
           type: "UPDATE_POS",
           payload: locationObjectToLiteral(loc),
@@ -109,5 +112,3 @@ export default function UserLocationProvider({ children }) {
     </UserLocationContext.Provider>
   );
 }
-
-export const useUserLocation = () => useContext(UserLocationContext);

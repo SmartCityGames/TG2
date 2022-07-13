@@ -1,5 +1,7 @@
+import { logger } from "../../utils/logger";
+
 export function userAuthReducer(state, action) {
-  console.log(`[AUTH] action of type ${action.type} fired`);
+  logger.info(`[AUTH] action of type ${action.type} fired`);
 
   switch (action.type) {
     case "SIGNIN":
