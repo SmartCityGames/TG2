@@ -19,5 +19,6 @@ export const mapConfig = {
     maxZoom: 18,
     minZoom: 5,
     bounceAtZoomLimits: true,
+    doubleClickZoom: false,
   },
 };
