@@ -54,7 +54,7 @@ export default function UserLocationProvider({ children }) {
       if (!ok) return;
 
       subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.High },
+        { accuracy: LocationAccuracy.BestForNavigation },
         (loc) => {
           dispatch({
             type: "UPDATE_POS",
