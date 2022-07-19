@@ -8,6 +8,7 @@ import {
 } from "react";
 import AsyncAlert from "../../components/utils/AsyncAlert";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { logger } from "../../utils/logger";
 import { useSupabase } from "../supabase/provider";
 import { userAuthReducer } from "./reducer";
 
@@ -17,7 +18,7 @@ export const userAuthInitialState = {
   loading: false,
 };
 
-const UserAuthContext = createContext({ state: userAuthInitialState });
+const UserAuthContext = createContext({ state: { ...userAuthInitialState } });
 
 export const useUserAuth = () => useContext(UserAuthContext);
 
@@ -33,12 +34,9 @@ export default function UserAuthProvider({ children }) {
 
   useEffect(() => {
     const { data: listener, error } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log(`[SUPABASE:AUTH] action of type ${event} fired`);
+      (event, _) => {
+        logger.info(`[SUPABASE:AUTH] action of type ${event} fired`);
         switch (event) {
-          case "SIGNED_IN":
-            dispatch({ type: "SIGNIN", payload: session });
-            break;
           case "SIGNED_OUT":
             dispatch({ type: "LOGOUT" });
             break;

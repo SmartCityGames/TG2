@@ -11,7 +11,9 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { mapConfig } from "../../components/map/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { generateEmojis } from "../../utils/generate-emojis";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
@@ -20,18 +22,21 @@ import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 const userLocationInitialState = {
   position: null,
   zoom: 17,
-  marker: {
-    icon: "🧔",
-    id: undefined,
-    position: undefined,
-  },
+  markers: [
+    {
+      icon: undefined,
+      id: undefined,
+      position: undefined,
+      size: [32, 32],
+    },
+  ],
   geojson: undefined,
   error: null,
   loading: false,
 };
 
 const UserLocationContext = createContext({
-  state: { userLocationInitialState },
+  state: { ...userLocationInitialState },
 });
 
 export const useUserLocation = () => useContext(UserLocationContext);
@@ -54,7 +59,7 @@ export default function UserLocationProvider({ children }) {
       if (!ok) return;
 
       subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.BestForNavigation },
+        { accuracy: LocationAccuracy.Highest },
         (loc) => {
           dispatch({
             type: "UPDATE_POS",
@@ -93,8 +98,14 @@ export default function UserLocationProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    updateUserMarkerInfo(session.user);
-  }, [session]);
+    dispatch({
+      type: "UPDATE_USER_MARKER_INFO",
+      payload: {
+        id: session.user.email,
+        icon: generateEmojis()[0],
+      },
+    });
+  }, [session.user]);
 
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();
@@ -105,16 +116,7 @@ export default function UserLocationProvider({ children }) {
       type: "UPDATE_POS_ZOOM",
       payload: {
         position: locationObjectToLiteral(loc),
-        zoom: 17,
-      },
-    });
-  }
-
-  function updateUserMarkerInfo(user) {
-    dispatch({
-      type: "UPDATE_USER_MARKER_INFO",
-      payload: {
-        id: user.email,
+        zoom: mapConfig.maxZoom,
       },
     });
   }
@@ -126,10 +128,21 @@ export default function UserLocationProvider({ children }) {
     });
   }
 
+  function addQuestMarker(quest) {
+    dispatch({
+      type: "ADD_QUEST_MARKER",
+      payload: {
+        id: quest.id,
+        position: quest.position,
+      },
+    });
+  }
+
   const actions = useMemo(
     () => ({
       getUserPosition,
       onMoveEnd,
+      addQuestMarker,
     }),
     []
   );

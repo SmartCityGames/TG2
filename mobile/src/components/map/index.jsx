@@ -1,43 +1,18 @@
 import { ExpoLeaflet } from "expo-leaflet";
 import { Center, IconButton } from "native-base";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, Alert, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserLocation } from "../../store/location/provider";
 import { logger } from "../../utils/logger";
 import { mapConfig } from "./config";
-import { generateColours } from "../../utils/generate-colours";
 
-export default function LeafletMap() {
+export default function LeafletMap({ polygons }) {
   const {
-    state: { position, zoom, marker: userMarker, loading, geojson },
+    state: { position, zoom, markers, loading },
     actions: { onMoveEnd, getUserPosition },
   } = useUserLocation();
-  const [shapes, setShapes] = useState([]);
   const [showShapes, setShowShapes] = useState(false);
-
-  useEffect(() => {
-    if (!geojson) return;
-
-    const parsedShapes = geojson.features.map((f, i) => ({
-      id: i,
-      shapeType: "polygon",
-      positions: f.geometry.coordinates[0].map(([lng, lat]) => ({
-        lng,
-        lat,
-      })),
-    }));
-
-    const colors = generateColours({
-      quantity: parsedShapes.length,
-      shuffle: true,
-      offset: 45,
-    });
-
-    setShapes(
-      parsedShapes.map((shape) => ({ ...shape, color: colors[shape.id] }))
-    );
-  }, [geojson]);
 
   function processLeafletEvent(event) {
     logger.info(`[LEAFLET] action of type ${event.tag} fired`);
@@ -77,8 +52,8 @@ export default function LeafletMap() {
           mapCenterPosition={position}
           onMessage={processLeafletEvent}
           zoom={zoom}
-          mapMarkers={[userMarker]}
-          mapShapes={showShapes ? shapes : []}
+          mapMarkers={markers}
+          mapShapes={showShapes ? polygons : []}
           {...mapConfig}
         />
       </View>

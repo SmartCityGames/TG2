@@ -4,16 +4,21 @@ export function userLocationReducer(state, action) {
   logger.info(`[LOCATION] action of type ${action.type} fired`);
 
   switch (action.type) {
-    case "UPDATE_POS":
+    case "UPDATE_POS": {
+      const userMarker = state.markers.shift();
       return {
         ...state,
         position: action.payload,
-        marker: {
-          ...state.marker,
-          position: action.payload,
-        },
+        markers: [
+          {
+            ...userMarker,
+            position: action.payload,
+          },
+          ...state.markers,
+        ],
         error: undefined,
       };
+    }
     case "UPDATE_POS_ZOOM":
       return {
         ...state,
@@ -22,12 +27,10 @@ export function userLocationReducer(state, action) {
         error: undefined,
       };
     case "UPDATE_USER_MARKER_INFO": {
+      const userMarker = state.markers.shift();
       return {
         ...state,
-        marker: {
-          ...state.marker,
-          ...action.payload,
-        },
+        markers: [{ ...userMarker, ...action.payload }, ...state.markers],
         error: undefined,
       };
     }
