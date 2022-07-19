@@ -15,6 +15,7 @@ import { mapConfig } from "../../components/map/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { generateEmojis } from "../../utils/generate-emojis";
 import { useUserAuth } from "../auth/provider";
+import { useQuests } from "../quests/provider";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
@@ -50,6 +51,9 @@ export default function UserLocationProvider({ children }) {
     state: { session },
   } = useUserAuth();
   const supabase = useSupabase();
+  const {
+    actions: { retrieveQuests },
+  } = useQuests();
 
   useEffect(() => {
     let subscription;
@@ -61,10 +65,12 @@ export default function UserLocationProvider({ children }) {
       subscription = await watchPositionAsync(
         { accuracy: LocationAccuracy.Highest },
         (loc) => {
+          const domain = locationObjectToLiteral(loc);
           dispatch({
             type: "UPDATE_POS",
-            payload: locationObjectToLiteral(loc),
+            payload: domain,
           });
+          retrieveQuests(domain);
         }
       );
     }
@@ -128,13 +134,16 @@ export default function UserLocationProvider({ children }) {
     });
   }
 
-  function addQuestMarker(quest) {
+  function addQuestsMarkers(quests) {
     dispatch({
-      type: "ADD_QUEST_MARKER",
-      payload: {
-        id: quest.id,
-        position: quest.position,
-      },
+      type: "ADD_QUESTS_MARKERS",
+      payload: quests,
+    });
+  }
+
+  function removeQuestsMarkers() {
+    dispatch({
+      type: "REMOVE_QUESTS_MARKERS",
     });
   }
 
@@ -142,7 +151,8 @@ export default function UserLocationProvider({ children }) {
     () => ({
       getUserPosition,
       onMoveEnd,
-      addQuestMarker,
+      addQuestsMarkers,
+      removeQuestsMarkers,
     }),
     []
   );

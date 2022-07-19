@@ -5,6 +5,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import AsyncAlert from "../../components/utils/AsyncAlert";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
 import { userProfileReducer } from "./reducer";
@@ -53,12 +54,26 @@ export default function UserProfileProvider({ children }) {
       .select()
       .eq("id", session.user.id);
 
-    if (error || !data.length) {
-      console.log(error);
-      return;
+    if (error) {
+      return showUserProfileError({ error });
+    } else if (data.length === 0) {
+      return showUserProfileError({
+        error: {
+          status: 500,
+          message: "User profile not found",
+        },
+      });
     }
 
     return data[0];
+  }
+
+  async function showUserProfileError({ error }) {
+    await AsyncAlert(`Status: ${error.status}`, `Error: ${error.message}`);
+    dispatch({
+      type: "ERROR",
+      payload: error?.message,
+    });
   }
 
   const actions = useMemo(

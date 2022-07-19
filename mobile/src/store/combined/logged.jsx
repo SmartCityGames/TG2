@@ -5,9 +5,9 @@ import UserProfileProvider from "../user-profile/provider";
 export default function LoggedProviders({ children }) {
   return (
     <UserProfileProvider>
-      <UserLocationProvider>
-        <QuestsProvider>{children}</QuestsProvider>
-      </UserLocationProvider>
+      <QuestsProvider>
+        <UserLocationProvider>{children}</UserLocationProvider>
+      </QuestsProvider>
     </UserProfileProvider>
   );
 }

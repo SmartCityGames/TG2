@@ -41,6 +41,18 @@ export function userLocationReducer(state, action) {
         loading: false,
         error: undefined,
       };
+    case "REMOVE_QUESTS_MARKERS": {
+      const userMarker = state.markers.shift();
+      return {
+        markers: [userMarker],
+        error: undefined,
+      };
+    }
+    case "ADD_QUESTS_MARKERS":
+      return {
+        markers: [...state.markers, ...action.payload],
+        error: undefined,
+      };
     case "ERROR":
       return {
         ...state,

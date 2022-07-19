@@ -13,7 +13,5 @@ export const generateEmojis = () => {
     ];
   }
 
-  console.log({ emojis });
-
   return emojis;
 };
