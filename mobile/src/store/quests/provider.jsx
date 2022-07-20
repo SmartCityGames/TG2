@@ -1,5 +1,11 @@
 import { useToast } from "native-base";
-import { createContext, useContext, useMemo, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { questsReducer } from "./reducer";
 
@@ -17,11 +23,15 @@ export default function QuestsProvider({ children }) {
   const [state, dispatch] = useReducer(questsReducer, questsInitialState);
   const toast = useToast();
 
-  async function retrieveQuests(position) {
+  useEffect(() => {
+    retrieveQuests();
+  }, []);
+
+  async function retrieveQuests() {
     toggleLoading(dispatch);
 
     const quests = await Promise.resolve(
-      Array(20)
+      Array(2)
         .fill({
           name: "complete me",
           experience: 100,
@@ -33,25 +43,25 @@ export default function QuestsProvider({ children }) {
           id: i,
           name: `${v.name} ${i}`,
           expires_at: v.expires_at + 10000000 * i,
+          type: ["trash", "fire", "water", "sewer", "electricity"].at(
+            Math.floor(Math.random() * 13) % 5
+          ),
           shape: {
             shapeType: "circle",
-            color: "#000000",
             id: i,
             center: {
-              lat: position.lat + Math.random() * 0.013,
-              lng: position.lng - Math.random() * 0.01,
+              lat: -15.7093 + Math.random() * 0.013,
+              lng: -47.8757 - Math.random() * 0.01,
             },
             radius: 75,
           },
         }))
     );
 
-    setTimeout(() => {
-      dispatch({
-        type: "RETRIEVE_QUESTS",
-        payload: quests,
-      });
-    }, 2000);
+    dispatch({
+      type: "RETRIEVE_QUESTS",
+      payload: quests,
+    });
   }
 
   function completeQuest(questId) {

@@ -2,7 +2,10 @@ export const circle = {
   shapeType: "circle",
   color: "#123123",
   id: "1",
-  center: { lat: 34.225727, lng: -77.94471 },
+  center: {
+    lat: -15.7093 + Math.random() * 0.013,
+    lng: -47.8757 - Math.random() * 0.01,
+  },
   radius: 2000,
 };
 
@@ -10,8 +13,11 @@ export const circleMarker = {
   shapeType: "circle",
   color: "red",
   id: "2",
-  center: { lat: 38.437424, lng: -78.867912 },
-  radius: 15,
+  center: {
+    lat: -15.7093 + Math.random() * 0.013,
+    lng: -47.8757 - Math.random() * 0.01,
+  },
+  radius: 50,
 };
 
 export const polygon = {
@@ -19,9 +25,26 @@ export const polygon = {
   color: "blue",
   id: "3",
   positions: [
-    { lat: 38.80118939192329, lng: -74.69604492187501 },
-    { lat: 38.19502155795575, lng: -74.65209960937501 },
-    { lat: 39.07890809706475, lng: -71.46606445312501 },
+    {
+      lng: -47.87967860698699,
+      lat: -15.709059650267365,
+    },
+    {
+      lng: -47.87945330142975,
+      lat: -15.709059650267365,
+    },
+    {
+      lng: -47.87945330142975,
+      lat: -15.708894400556607,
+    },
+    {
+      lng: -47.87967860698699,
+      lat: -15.708894400556607,
+    },
+    {
+      lng: -47.87967860698699,
+      lat: -15.709059650267365,
+    },
   ],
 };
 

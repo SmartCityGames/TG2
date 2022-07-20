@@ -1,4 +1,4 @@
-export const generateEmojis = () => {
+export const generateEmojiMarker = () => {
   const emojis = ["👱", "👨", "👩", "👩‍🦱", "👴", "👵"];
 
   let currentIndex = emojis.length,
@@ -13,5 +13,5 @@ export const generateEmojis = () => {
     ];
   }
 
-  return emojis;
+  return emojis[randomIndex];
 };

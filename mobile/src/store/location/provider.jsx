@@ -13,11 +13,10 @@ import {
 } from "react";
 import { mapConfig } from "../../components/map/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
-import { generateEmojis } from "../../utils/generate-emojis";
 import { useUserAuth } from "../auth/provider";
-import { useQuests } from "../quests/provider";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
+import { generateEmojiMarker } from "./utils/generate-emoji-marker";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 
 const userLocationInitialState = {
@@ -51,36 +50,16 @@ export default function UserLocationProvider({ children }) {
     state: { session },
   } = useUserAuth();
   const supabase = useSupabase();
-  const {
-    actions: { retrieveQuests },
-  } = useQuests();
 
   useEffect(() => {
-    let subscription;
-
-    async function getSubscription() {
-      const { granted: ok } = await getForegroundPermissionsAsync();
-      if (!ok) return;
-
-      subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.Highest },
-        (loc) => {
-          const domain = locationObjectToLiteral(loc);
-          dispatch({
-            type: "UPDATE_POS",
-            payload: domain,
-          });
-          retrieveQuests(domain);
-        }
-      );
-    }
-
-    getSubscription();
-
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
+    dispatch({
+      type: "UPDATE_USER_MARKER_INFO",
+      payload: {
+        id: session.user.email,
+        icon: generateEmojiMarker(),
+      },
+    });
+  }, [session.user]);
 
   useEffect(() => {
     async function getGeojson() {
@@ -88,7 +67,7 @@ export default function UserLocationProvider({ children }) {
 
       const { signedURL } = await supabase.storage
         .from("assets")
-        .createSignedUrl("geojson/polygon-subdistrict.geojson", 60);
+        .createSignedUrl("geojson/polygon-subdistrict-2017.geojson", 60);
 
       const geojson = await fetch(signedURL).then((response) =>
         response.json()
@@ -104,14 +83,32 @@ export default function UserLocationProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    dispatch({
-      type: "UPDATE_USER_MARKER_INFO",
-      payload: {
-        id: session.user.email,
-        icon: generateEmojis()[0],
-      },
-    });
-  }, [session.user]);
+    let subscription;
+
+    async function getSubscription() {
+      const { granted: ok } = await getForegroundPermissionsAsync();
+      if (!ok) return;
+
+      subscription = await watchPositionAsync(
+        { accuracy: LocationAccuracy.BestForNavigation },
+        (loc) => {
+          const domain = locationObjectToLiteral(loc);
+          dispatch({
+            type: "UPDATE_POS",
+            payload: domain,
+          });
+          // this leads to high memory consumption
+          // retrieveQuests(domain);
+        }
+      );
+    }
+
+    getSubscription();
+
+    return () => {
+      subscription?.remove();
+    };
+  }, []);
 
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();

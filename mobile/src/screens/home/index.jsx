@@ -5,7 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LeafletMap from "../../components/map";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
-import { generateColours } from "../../utils/generate-colours";
+import { generateDistrictsColors } from "./util/generate-districts-colors";
+import { generateQuestCircleColor } from "./util/generate-quest-circle-color";
+import { generateQuestEmoji } from "./util/generate-quest-emoji";
 
 export default function HomeScreen() {
   const [polygons, setPolygons] = useState([]);
@@ -25,13 +27,17 @@ export default function HomeScreen() {
     const parsedShapes = geojson.features.map((f, i) => ({
       id: i,
       shapeType: "polygon",
+      properties: {
+        ...f.properties,
+        type: "subdistrict",
+      },
       positions: f.geometry.coordinates[0].map(([lng, lat]) => ({
         lng,
         lat,
       })),
     }));
 
-    const colors = generateColours({
+    const colors = generateDistrictsColors({
       quantity: parsedShapes.length,
       shuffle: true,
       offset: 45,
@@ -43,19 +49,37 @@ export default function HomeScreen() {
   }, [geojson]);
 
   useEffect(() => {
+    if (!availableQuests) return;
+
     setQuestMarkers(
-      availableQuests?.map((q) => ({
-        id: `quest:${q.id}`,
-        icon: "🔥",
+      availableQuests.map((q) => ({
+        id: q.id,
+        icon: generateQuestEmoji(q),
         position: q.shape.center,
-        size: [10, 10],
-      })) ?? []
+        size: [15, 15],
+      }))
     );
 
-    setQuestShapes(availableQuests?.map((q) => q.shape) ?? []);
+    setQuestShapes(
+      availableQuests.map((q) => ({
+        ...q.shape,
+        color: generateQuestCircleColor(q),
+        properties: {
+          type: "quest",
+        },
+      }))
+    );
   }, [availableQuests]);
 
-  if (loadingLoc || loadingQuests) {
+  const allDataReady = [
+    !loadingLoc,
+    !loadingQuests,
+    polygons.length,
+    questMarkers.length,
+    questShapes.length,
+  ].every((v) => v);
+
+  if (!allDataReady) {
     return (
       <Center flex={1}>
         <ActivityIndicator size="large" />

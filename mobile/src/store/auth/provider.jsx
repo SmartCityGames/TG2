@@ -29,7 +29,8 @@ export default function UserAuthProvider({ children }) {
 
   useEffect(() => {
     toggleLoading(dispatch);
-    dispatch({ type: "SIGNIN", payload: supabase.auth.session() });
+    const session = supabase.auth.session();
+    if (session) dispatch({ type: "SIGNIN", payload: session });
   }, []);
 
   useEffect(() => {
@@ -38,7 +39,9 @@ export default function UserAuthProvider({ children }) {
         logger.info(`[SUPABASE:AUTH] action of type ${event} fired`);
         switch (event) {
           case "SIGNED_IN":
-            dispatch({ type: "SIGNIN", payload: session });
+            if (!state.session) {
+              dispatch({ type: "SIGNIN", payload: session });
+            }
             break;
           case "SIGNED_OUT":
             dispatch({ type: "LOGOUT" });

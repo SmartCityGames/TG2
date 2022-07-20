@@ -1,4 +1,4 @@
-export const generateColours = ({
+export const generateDistrictsColors = ({
   quantity = 1,
   shuffle = false,
   order = "0,360",

@@ -1,13 +1,49 @@
 import { ExpoLeaflet } from "expo-leaflet";
-import { IconButton } from "native-base";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, View } from "react-native";
+import { Flex, IconButton } from "native-base";
+import { useEffect, useReducer } from "react";
+import { ActivityIndicator, Alert } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserLocation } from "../../store/location/provider";
 import { logger } from "../../utils/logger";
 import { mapConfig } from "./config";
 
+function mapReducer(state, action) {
+  logger.info(`[MAP] action of type ${action.type} fired`);
+
+  switch (action.type) {
+    case "TOGGLE_QUESTS": {
+      const showQuests = !state.showQuests;
+      const quests = showQuests ? action.payload : [];
+
+      return {
+        ...state,
+        showQuests,
+        quests,
+      };
+    }
+    case "TOGGLE_DISTRICTS": {
+      const showDistricts = !state.showDistricts;
+      const districts = showDistricts ? action.payload : [];
+
+      return {
+        ...state,
+        showDistricts,
+        districts,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 export default function LeafletMap({ polygons, quests }) {
+  const [state, dispatch] = useReducer(mapReducer, {
+    showDistricts: false,
+    showQuests: false,
+    districts: [],
+    quests: [],
+  });
+
   const {
     state: { position, zoom, markers },
     actions: {
@@ -18,29 +54,17 @@ export default function LeafletMap({ polygons, quests }) {
     },
   } = useUserLocation();
 
-  const [showShapes, setShowShapes] = useState(false);
-  const [showQuests, setShowQuests] = useState(false);
-
   useEffect(() => {
-    showQuests ? addQuestsMarkers(quests.markers) : removeQuestsMarkers();
-  }, [showQuests]);
+    state.showQuests ? addQuestsMarkers(quests.markers) : removeQuestsMarkers();
+  }, [state.showQuests]);
 
   function processLeafletEvent(event) {
     logger.info(`[LEAFLET] action of type ${event.tag} fired`);
 
     switch (event.tag) {
       case "onMapMarkerClicked":
-        if (event.mapMarkerId.includes("quest")) {
-          const questId = event.mapMarkerId.split(":")[1];
-
-          Alert.alert(
-            `${availableQuests[questId].name}`,
-            `${availableQuests[questId].description}`
-          );
-        } else {
-          Alert.alert(
-            `Map Marker Touched, ID: ${event.mapMarkerId || "unknown"}`
-          );
+        if (String(event.mapMarkerId).includes("@")) {
+          Alert.alert("this is you", "keep exploring the map");
         }
         break;
       case "onMoveEnd":
@@ -56,29 +80,30 @@ export default function LeafletMap({ polygons, quests }) {
     }
   }
 
-  function getShapes() {
-    if (showShapes && showQuests) return [...polygons, ...quests.shapes];
-    if (showShapes && !showQuests) return polygons;
-    if (!showShapes && showQuests) return quests.shapes;
-
-    return [];
-  }
-
   return (
     <>
-      <View style={{ flex: 1, minHeight: "100%" }}>
+      <Flex flex={1} minH="100%">
         <ExpoLeaflet
           loadingIndicator={() => <ActivityIndicator />}
           mapCenterPosition={position}
           onMessage={processLeafletEvent}
           zoom={zoom}
           mapMarkers={markers}
-          mapShapes={getShapes()}
+          mapShapes={
+            state.showDistricts || state.showQuests
+              ? [...state.quests, ...state.districts]
+              : []
+          }
           {...mapConfig}
         />
-      </View>
+      </Flex>
       <IconButton
-        onPress={() => setShowShapes((v) => !v)}
+        onPress={() =>
+          dispatch({
+            type: "TOGGLE_DISTRICTS",
+            payload: polygons,
+          })
+        }
         position="absolute"
         right="3"
         top="24"
@@ -87,12 +112,17 @@ export default function LeafletMap({ polygons, quests }) {
           <Icon
             name="map"
             size={25}
-            color={showShapes ? "#0047AB" : "#8c92ac"}
+            color={state.showDistricts ? "#0047AB" : "#8c92ac"}
           />
         }
       />
       <IconButton
-        onPress={() => setShowQuests((v) => !v)}
+        onPress={() =>
+          dispatch({
+            type: "TOGGLE_QUESTS",
+            payload: quests.shapes,
+          })
+        }
         position="absolute"
         right="3"
         top="32"
@@ -102,7 +132,7 @@ export default function LeafletMap({ polygons, quests }) {
           <Icon
             name="file"
             size={25}
-            color={showQuests ? "#0047AB" : "#8c92ac"}
+            color={state.showQuests ? "#0047AB" : "#8c92ac"}
           />
         }
       />
