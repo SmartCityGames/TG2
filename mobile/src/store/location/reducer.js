@@ -5,17 +5,13 @@ export function userLocationReducer(state, action) {
 
   switch (action.type) {
     case "UPDATE_POS": {
-      const userMarker = state.markers.shift();
       return {
         ...state,
         position: action.payload,
-        markers: [
-          {
-            ...userMarker,
-            position: action.payload,
-          },
-          ...state.markers,
-        ],
+        ownMarker: {
+          ...state.ownMarker,
+          position: action.payload,
+        },
         error: undefined,
       };
     }
@@ -27,10 +23,9 @@ export function userLocationReducer(state, action) {
         error: undefined,
       };
     case "UPDATE_USER_MARKER_INFO": {
-      const userMarker = state.markers.shift();
       return {
         ...state,
-        markers: [{ ...userMarker, ...action.payload }, ...state.markers],
+        ownMarker: { ...state.ownMarker, ...action.payload },
         error: undefined,
       };
     }
@@ -42,18 +37,16 @@ export function userLocationReducer(state, action) {
         error: undefined,
       };
     case "REMOVE_QUESTS_MARKERS": {
-      const userMarker = state.markers.shift();
       return {
         ...state,
-        markers: [userMarker],
+        markers: state.markers.filter((m) => !m.id.includes("quest")),
         error: undefined,
       };
     }
     case "ADD_QUESTS_MARKERS": {
-      const userMarker = state.markers.shift();
       return {
         ...state,
-        markers: [userMarker, ...action.payload],
+        markers: action.payload,
         error: undefined,
       };
     }

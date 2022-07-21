@@ -11,7 +11,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import { mapConfig } from "../../components/map/config";
+import { mapConfig } from "../../components/map/utils/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
@@ -20,16 +20,15 @@ import { generateEmojiMarker } from "./utils/generate-emoji-marker";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 
 const userLocationInitialState = {
-  position: null,
-  zoom: 17,
-  markers: [
-    {
-      icon: undefined,
-      id: undefined,
-      position: undefined,
-      size: [32, 32],
-    },
-  ],
+  ownMarker: {
+    icon: undefined,
+    id: undefined,
+    position: [],
+    size: [32, 32],
+  },
+  position: [],
+  zoom: mapConfig.maxZoom,
+  markers: [],
   geojson: undefined,
   error: null,
   loading: false,
@@ -90,7 +89,7 @@ export default function UserLocationProvider({ children }) {
       if (!ok) return;
 
       subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.BestForNavigation },
+        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 1000 },
         (loc) => {
           const domain = locationObjectToLiteral(loc);
           dispatch({

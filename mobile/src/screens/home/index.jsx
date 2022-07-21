@@ -1,8 +1,9 @@
+import { useNetInfo } from "@react-native-community/netinfo";
 import { Center } from "native-base";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LeafletMap from "../../components/map";
+import LeafletWebviewMap from "../../components/map/leaflet-webview-map";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { generateDistrictsColors } from "./util/generate-districts-colors";
@@ -13,6 +14,7 @@ export default function HomeScreen() {
   const [polygons, setPolygons] = useState([]);
   const [questShapes, setQuestShapes] = useState([]);
   const [questMarkers, setQuestMarkers] = useState([]);
+  const { isConnected } = useNetInfo();
 
   const {
     state: { loadingLoc, geojson },
@@ -22,15 +24,12 @@ export default function HomeScreen() {
   } = useQuests();
 
   useEffect(() => {
-    if (!geojson) return;
+    if (!geojson || !isConnected) return;
 
     const parsedShapes = geojson.features.map((f, i) => ({
       id: i,
-      shapeType: "polygon",
-      properties: {
-        ...f.properties,
-        type: "subdistrict",
-      },
+      shapeType: "Polygon",
+      properties: f.properties,
       positions: f.geometry.coordinates[0].map(([lng, lat]) => ({
         lng,
         lat,
@@ -46,14 +45,14 @@ export default function HomeScreen() {
     setPolygons(
       parsedShapes.map((shape) => ({ ...shape, color: colors[shape.id] }))
     );
-  }, [geojson]);
+  }, [geojson, isConnected]);
 
   useEffect(() => {
-    if (!availableQuests) return;
+    if (!availableQuests || !isConnected) return;
 
     setQuestMarkers(
       availableQuests.map((q) => ({
-        id: q.id,
+        id: `quest-${q.id}`,
         icon: generateQuestEmoji(q),
         position: q.shape.center,
         size: [15, 15],
@@ -64,12 +63,9 @@ export default function HomeScreen() {
       availableQuests.map((q) => ({
         ...q.shape,
         color: generateQuestCircleColor(q),
-        properties: {
-          type: "quest",
-        },
       }))
     );
-  }, [availableQuests]);
+  }, [availableQuests, isConnected]);
 
   const allDataReady = [
     !loadingLoc,
@@ -89,7 +85,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
-      <LeafletMap
+      <LeafletWebviewMap
         polygons={polygons}
         quests={{ markers: questMarkers, shapes: questShapes }}
       />

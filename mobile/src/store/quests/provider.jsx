@@ -47,7 +47,7 @@ export default function QuestsProvider({ children }) {
             Math.floor(Math.random() * 13) % 5
           ),
           shape: {
-            shapeType: "circle",
+            shapeType: "Circle",
             id: i,
             center: {
               lat: -15.7093 + Math.random() * 0.013,
