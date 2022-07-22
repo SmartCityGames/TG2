@@ -17,17 +17,22 @@ export default function LeafletWebviewMap({ polygons, quests }) {
   } = useUserLocation();
 
   useEffect(() => {
-    if (state.showQuests) {
-      addQuestsMarkers(quests.markers);
-      dispatch({
-        type: "UPDATE_SHOW_QUESTS",
-        payload: { shapes: quests.shapes, toggle: false },
-      });
-    }
+    if (!state.showQuests) return;
+
+    addQuestsMarkers(quests.markers);
+    dispatch({
+      type: "UPDATE_SHOW_QUESTS",
+      payload: { shapes: quests.shapes, toggle: false },
+    });
   }, [quests.markers]);
 
   useEffect(() => {
-    state.showQuests ? addQuestsMarkers(quests.markers) : removeQuestsMarkers();
+    if (!state.showQuests) {
+      removeQuestsMarkers();
+      return;
+    }
+
+    addQuestsMarkers(quests.markers);
   }, [state.showQuests]);
 
   function processLeafletMessage(message) {
@@ -64,8 +69,6 @@ export default function LeafletWebviewMap({ polygons, quests }) {
     }
   }
 
-  console.log({ quests });
-
   return (
     <>
       <Flex flex={1} minH="100%">
@@ -82,7 +85,7 @@ export default function LeafletWebviewMap({ polygons, quests }) {
           onMessageReceived={processLeafletMessage}
         />
       </Flex>
-      {polygons.length && (
+      {polygons.length ? (
         <IconButton
           onPress={() =>
             dispatch({
@@ -102,8 +105,8 @@ export default function LeafletWebviewMap({ polygons, quests }) {
             />
           }
         />
-      )}
-      {quests.shapes.length && quests.markers.length && (
+      ) : null}
+      {quests.shapes.length && quests.markers.length ? (
         <IconButton
           onPress={() =>
             dispatch({
@@ -124,7 +127,7 @@ export default function LeafletWebviewMap({ polygons, quests }) {
             />
           }
         />
-      )}
+      ) : null}
       <IconButton
         onPress={() => getUserPosition()}
         position="absolute"

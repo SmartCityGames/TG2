@@ -14,6 +14,8 @@ const userProfileinitialState = {
   avatar_url: undefined,
   username: undefined,
   wallet: undefined,
+  level: 1,
+  experience: 0,
 };
 
 const UserProfileContext = createContext({
@@ -36,16 +38,11 @@ export default function UserProfileProvider({ children }) {
   useEffect(() => {
     if (!session) return;
 
-    async function updateProfile() {
-      const profile = await getUserProfile();
-
-      dispatch({
-        type: "UPDATE_PROFILE",
-        payload: profile,
-      });
+    async function getProfileToUpdate() {
+      updateProfile(await getUserProfile());
     }
 
-    updateProfile();
+    getProfileToUpdate();
   }, [session.user.id]);
 
   async function getUserProfile() {
@@ -68,6 +65,32 @@ export default function UserProfileProvider({ children }) {
     return data[0];
   }
 
+  async function updateExperience(amount) {
+    console.log(
+      `xp from: ${state.experience} to: ${state.experience + amount}`
+    );
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({
+        experience: state.experience + amount,
+      })
+      .match({ id: session.user.id });
+
+    if (error) {
+      showUserProfileError({ error });
+      return;
+    }
+
+    updateProfile(data[0]);
+  }
+
+  function updateProfile(data) {
+    dispatch({
+      type: "UPDATE_PROFILE",
+      payload: data,
+    });
+  }
+
   async function showUserProfileError({ error }) {
     await AsyncAlert(`Status: ${error.status}`, `Error: ${error.message}`);
     dispatch({
@@ -79,6 +102,8 @@ export default function UserProfileProvider({ children }) {
   const actions = useMemo(
     () => ({
       getUserProfile,
+      updateExperience,
+      updateProfile,
     }),
     [session]
   );

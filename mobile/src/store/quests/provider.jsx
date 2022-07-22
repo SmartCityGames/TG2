@@ -7,6 +7,7 @@ import {
   useReducer,
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
 
 const questsInitialState = {
@@ -22,6 +23,10 @@ export const useQuests = () => useContext(QuestsContext);
 export default function QuestsProvider({ children }) {
   const [state, dispatch] = useReducer(questsReducer, questsInitialState);
   const toast = useToast();
+
+  const {
+    actions: { updateExperience },
+  } = useUserProfile();
 
   useEffect(() => {
     retrieveQuests();
@@ -64,10 +69,10 @@ export default function QuestsProvider({ children }) {
     });
   }
 
-  function completeQuest(questId) {
+  async function completeQuest(quest) {
     dispatch({
       type: "COMPLETE_QUEST",
-      payload: questId,
+      payload: quest.id,
     });
 
     toast.show({
@@ -75,6 +80,8 @@ export default function QuestsProvider({ children }) {
       description: "Continue to gain more Exp and rewards",
       collapsable: true,
     });
+
+    await updateExperience(quest.experience);
   }
 
   const actions = useMemo(() => ({ completeQuest, retrieveQuests }), []);

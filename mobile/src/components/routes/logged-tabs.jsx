@@ -7,6 +7,7 @@ import HomeScreen from "../../screens/home";
 import MissionsScreen from "../../screens/missions";
 import LoggedProviders from "../../store/combined/logged";
 import Left from "../navbar/left";
+import Middle from "../navbar/middle";
 import Right from "../navbar/right";
 import NoLocationPermissions from "./no-location-permissions";
 
@@ -52,14 +53,13 @@ export default function LoggedTabs() {
         screenOptions={{
           headerLeft: (props) => <Left {...props} />,
           headerRight: (props) => <Right {...props} />,
+          headerTitle: (props) => <Middle {...props} />,
         }}
       >
         <Tab.Screen
           name="Home"
           options={{
             headerTransparent: true,
-            headerTitle: "",
-
             tabBarIcon: (props) => <Icon name="home" {...props} />,
           }}
           component={HomeScreen}

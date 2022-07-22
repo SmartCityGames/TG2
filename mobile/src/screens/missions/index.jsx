@@ -63,7 +63,7 @@ export default function MissionsScreen() {
                 ml={3}
                 alignSelf="flex-start"
                 bg="green.500"
-                onPress={() => completeQuest(item.id)}
+                onPress={() => completeQuest(item)}
                 leftIcon={<Icon name="thumbs-up" color="white" size={15} />}
               >
                 <Text color="gray.800" fontSize={14} fontWeight="semibold">

@@ -51,19 +51,19 @@ export default function HomeScreen() {
     if (!availableQuests || !isConnected) return;
 
     setQuestMarkers(
-      availableQuests.map((q) => ({
+      availableQuests?.map((q) => ({
         id: `quest-${q.id}`,
         icon: generateQuestEmoji(q),
         position: q.shape.center,
         size: [15, 15],
-      }))
+      })) ?? []
     );
 
     setQuestShapes(
-      availableQuests.map((q) => ({
+      availableQuests?.map((q) => ({
         ...q.shape,
         color: generateQuestCircleColor(q),
-      }))
+      })) ?? []
     );
   }, [availableQuests, isConnected]);
 
@@ -71,8 +71,8 @@ export default function HomeScreen() {
     !loadingLoc,
     !loadingQuests,
     polygons.length,
-    questMarkers.length,
-    questShapes.length,
+    questShapes,
+    questMarkers,
   ].every((v) => v);
 
   if (!allDataReady) {

@@ -4,7 +4,7 @@ export const mapConfig = {
   mapLayers: [
     {
       attribution:
-        '&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        '<div>&copy <a href="/copyright">contribuidores do OpenStreetMap</a> ♥ <a class="donate-attr" href="https://donate.openstreetmap.org">Fazer uma doação</a>. <a href="https://wiki.osmfoundation.org/wiki/Terms_of_Use" target="_blank">Termos do site e da API</a></div>',
       baseLayer: true,
       baseLayerIsChecked: true,
       baseLayerName: "OpenStreetMap",
