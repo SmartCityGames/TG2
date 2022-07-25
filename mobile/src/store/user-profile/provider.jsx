@@ -22,6 +22,8 @@ const UserProfileContext = createContext({
   state: { ...userProfileinitialState },
 });
 
+export const MAX_XP_PER_LEVEL = 700;
+
 export const useUserProfile = () => useContext(UserProfileContext);
 
 export default function UserProfileProvider({ children }) {
@@ -66,15 +68,26 @@ export default function UserProfileProvider({ children }) {
   }
 
   async function updateExperience(amount) {
-    console.log(
-      `xp from: ${state.experience} to: ${state.experience + amount}`
-    );
+    const xp = state.experience + amount;
+    const xpLevel = state.level * MAX_XP_PER_LEVEL;
+
     const { data, error } = await supabase
       .from("profiles")
-      .update({
-        experience: state.experience + amount,
-      })
-      .match({ id: session.user.id });
+      .update(
+        {
+          level: xp >= xpLevel ? state.level + 1 : state.level,
+          experience: xp >= xpLevel ? xp - xpLevel : xp,
+        },
+        {
+          returning: "representation",
+        }
+      )
+      .eq("id", session.user.id);
+
+    console.log({
+      anewProfile: data,
+      error,
+    });
 
     if (error) {
       showUserProfileError({ error });
@@ -85,10 +98,12 @@ export default function UserProfileProvider({ children }) {
   }
 
   function updateProfile(data) {
-    dispatch({
-      type: "UPDATE_PROFILE",
-      payload: data,
-    });
+    if (data) {
+      dispatch({
+        type: "UPDATE_PROFILE",
+        payload: data,
+      });
+    }
   }
 
   async function showUserProfileError({ error }) {
@@ -102,14 +117,22 @@ export default function UserProfileProvider({ children }) {
   const actions = useMemo(
     () => ({
       getUserProfile,
-      updateExperience,
-      updateProfile,
     }),
     [session]
   );
 
+  const dependentActions = useMemo(
+    () => ({
+      updateExperience,
+      updateProfile,
+    }),
+    [session.user.id, state.experience]
+  );
+
   return (
-    <UserProfileContext.Provider value={{ state, actions }}>
+    <UserProfileContext.Provider
+      value={{ state, actions: { ...actions, ...dependentActions } }}
+    >
       {children}
     </UserProfileContext.Provider>
   );

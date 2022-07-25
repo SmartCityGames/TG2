@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LeafletWebviewMap from "../../components/map/leaflet-webview-map";
+import RnMaps from "../../components/rn-maps";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { generateDistrictsColors } from "./util/generate-districts-colors";
@@ -26,14 +27,9 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!geojson || !isConnected) return;
 
-    const parsedShapes = geojson.features.map((f, i) => ({
-      id: i,
-      shapeType: "Polygon",
-      properties: f.properties,
-      positions: f.geometry.coordinates[0].map(([lng, lat]) => ({
-        lng,
-        lat,
-      })),
+    const parsedShapes = geojson.features.map((f) => ({
+      id: `geojson_${f.properties.CD_SUBDIST}`,
+      features: [f],
     }));
 
     const colors = generateDistrictsColors({
@@ -43,7 +39,7 @@ export default function HomeScreen() {
     });
 
     setPolygons(
-      parsedShapes.map((shape) => ({ ...shape, color: colors[shape.id] }))
+      parsedShapes.map((shape, i) => ({ ...shape, color: colors[i] }))
     );
   }, [geojson, isConnected]);
 
@@ -85,7 +81,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
-      <LeafletWebviewMap
+      {/* <LeafletWebviewMap
+        polygons={polygons}
+        quests={{ markers: questMarkers, shapes: questShapes }}
+      /> */}
+      <RnMaps
         polygons={polygons}
         quests={{ markers: questMarkers, shapes: questShapes }}
       />

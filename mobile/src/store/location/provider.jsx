@@ -23,10 +23,10 @@ const userLocationInitialState = {
   ownMarker: {
     icon: undefined,
     id: undefined,
-    position: [],
+    position: undefined,
     size: [32, 32],
   },
-  position: [],
+  position: undefined,
   zoom: mapConfig.maxZoom,
   markers: [],
   geojson: undefined,
@@ -61,6 +61,10 @@ export default function UserLocationProvider({ children }) {
   }, [session.user]);
 
   useEffect(() => {
+    getUserPosition();
+  }, []);
+
+  useEffect(() => {
     async function getGeojson() {
       toggleLoading(dispatch);
 
@@ -90,12 +94,13 @@ export default function UserLocationProvider({ children }) {
 
       subscription = await watchPositionAsync(
         { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 1000 },
-        (loc) => {
-          const domain = locationObjectToLiteral(loc);
-          dispatch({
-            type: "UPDATE_POS",
-            payload: domain,
-          });
+        (_loc) => {
+          // const domain = locationObjectToLiteral(loc);
+          // console.log({ domain });
+          // dispatch({
+          //   type: "UPDATE_POS",
+          //   payload: domain,
+          // });
           // this leads to high memory consumption
           // retrieveQuests(domain);
         }

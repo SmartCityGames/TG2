@@ -14,7 +14,7 @@ export const generateDistrictsColors = ({
 
     hue += offset;
 
-    colours.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+    colours.push(`hsla(${hue}, ${saturation}%, ${lightness}%, 0.3)`);
   }
 
   if (shuffle) {

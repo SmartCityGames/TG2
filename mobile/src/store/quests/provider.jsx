@@ -36,7 +36,7 @@ export default function QuestsProvider({ children }) {
     toggleLoading(dispatch);
 
     const quests = await Promise.resolve(
-      Array(2)
+      Array(3)
         .fill({
           name: "complete me",
           experience: 100,
@@ -48,9 +48,9 @@ export default function QuestsProvider({ children }) {
           id: i,
           name: `${v.name} ${i}`,
           expires_at: v.expires_at + 10000000 * i,
-          type: ["trash", "fire", "water", "sewer", "electricity"].at(
+          type: ["trash", "fire", "water", "sewer", "electricity"][
             Math.floor(Math.random() * 13) % 5
-          ),
+          ],
           shape: {
             shapeType: "Circle",
             id: i,
@@ -75,16 +75,22 @@ export default function QuestsProvider({ children }) {
       payload: quest.id,
     });
 
-    toast.show({
-      title: "congrats! 😊",
-      description: "Continue to gain more Exp and rewards",
-      collapsable: true,
-    });
+    updateExperience(quest.experience);
 
-    await updateExperience(quest.experience);
+    // if completing many quests toasts should not stack
+
+    // toast.show({
+    //   title: "congrats! 😊",
+    //   description: "Continue to gain more Exp and rewards",
+    //   collapsable: true,
+    //   duration: 2000,
+    // });
   }
 
-  const actions = useMemo(() => ({ completeQuest, retrieveQuests }), []);
+  const actions = useMemo(
+    () => ({ completeQuest, retrieveQuests }),
+    [updateExperience]
+  );
 
   return (
     <QuestsContext.Provider value={{ state, actions }}>

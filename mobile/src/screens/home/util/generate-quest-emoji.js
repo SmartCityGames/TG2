@@ -1,14 +1,14 @@
 export function generateQuestEmoji(quest) {
   switch (quest.type) {
     case "trash":
-      return "🗑️";
+      return require("../../../../assets/garbage.jpg");
     case "fire":
-      return "🔥";
+      return require("../../../../assets/map_marker.png");
     case "water":
-      return "💧";
+      return require("../../../../assets/map_marker.png");
     case "sewer":
-      return "🪠";
+      return require("../../../../assets/sewer.png");
     case "electricity":
-      return "⚡";
+      return require("../../../../assets/map_marker.png");
   }
 }

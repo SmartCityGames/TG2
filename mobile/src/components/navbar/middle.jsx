@@ -1,19 +1,21 @@
 import { Box, Flex, Text } from "native-base";
 import { useEffect, useState } from "react";
 import { Bar } from "react-native-progress";
-import { useUserProfile } from "../../store/user-profile/provider";
+import { MAX_XP_PER_LEVEL, useUserProfile } from "../../store/user-profile/provider";
 
 export default function Middle({ children, ...rest }) {
   const [progress, setProgress] = useState(0);
 
-  const { state } = useUserProfile();
+  const {
+    state: { experience, level },
+  } = useUserProfile();
 
   useEffect(() => {
-    setProgress(state.experience / (700 * state.level));
-  }, [state]);
+    setProgress(experience / (MAX_XP_PER_LEVEL * level));
+  }, [experience, level]);
 
   return (
-    <Flex align="center" justify="center" direction="column" {...rest}>
+    <Flex mt="5" align="center" justify="center" direction="column" {...rest}>
       <Text fontWeight="bold" fontSize="16">
         {children}
       </Text>
@@ -22,10 +24,10 @@ export default function Middle({ children, ...rest }) {
       </Box>
       <Flex align="center" justify="space-between" direction="row" w="90%">
         <Text fontWeight="bold" alignSelf="flex-start">
-          level {state.level}
+          level {level}
         </Text>
         <Text fontWeight="bold" alignSelf="flex-end" textAlign="left">
-          {state.level * 700} xp
+          {level * MAX_XP_PER_LEVEL} xp
         </Text>
       </Flex>
     </Flex>
