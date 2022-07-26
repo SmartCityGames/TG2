@@ -63,6 +63,8 @@ export default function RnMaps({ polygons, quests }) {
         <UrlTile
           urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           maximumZ={19}
+          tileSize={256}
+          tileCacheMaxAge={1000 * 60 * 60 * 24 * 7}
         />
         {state.showQuests
           ? quests.markers.map((m) => (

@@ -3,11 +3,11 @@ import { Center } from "native-base";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LeafletWebviewMap from "../../components/map/leaflet-webview-map";
 import RnMaps from "../../components/rn-maps";
+import { useIndicators } from "../../store/indicators/provider";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
-import { generateDistrictsColors } from "./util/generate-districts-colors";
+import { generateGreenRedGradientColors } from "./util/generate-districts-colors";
 import { generateQuestCircleColor } from "./util/generate-quest-circle-color";
 import { generateQuestEmoji } from "./util/generate-quest-emoji";
 
@@ -23,25 +23,53 @@ export default function HomeScreen() {
   const {
     state: { loadingQuests, availableQuests },
   } = useQuests();
+  const {
+    state: { ivs },
+  } = useIndicators();
 
   useEffect(() => {
-    if (!geojson || !isConnected) return;
+    if (!geojson || !isConnected || !ivs) return;
 
-    const parsedShapes = geojson.features.map((f) => ({
-      id: `geojson_${f.properties.CD_SUBDIST}`,
-      features: [f],
-    }));
-
-    const colors = generateDistrictsColors({
-      quantity: parsedShapes.length,
-      shuffle: true,
-      offset: 45,
+    const parsedShapes = geojson.features.map((f) => {
+      const parsedName = f.properties.NM_SUBDIST.normalize("NFD").replace(
+        /[\u0300-\u036f]/g,
+        ""
+      );
+      return {
+        id: `geojson_${f.properties.CD_SUBDIST}_${parsedName}`,
+        features: [
+          {
+            ...f,
+            properties: {
+              ...f.properties,
+              NM_SUBDIST: parsedName,
+            },
+          },
+        ],
+        indicators: {
+          ivs: ivs?.filter((i) =>
+            i.UDH.toLowerCase().includes(parsedName.toLowerCase())
+          ),
+        },
+      };
     });
 
+    // const colors = generateRandomDistrictsColors({
+    //   quantity: parsedShapes.length,
+    //   shuffle: true,
+    //   offset: 45,
+    // });
+
     setPolygons(
-      parsedShapes.map((shape, i) => ({ ...shape, color: colors[i] }))
+      parsedShapes.map((shape, _i) => ({
+        ...shape,
+        color: generateGreenRedGradientColors({
+          percentage: shape.indicators.ivs[0].IDHM,
+          order: "RG",
+        }),
+      }))
     );
-  }, [geojson, isConnected]);
+  }, [geojson, isConnected, ivs]);
 
   useEffect(() => {
     if (!availableQuests || !isConnected) return;
