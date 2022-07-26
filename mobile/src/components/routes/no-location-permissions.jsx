@@ -23,7 +23,9 @@ export default function NoLocationPermissions() {
               <HStack space={3}>
                 <Icon name="check" size={16} color="green" />
                 <Text>
-                  Allow <Text>Always</Text> or <Text>During app use</Text>
+                  Allow
+                  <Text fontWeight={"bold"}>Always</Text> or{" "}
+                  <Text fontWeight={"bold"}>During app use</Text>
                 </Text>
               </HStack>
             </VStack>

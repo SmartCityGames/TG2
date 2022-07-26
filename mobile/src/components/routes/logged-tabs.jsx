@@ -5,9 +5,9 @@ import { AppState, Platform } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import HomeScreen from "../../screens/home";
 import MissionsScreen from "../../screens/missions";
-import UserLocationProvider from "../../store/location/provider";
-import QuestsProvider from "../../store/quests/provider";
+import LoggedProviders from "../../store/combined/logged";
 import Left from "../navbar/left";
+import Middle from "../navbar/middle";
 import Right from "../navbar/right";
 import NoLocationPermissions from "./no-location-permissions";
 
@@ -48,36 +48,33 @@ export default function LoggedTabs() {
   }
 
   return (
-    <UserLocationProvider>
-      <QuestsProvider>
-        <Tab.Navigator
-          screenOptions={{
-            headerLeft: (props) => <Left {...props} />,
-            headerRight: (props) => <Right {...props} />,
+    <LoggedProviders>
+      <Tab.Navigator
+        screenOptions={{
+          headerLeft: (props) => <Left {...props} />,
+          headerRight: (props) => <Right {...props} />,
+          headerTitle: (props) => <Middle {...props} />,
+        }}
+      >
+        <Tab.Screen
+          name="Home"
+          options={{
+            headerTransparent: true,
+            tabBarIcon: (props) => <Icon name="home" {...props} />,
           }}
-        >
-          <Tab.Screen
-            name="Home"
-            options={{
-              headerTransparent: true,
-              headerTitle: "",
-
-              tabBarIcon: (props) => <Icon name="home" {...props} />,
-            }}
-            component={HomeScreen}
-          />
-          <Tab.Screen
-            name="Missions"
-            options={{
-              tabBarIcon: (props) => <Icon name="gamepad" {...props} />,
-              headerBackgroundContainerStyle: {
-                height: Platform.OS === "ios" ? 105 : 100,
-              },
-            }}
-            component={MissionsScreen}
-          />
-        </Tab.Navigator>
-      </QuestsProvider>
-    </UserLocationProvider>
+          component={HomeScreen}
+        />
+        <Tab.Screen
+          name="Missions"
+          options={{
+            tabBarIcon: (props) => <Icon name="gamepad" {...props} />,
+            headerBackgroundContainerStyle: {
+              height: Platform.OS === "ios" ? 105 : 100,
+            },
+          }}
+          component={MissionsScreen}
+        />
+      </Tab.Navigator>
+    </LoggedProviders>
   );
 }

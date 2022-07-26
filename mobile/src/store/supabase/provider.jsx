@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 const supabaseUrl = "https://ztznlnawnncaxlmnhhjm.supabase.co/";
 const supabaseAnonKey =
@@ -18,6 +18,12 @@ const SupabaseContext = createContext(supabase);
 export const useSupabase = () => useContext(SupabaseContext);
 
 export default function SupabaseProvider({ children }) {
+  useEffect(() => {
+    return () => {
+      supabase.removeAllSubscriptions();
+    };
+  }, []);
+
   return (
     <SupabaseContext.Provider value={supabase}>
       {children}

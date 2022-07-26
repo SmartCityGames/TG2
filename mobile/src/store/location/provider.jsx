@@ -11,24 +11,31 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { mapConfig } from "../../components/map/utils/config";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
+import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
+import { generateEmojiMarker } from "./utils/generate-emoji-marker";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
 
 const userLocationInitialState = {
-  position: null,
-  zoom: 17,
-  marker: {
-    icon: "🧔",
+  ownMarker: {
+    icon: undefined,
     id: undefined,
     position: undefined,
+    size: [32, 32],
   },
+  position: undefined,
+  zoom: mapConfig.maxZoom,
+  markers: [],
+  geojson: undefined,
   error: null,
   loading: false,
 };
 
 const UserLocationContext = createContext({
-  state: { userLocationInitialState },
+  state: { ...userLocationInitialState },
 });
 
 export const useUserLocation = () => useContext(UserLocationContext);
@@ -41,6 +48,42 @@ export default function UserLocationProvider({ children }) {
   const {
     state: { session },
   } = useUserAuth();
+  const supabase = useSupabase();
+
+  useEffect(() => {
+    dispatch({
+      type: "UPDATE_USER_MARKER_INFO",
+      payload: {
+        id: session.user.email,
+        icon: generateEmojiMarker(),
+      },
+    });
+  }, [session.user]);
+
+  useEffect(() => {
+    getUserPosition();
+  }, []);
+
+  useEffect(() => {
+    async function getGeojson() {
+      toggleLoading(dispatch);
+
+      const { signedURL } = await supabase.storage
+        .from("assets")
+        .createSignedUrl("geojson/polygon-subdistrict-2017.geojson", 60);
+
+      const geojson = await fetch(signedURL).then((response) =>
+        response.json()
+      );
+
+      dispatch({
+        type: "LOAD_GEOJSON",
+        payload: geojson,
+      });
+    }
+
+    getGeojson();
+  }, []);
 
   useEffect(() => {
     let subscription;
@@ -49,12 +92,19 @@ export default function UserLocationProvider({ children }) {
       const { granted: ok } = await getForegroundPermissionsAsync();
       if (!ok) return;
 
-      subscription = await watchPositionAsync({ accuracy: LocationAccuracy.High }, (loc) => {
-        dispatch({
-          type: "UPDATE_POS",
-          payload: locationObjectToLiteral(loc),
-        });
-      });
+      subscription = await watchPositionAsync(
+        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 1000 },
+        (_loc) => {
+          // const domain = locationObjectToLiteral(loc);
+          // console.log({ domain });
+          // dispatch({
+          //   type: "UPDATE_POS",
+          //   payload: domain,
+          // });
+          // this leads to high memory consumption
+          // retrieveQuests(domain);
+        }
+      );
     }
 
     getSubscription();
@@ -63,10 +113,6 @@ export default function UserLocationProvider({ children }) {
       subscription?.remove();
     };
   }, []);
-
-  useEffect(() => {
-    updateUserMarkerInfo(session.user);
-  }, [session]);
 
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();
@@ -77,16 +123,7 @@ export default function UserLocationProvider({ children }) {
       type: "UPDATE_POS_ZOOM",
       payload: {
         position: locationObjectToLiteral(loc),
-        zoom: 17,
-      },
-    });
-  }
-
-  function updateUserMarkerInfo(user) {
-    dispatch({
-      type: "UPDATE_USER_MARKER_INFO",
-      payload: {
-        id: user.email,
+        zoom: mapConfig.maxZoom,
       },
     });
   }
@@ -98,10 +135,25 @@ export default function UserLocationProvider({ children }) {
     });
   }
 
+  function addQuestsMarkers(quests) {
+    dispatch({
+      type: "ADD_QUESTS_MARKERS",
+      payload: quests,
+    });
+  }
+
+  function removeQuestsMarkers() {
+    dispatch({
+      type: "REMOVE_QUESTS_MARKERS",
+    });
+  }
+
   const actions = useMemo(
     () => ({
       getUserPosition,
       onMoveEnd,
+      addQuestsMarkers,
+      removeQuestsMarkers,
     }),
     []
   );
