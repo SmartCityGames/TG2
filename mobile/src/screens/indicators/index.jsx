@@ -11,16 +11,23 @@ export default function IndicatorsScreen({ route }) {
     actions: { retrieveIndicators },
   } = useIndicators();
   const [filteredIvs, setFilteredIvs] = useState(ivs);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (!route?.params?.district) return;
-    filterDistricts(route?.params?.district);
+    setSearch("");
+  }, [ivs]);
+
+  useEffect(() => {
+    setSearch(route?.params?.district ?? "");
   }, [route?.params?.district]);
 
+  useEffect(() => {
+    filterDistricts(search);
+  }, [search]);
+
   function filterDistricts(name) {
-    const sanitized = sanitizeText(name);
     setFilteredIvs(
-      ivs.filter((iv) => iv.UDH.toLowerCase().includes(sanitized.toLowerCase()))
+      ivs.filter((iv) => iv.UDH.toLowerCase().includes(name.toLowerCase()))
     );
   }
 
@@ -33,7 +40,7 @@ export default function IndicatorsScreen({ route }) {
         placeholder="search your district"
         delayTimeout={500}
         clearButtonMode="while-editing"
-        onChangeText={(v) => filterDistricts(v)}
+        onChangeText={(v) => setSearch(sanitizeText(v))}
         style={{
           marginTop: 6,
           padding: 10,
