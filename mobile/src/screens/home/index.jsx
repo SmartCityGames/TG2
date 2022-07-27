@@ -30,35 +30,15 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!geojson || !isConnected || !ivs) return;
 
-    const parsedShapes = geojson.features.map((f) => {
-      const parsedName = f.properties.NM_SUBDIST.normalize("NFD").replace(
-        /[\u0300-\u036f]/g,
-        ""
-      );
-      return {
-        id: `geojson_${f.properties.CD_SUBDIST}_${parsedName}`,
-        features: [
-          {
-            ...f,
-            properties: {
-              ...f.properties,
-              NM_SUBDIST: parsedName,
-            },
-          },
-        ],
-        indicators: {
-          ivs: ivs?.filter((i) =>
-            i.UDH.toLowerCase().includes(parsedName.toLowerCase())
-          ),
-        },
-      };
-    });
-
-    // const colors = generateRandomDistrictsColors({
-    //   quantity: parsedShapes.length,
-    //   shuffle: true,
-    //   offset: 45,
-    // });
+    const parsedShapes = geojson.features.map((f) => ({
+      id: `geojson_${f.properties.CD_SUBDIST}_${f.properties.NM_SUBDIST}`,
+      indicators: {
+        ivs: ivs?.filter((i) =>
+          i.UDH.toLowerCase().includes(f.properties.NM_SUBDIST.toLowerCase())
+        ),
+      },
+      features: [f],
+    }));
 
     setPolygons(
       parsedShapes.map((shape, _i) => ({

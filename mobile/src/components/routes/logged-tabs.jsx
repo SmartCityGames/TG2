@@ -1,9 +1,10 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from "react";
 import { AppState, Platform } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
 import HomeScreen from "../../screens/home";
+import IndicatorsScreen from "../../screens/indicators";
 import MissionsScreen from "../../screens/missions";
 import LoggedProviders from "../../store/combined/logged";
 import Left from "../navbar/left";
@@ -54,25 +55,32 @@ export default function LoggedTabs() {
           headerLeft: (props) => <Left {...props} />,
           headerRight: (props) => <Right {...props} />,
           headerTitle: (props) => <Middle {...props} />,
+          headerBackgroundContainerStyle: {
+            height: Platform.OS === "ios" ? 105 : 100,
+          },
         }}
       >
         <Tab.Screen
           name="Home"
           options={{
             headerTransparent: true,
-            tabBarIcon: (props) => <Icon name="home" {...props} />,
+            tabBarIcon: (props) => <FontAwesome name="home" {...props} />,
           }}
           component={HomeScreen}
         />
         <Tab.Screen
           name="Missions"
           options={{
-            tabBarIcon: (props) => <Icon name="gamepad" {...props} />,
-            headerBackgroundContainerStyle: {
-              height: Platform.OS === "ios" ? 105 : 100,
-            },
+            tabBarIcon: (props) => <FontAwesome name="gamepad" {...props} />,
           }}
           component={MissionsScreen}
+        />
+        <Tab.Screen
+          name="Indicators"
+          options={{
+            tabBarIcon: (props) => <FontAwesome name="btc" {...props} />,
+          }}
+          component={IndicatorsScreen}
         />
       </Tab.Navigator>
     </LoggedProviders>

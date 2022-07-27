@@ -13,6 +13,7 @@ import {
 } from "react";
 import { mapConfig } from "../../components/map/utils/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { sanitizeText } from "../../utils/sanitize-text";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
@@ -78,7 +79,18 @@ export default function UserLocationProvider({ children }) {
 
       dispatch({
         type: "LOAD_GEOJSON",
-        payload: geojson,
+        payload: {
+          ...geojson,
+          features: geojson.features.map((feature) => {
+            return {
+              ...feature,
+              properties: {
+                ...feature.properties,
+                NM_SUBDIST: sanitizeText(feature.properties.NM_SUBDIST),
+              },
+            };
+          }),
+        },
       });
     }
 

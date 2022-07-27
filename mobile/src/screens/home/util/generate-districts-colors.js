@@ -35,8 +35,12 @@ export const generateRandomDistrictsColors = ({
   return colours;
 };
 
-export function generateGreenRedGradientColors({ percentage, order = "GR" }) {
-  const p = order === "GR" ? 1 - percentage : percentage;
-  const hue = (p * 70).toString(10);
-  return `hsla(${hue}, 100%, 50%, 0.3)`;
+export function generateGreenRedGradientColors({
+  percentage,
+  maxHue = 120,
+  minHue = 0,
+  opacity = 0.4,
+}) {
+  const hue = percentage * (maxHue - minHue) + minHue;
+  return `hsla(${hue}, 100%, 50%, ${opacity})`;
 }

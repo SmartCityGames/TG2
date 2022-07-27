@@ -1,4 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 import { IconButton } from "native-base";
 import { useEffect, useReducer } from "react";
 import { Alert } from "react-native";
@@ -10,10 +11,11 @@ import MapView, {
   UrlTile,
 } from "react-native-maps";
 import { useUserLocation } from "../../store/location/provider";
-import { mapInitialState, mapReducer } from "../map/utils/reducer";
+import { mapInitialState, mapReducer } from "./utils/reducer";
 
 export default function RnMaps({ polygons, quests }) {
   const [state, dispatch] = useReducer(mapReducer, mapInitialState);
+  const { navigate } = useNavigation();
 
   const {
     state: { position },
@@ -80,7 +82,7 @@ export default function RnMaps({ polygons, quests }) {
                   longitude: m.position.lng,
                 }}
                 onPress={() => {
-                  Alert.alert(`this is ${m.id} of type: ${m.type}`);
+                  Alert.alert(`this is ${m.id}`);
                 }}
               />
             ))
@@ -103,10 +105,15 @@ export default function RnMaps({ polygons, quests }) {
               <Geojson
                 key={p.id}
                 fillColor={p.color}
-                title={p.features[0].properties.name}
+                title={p.features[0].properties.NM_SUBDIST}
                 geojson={p}
-                tappable={false}
+                tappable={true}
                 strokeWidth={2}
+                onPress={() =>
+                  navigate("Indicators", {
+                    district: p.features[0].properties.NM_SUBDIST,
+                  })
+                }
               />
             ))
           : null}
