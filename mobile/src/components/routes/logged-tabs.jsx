@@ -78,7 +78,7 @@ export default function LoggedTabs() {
         <Tab.Screen
           name="Indicators"
           options={{
-            tabBarIcon: (props) => <FontAwesome name="btc" {...props} />,
+            tabBarIcon: (props) => <FontAwesome name="flask" {...props} />,
           }}
           component={IndicatorsScreen}
         />
