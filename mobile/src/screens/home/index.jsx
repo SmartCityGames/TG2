@@ -18,25 +18,23 @@ export default function HomeScreen() {
   const { isConnected } = useNetInfo();
 
   const {
-    state: { loadingLoc, geojson },
+    state: { loading: loadingLoc, geojson },
   } = useUserLocation();
   const {
-    state: { loadingQuests, availableQuests },
+    state: { loading: loadingQuests, availableQuests },
   } = useQuests();
   const {
-    state: { ivs },
+    state: { loading: loadingIndicators, indicators },
   } = useIndicators();
 
   useEffect(() => {
-    if (!geojson || !isConnected || !ivs) return;
+    if (!geojson || !isConnected || !indicators) return;
 
     const parsedShapes = geojson.features.map((f) => ({
       id: `geojson_${f.properties.CD_SUBDIST}_${f.properties.NM_SUBDIST}`,
-      indicators: {
-        ivs: ivs?.filter((i) =>
-          i.UDH.toLowerCase().includes(f.properties.NM_SUBDIST.toLowerCase())
-        ),
-      },
+      indicators: indicators?.filter((i) =>
+        i.UDH.toLowerCase().includes(f.properties.NM_SUBDIST.toLowerCase())
+      ),
       features: [f],
     }));
 
@@ -44,12 +42,12 @@ export default function HomeScreen() {
       parsedShapes.map((shape, _i) => ({
         ...shape,
         color: generateGreenRedGradientColors({
-          percentage: shape.indicators.ivs[0].IDHM,
+          percentage: shape.indicators[0].IDHM,
           order: "RG",
         }),
       }))
     );
-  }, [geojson, isConnected, ivs]);
+  }, [geojson, isConnected, indicators]);
 
   useEffect(() => {
     if (!availableQuests || !isConnected) return;
@@ -74,6 +72,7 @@ export default function HomeScreen() {
   const allDataReady = [
     !loadingLoc,
     !loadingQuests,
+    !loadingIndicators,
     polygons.length,
     questShapes,
     questMarkers,

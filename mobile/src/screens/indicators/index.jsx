@@ -7,15 +7,15 @@ import { sanitizeText } from "../../utils/sanitize-text";
 
 export default function IndicatorsScreen({ route }) {
   const {
-    state: { ivs, loading },
+    state: { indicators, loading },
     actions: { retrieveIndicators },
   } = useIndicators();
-  const [filteredIvs, setFilteredIvs] = useState(ivs);
+  const [filteredIvs, setFilteredIvs] = useState(indicators);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     setSearch("");
-  }, [ivs]);
+  }, [indicators]);
 
   useEffect(() => {
     setSearch(route?.params?.district ?? "");
@@ -27,7 +27,7 @@ export default function IndicatorsScreen({ route }) {
 
   function filterDistricts(name) {
     setFilteredIvs(
-      ivs.filter((iv) => iv.UDH.toLowerCase().includes(name.toLowerCase()))
+      indicators.filter((iv) => iv.UDH.toLowerCase().includes(name.toLowerCase()))
     );
   }
 

@@ -27,7 +27,10 @@ const userLocationInitialState = {
     position: undefined,
     size: [32, 32],
   },
-  position: undefined,
+  region: {
+    latitudeDelta: 0.014,
+    longitudeDelta: 0.014,
+  },
   zoom: mapConfig.maxZoom,
   markers: [],
   geojson: undefined,
@@ -62,6 +65,7 @@ export default function UserLocationProvider({ children }) {
   }, [session.user]);
 
   useEffect(() => {
+    toggleLoading(dispatch);
     getUserPosition();
   }, []);
 
@@ -134,16 +138,9 @@ export default function UserLocationProvider({ children }) {
     dispatch({
       type: "UPDATE_POS_ZOOM",
       payload: {
-        position: locationObjectToLiteral(loc),
+        region: locationObjectToLiteral(loc),
         zoom: mapConfig.maxZoom,
       },
-    });
-  }
-
-  function onMoveEnd({ position, zoom }) {
-    dispatch({
-      type: "UPDATE_POS_ZOOM",
-      payload: { position, zoom },
     });
   }
 
@@ -163,7 +160,6 @@ export default function UserLocationProvider({ children }) {
   const actions = useMemo(
     () => ({
       getUserPosition,
-      onMoveEnd,
       addQuestsMarkers,
       removeQuestsMarkers,
     }),

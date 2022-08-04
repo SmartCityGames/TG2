@@ -10,7 +10,7 @@ import { useSupabase } from "../supabase/provider";
 import { indicatorReducer } from "./reducer";
 
 const indicatorInitialState = {
-  ivs: undefined,
+  indicators: undefined,
   loading: false,
   error: undefined,
 };
@@ -36,15 +36,27 @@ export default function IndicatorsProvider({ children }) {
       .from("assets")
       .createSignedUrl("indicadores/ivs.json", 60);
 
-    const ivs = await fetch(signedURL).then((response) => response.json());
+    const indicators = await fetch(signedURL).then((response) =>
+      response.json()
+    );
 
     dispatch({
       type: "LOAD_IVS_INDICATORS",
-      payload: ivs,
+      payload: indicators,
     });
   }
 
-  const actions = useMemo(() => ({ retrieveIndicators }), []);
+  function incrementIndicator(values) {
+    dispatch({
+      type: "INCREMENT_INDICATORS",
+      payload: values,
+    });
+  }
+
+  const actions = useMemo(
+    () => ({ retrieveIndicators, incrementIndicator }),
+    []
+  );
 
   return (
     <IndicatorsContext.Provider value={{ state, actions }}>

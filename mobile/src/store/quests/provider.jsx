@@ -20,6 +20,8 @@ const QuestsContext = createContext({ state: { ...questsInitialState } });
 
 export const useQuests = () => useContext(QuestsContext);
 
+const TOAST_QUEST_COMPLETED_ID = "TOAST_QUEST_COMPLETED_ID";
+
 export default function QuestsProvider({ children }) {
   const [state, dispatch] = useReducer(questsReducer, questsInitialState);
   const toast = useToast();
@@ -69,7 +71,7 @@ export default function QuestsProvider({ children }) {
     });
   }
 
-  async function completeQuest(quest) {
+  function completeQuest(quest) {
     dispatch({
       type: "COMPLETE_QUEST",
       payload: quest.id,
@@ -77,14 +79,15 @@ export default function QuestsProvider({ children }) {
 
     updateExperience(quest.experience);
 
-    // if completing many quests toasts should not stack
-
-    // toast.show({
-    //   title: "congrats! 😊",
-    //   description: "Continue to gain more Exp and rewards",
-    //   collapsable: true,
-    //   duration: 2000,
-    // });
+    if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
+      toast.show({
+        id: TOAST_QUEST_COMPLETED_ID,
+        title: "congrats! 😊",
+        description: "Continue to gain more EXP and rewards",
+        collapsable: true,
+        duration: 2000,
+      });
+    }
   }
 
   const actions = useMemo(

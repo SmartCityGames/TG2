@@ -1,14 +1,26 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Center, Divider, FlatList, Flex, HStack, Text } from "native-base";
+import {
+  Center,
+  Divider,
+  FlatList,
+  Flex,
+  HStack,
+  IconButton,
+  Text,
+} from "native-base";
 import { RefreshControl } from "react-native";
+import { useIndicators } from "../../store/indicators/provider";
 import { useQuests } from "../../store/quests/provider";
 import { formatTimeLeft } from "./utils/format-expiration-time";
 
 export default function MissionsScreen() {
   const {
     state: { availableQuests, loading },
-    actions: { retrieveQuests },
+    actions: { retrieveQuests, completeQuest },
   } = useQuests();
+  const {
+    actions: { incrementIndicator },
+  } = useIndicators();
 
   return (
     <Flex flex={1} mt={5}>
@@ -44,6 +56,23 @@ export default function MissionsScreen() {
                     : "take your time"}
                 </Text>
               </HStack>
+              <IconButton
+                alignSelf="flex-start"
+                onPress={() => {
+                  completeQuest(item);
+                  incrementIndicator([
+                    {
+                      indicator: "IVS",
+                      target: "Lago Norte",
+                      amount: 1,
+                    },
+                  ]);
+                }}
+                rounded="full"
+                icon={
+                  <FontAwesome name="thumbs-up" size={35} color="#FA47AB" />
+                }
+              />
             </Flex>
           </Flex>
         )}

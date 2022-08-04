@@ -7,26 +7,31 @@ export function userLocationReducer(state, action) {
     case "UPDATE_POS": {
       return {
         ...state,
-        position: action.payload,
-        ownMarker: {
-          ...state.ownMarker,
-          position: action.payload,
+        region: {
+          ...action.payload,
+          ...state.region,
         },
         error: undefined,
+        loading: false,
       };
     }
     case "UPDATE_POS_ZOOM":
       return {
         ...state,
-        position: action.payload.position,
+        region: {
+          ...state.region,
+          ...action.payload.region,
+        },
         zoom: action.payload.zoom,
         error: undefined,
+        loading: false,
       };
     case "UPDATE_USER_MARKER_INFO": {
       return {
         ...state,
         ownMarker: { ...state.ownMarker, ...action.payload },
         error: undefined,
+        loading: false,
       };
     }
     case "LOAD_GEOJSON":
