@@ -7,6 +7,7 @@ import {
   useReducer,
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { useIndicators } from "../indicators/provider";
 import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
 
@@ -30,6 +31,10 @@ export default function QuestsProvider({ children }) {
     actions: { updateExperience },
   } = useUserProfile();
 
+  const {
+    actions: { incrementIndicator },
+  } = useIndicators();
+
   useEffect(() => {
     retrieveQuests();
   }, []);
@@ -41,9 +46,18 @@ export default function QuestsProvider({ children }) {
       Array(3)
         .fill({
           name: "complete me",
-          experience: 100,
           description: "click to earn exp",
-          expires_at: 1657583383759 - 9812300,
+          expires_at: Date.now() - 9812300,
+          rewards: {
+            indicators: [
+              {
+                indicator: "ivs",
+                target: "c1cbb652-141a-42aa-a2a2-12ca9cf7dcb3",
+                amount: 1,
+              },
+            ],
+            experience: 100,
+          },
         })
         .map((v, i) => ({
           ...v,
@@ -72,12 +86,15 @@ export default function QuestsProvider({ children }) {
   }
 
   function completeQuest(quest) {
+    const { id, rewards } = quest;
+
     dispatch({
       type: "COMPLETE_QUEST",
-      payload: quest.id,
+      payload: id,
     });
 
-    updateExperience(quest.experience);
+    updateExperience(rewards.experience);
+    incrementIndicator(rewards.indicators);
 
     if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
       toast.show({
@@ -90,13 +107,17 @@ export default function QuestsProvider({ children }) {
     }
   }
 
-  const actions = useMemo(
-    () => ({ completeQuest, retrieveQuests }),
-    [updateExperience]
+  const actions = useMemo(() => ({ retrieveQuests }), []);
+
+  const dependentActions = useMemo(
+    () => ({ completeQuest }),
+    [updateExperience, incrementIndicator]
   );
 
   return (
-    <QuestsContext.Provider value={{ state, actions }}>
+    <QuestsContext.Provider
+      value={{ state, actions: { ...actions, ...dependentActions } }}
+    >
       {children}
     </QuestsContext.Provider>
   );

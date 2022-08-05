@@ -33,7 +33,7 @@ export default function HomeScreen() {
     const parsedShapes = geojson.features.map((f) => ({
       id: `geojson_${f.properties.CD_SUBDIST}_${f.properties.NM_SUBDIST}`,
       indicators: indicators?.filter((i) =>
-        i.UDH.toLowerCase().includes(f.properties.NM_SUBDIST.toLowerCase())
+        i.udh.toLowerCase().includes(f.properties.NM_SUBDIST.toLowerCase())
       ),
       features: [f],
     }));
@@ -42,7 +42,7 @@ export default function HomeScreen() {
       parsedShapes.map((shape, _i) => ({
         ...shape,
         color: generateGreenRedGradientColors({
-          percentage: shape.indicators[0].IDHM,
+          percentage: shape.indicators[0].idhm,
           order: "RG",
         }),
       }))

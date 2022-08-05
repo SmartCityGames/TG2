@@ -10,7 +10,6 @@ export default function IndicatorsScreen({ route }) {
     state: { indicators, loading },
     actions: { retrieveIndicators },
   } = useIndicators();
-  const [filteredIvs, setFilteredIvs] = useState(indicators);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -21,23 +20,22 @@ export default function IndicatorsScreen({ route }) {
     setSearch(route?.params?.district ?? "");
   }, [route?.params?.district]);
 
-  useEffect(() => {
-    filterDistricts(search);
-  }, [search]);
-
-  function filterDistricts(name) {
-    setFilteredIvs(
-      indicators.filter((iv) => iv.UDH.toLowerCase().includes(name.toLowerCase()))
-    );
-  }
+  const filteredIvs =
+    search.length > 0
+      ? indicators?.filter((iv) =>
+          iv.udh.toLowerCase().includes(search.toLowerCase())
+        )
+      : indicators;
 
   return (
     <Flex align={"center"} flex={1} mt={5}>
       <DebounceInput
+        value={search}
+        defaultValue=""
         returnKeyType="search"
         keyboardType="default"
         minLength={1}
-        placeholder="search your district"
+        placeholder={search.length > 0 ? search : "search your district"}
         delayTimeout={500}
         clearButtonMode="while-editing"
         onChangeText={(v) => setSearch(sanitizeText(v))}
@@ -65,11 +63,11 @@ export default function IndicatorsScreen({ route }) {
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={retrieveIndicators} />
         }
-        keyExtractor={(item) => item.UDH}
+        keyExtractor={(item) => item.udh}
         renderItem={({ item }) => (
           <Center>
             <Text fontSize={24} fontWeight="bold" alignSelf="center" px={2}>
-              {item.UDH}
+              {item.udh}
             </Text>
             <Flex direction="column" justify="space-around" my={2}>
               <Text
@@ -78,10 +76,10 @@ export default function IndicatorsScreen({ route }) {
                 color="gray.600"
                 ellipsizeMode="clip"
               >
-                Índice de Desenvolvimento Humano Municipal: {item.IDHM}
+                Índice de Desenvolvimento Humano Municipal: {item.idhm}
               </Text>
               <Text px={3} textAlign="justify" color="gray.600">
-                Índice de Vulnerabilidade Social: {item.IVS}
+                Índice de Vulnerabilidade Social: {item.ivs}
               </Text>
             </Flex>
           </Center>

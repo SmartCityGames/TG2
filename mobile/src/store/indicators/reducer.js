@@ -13,15 +13,15 @@ export function indicatorReducer(state, action) {
     case "INCREMENT_INDICATORS": {
       const nis = [...state.indicators];
       for (const val of action.payload) {
-        const upperTargetName = val.target.toUpperCase();
-        const upperIndicatorName = val.indicator.toUpperCase();
+        const lowerTargetName = val.target.toLowerCase();
+        const lowerIndicatorName = val.indicator.toLowerCase();
 
-        let idx = nis.findIndex((i) => i.UDH === upperTargetName);
+        let idx = nis.findIndex((i) => i.id === lowerTargetName);
         const indicator = nis[idx];
 
         nis[idx] = {
           ...indicator,
-          [upperIndicatorName]: indicator[upperIndicatorName] + val.amount,
+          [lowerIndicatorName]: indicator[lowerIndicatorName] + val.amount,
         };
       }
 

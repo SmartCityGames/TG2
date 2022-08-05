@@ -32,34 +32,52 @@ export default function IndicatorsProvider({ children }) {
   async function retrieveIndicators() {
     toggleLoading(dispatch);
 
-    const { signedURL } = await supabase.storage
-      .from("assets")
-      .createSignedUrl("indicadores/ivs.json", 60);
-
-    const indicators = await fetch(signedURL).then((response) =>
-      response.json()
-    );
+    const { data } = await supabase.from("indicators").select(`
+    *,
+    udhs (
+      name
+    )
+  `);
 
     dispatch({
       type: "LOAD_IVS_INDICATORS",
-      payload: indicators,
+      payload: {
+        data: data.map((d) => ({ ...d, udh: d.udhs.name, udhs: undefined })),
+      },
     });
   }
 
-  function incrementIndicator(values) {
+  async function incrementIndicator(values) {
+    await Promise.all(
+      values.map((val) => {
+        const [tgt] = state.indicators.filter((i) => i.id === val.target);
+        const lowerIndicator = val.indicator.toLowerCase();
+        return supabase
+          .from("indicators")
+          .update({
+            [lowerIndicator]: tgt[lowerIndicator] + val.amount,
+          })
+          .eq("id", val.target);
+      })
+    );
+
     dispatch({
       type: "INCREMENT_INDICATORS",
       payload: values,
     });
   }
 
-  const actions = useMemo(
-    () => ({ retrieveIndicators, incrementIndicator }),
-    []
+  const actions = useMemo(() => ({ retrieveIndicators }), []);
+
+  const dependentActions = useMemo(
+    () => ({ incrementIndicator }),
+    [state.indicators]
   );
 
   return (
-    <IndicatorsContext.Provider value={{ state, actions }}>
+    <IndicatorsContext.Provider
+      value={{ state, actions: { ...actions, ...dependentActions } }}
+    >
       {children}
     </IndicatorsContext.Provider>
   );
