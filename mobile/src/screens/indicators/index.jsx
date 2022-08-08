@@ -1,8 +1,20 @@
-import { Center, Divider, FlatList, Flex, Text } from "native-base";
+import {
+  Box,
+  Center,
+  Divider,
+  FlatList,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "native-base";
 import { useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
 import DebounceInput from "react-native-debounce-input";
-import { useIndicators } from "../../store/indicators/provider";
+import {
+  INDICATORS_LABELS,
+  useIndicators,
+} from "../../store/indicators/provider";
 import { sanitizeText } from "../../utils/sanitize-text";
 
 export default function IndicatorsScreen({ route }) {
@@ -65,23 +77,29 @@ export default function IndicatorsScreen({ route }) {
         }
         keyExtractor={(item) => item.udh}
         renderItem={({ item }) => (
-          <Center>
-            <Text fontSize={24} fontWeight="bold" alignSelf="center" px={2}>
+          <Center my={1} mx={2}>
+            <Heading
+              fontSize={24}
+              fontWeight="bold"
+              alignSelf="center"
+              textTransform={"capitalize"}
+            >
               {item.udh}
-            </Text>
-            <Flex direction="column" justify="space-around" my={2}>
-              <Text
-                px={3}
-                textAlign="justify"
-                color="gray.600"
-                ellipsizeMode="clip"
-              >
-                Índice de Desenvolvimento Humano Municipal: {item.idhm}
-              </Text>
-              <Text px={3} textAlign="justify" color="gray.600">
-                Índice de Vulnerabilidade Social: {item.ivs}
-              </Text>
-            </Flex>
+            </Heading>
+            <VStack alignSelf={"flex-start"} space={3}>
+              {Object.keys(item).map((value) =>
+                !INDICATORS_LABELS[value] ? null : (
+                  <Box key={`${item.udh}-${value}`} textAlign="justify">
+                    <Text fontSize={14} fontWeight="semibold">
+                      {INDICATORS_LABELS[value].description}:
+                    </Text>
+                    <Text textAlign="justify" color="gray.600">
+                      {item[value]}
+                    </Text>
+                  </Box>
+                )
+              )}
+            </VStack>
           </Center>
         )}
       />

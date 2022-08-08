@@ -13,6 +13,7 @@ const indicatorInitialState = {
   indicators: undefined,
   loading: false,
   error: undefined,
+  selectedIndicator: "ivs",
 };
 
 const IndicatorsContext = createContext({
@@ -20,6 +21,17 @@ const IndicatorsContext = createContext({
 });
 
 export const useIndicators = () => useContext(IndicatorsContext);
+
+export const INDICATORS_LABELS = {
+  idhm: {
+    description: "Municipal Human Development Indicator",
+    order: "RG",
+  },
+  ivs: {
+    description: "Social Vulnerability Indicator",
+    order: "GR",
+  },
+};
 
 export default function IndicatorsProvider({ children }) {
   const [state, dispatch] = useReducer(indicatorReducer, indicatorInitialState);
@@ -67,7 +79,17 @@ export default function IndicatorsProvider({ children }) {
     });
   }
 
-  const actions = useMemo(() => ({ retrieveIndicators }), []);
+  function changeSelectedIndicator(indicator) {
+    dispatch({
+      type: "CHANGE_SELECTED_INDICATOR",
+      payload: indicator,
+    });
+  }
+
+  const actions = useMemo(
+    () => ({ retrieveIndicators, changeSelectedIndicator }),
+    []
+  );
 
   const dependentActions = useMemo(
     () => ({ incrementIndicator }),

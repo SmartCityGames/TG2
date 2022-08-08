@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RnMaps from "../../components/rn-maps";
-import { useIndicators } from "../../store/indicators/provider";
+import {
+  INDICATORS_LABELS,
+  useIndicators,
+} from "../../store/indicators/provider";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { generateGreenRedGradientColors } from "./util/generate-districts-colors";
@@ -16,6 +19,9 @@ export default function HomeScreen() {
   const [questShapes, setQuestShapes] = useState([]);
   const [questMarkers, setQuestMarkers] = useState([]);
   const { isConnected } = useNetInfo();
+  const {
+    state: { selectedIndicator },
+  } = useIndicators();
 
   const {
     state: { loading: loadingLoc, geojson },
@@ -42,12 +48,12 @@ export default function HomeScreen() {
       parsedShapes.map((shape, _i) => ({
         ...shape,
         color: generateGreenRedGradientColors({
-          percentage: shape.indicators[0].idhm,
-          order: "RG",
+          percentage: shape.indicators[0][selectedIndicator],
+          order: INDICATORS_LABELS[selectedIndicator].order,
         }),
       }))
     );
-  }, [geojson, isConnected, indicators]);
+  }, [geojson, isConnected, indicators, selectedIndicator]);
 
   useEffect(() => {
     if (!availableQuests || !isConnected) return;

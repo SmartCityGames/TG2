@@ -8,8 +8,8 @@ export function userLocationReducer(state, action) {
       return {
         ...state,
         region: {
-          ...action.payload,
           ...state.region,
+          ...action.payload,
         },
         error: undefined,
         loading: false,

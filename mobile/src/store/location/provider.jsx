@@ -157,11 +157,19 @@ export default function UserLocationProvider({ children }) {
     });
   }
 
+  function updateRegion(region) {
+    dispatch({
+      type: "UPDATE_POS",
+      payload: region,
+    });
+  }
+
   const actions = useMemo(
     () => ({
       getUserPosition,
       addQuestsMarkers,
       removeQuestsMarkers,
+      updateRegion,
     }),
     []
   );

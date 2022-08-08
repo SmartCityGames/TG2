@@ -30,6 +30,11 @@ export function indicatorReducer(state, action) {
         indicators: nis,
       };
     }
+    case "CHANGE_SELECTED_INDICATOR":
+      return {
+        ...state,
+        selectedIndicator: action.payload,
+      };
     case "ERROR":
       return {
         ...state,

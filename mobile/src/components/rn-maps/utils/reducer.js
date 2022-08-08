@@ -25,6 +25,11 @@ export function mapReducer(state, action) {
         showDistricts: !state.showDistricts,
       };
     }
+    case "TOGGLE_INDICATOR_FORM":
+      return {
+        ...state,
+        showIndicatorForm: !state.showIndicatorForm,
+      };
     default:
       return state;
   }

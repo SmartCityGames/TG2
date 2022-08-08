@@ -12,6 +12,7 @@ import MapView, {
   UrlTile,
 } from "react-native-maps";
 import { useUserLocation } from "../../store/location/provider";
+import IndicatorForm from "./utils/indicator-form";
 import { mapInitialState, mapReducer } from "./utils/reducer";
 
 export default function RnMaps({ polygons, quests }) {
@@ -20,7 +21,12 @@ export default function RnMaps({ polygons, quests }) {
   const { navigate } = useNavigation();
   const {
     state: { region },
-    actions: { removeQuestsMarkers, addQuestsMarkers, getUserPosition },
+    actions: {
+      removeQuestsMarkers,
+      addQuestsMarkers,
+      getUserPosition,
+      updateRegion,
+    },
   } = useUserLocation();
 
   useEffect(() => {
@@ -118,6 +124,14 @@ export default function RnMaps({ polygons, quests }) {
         showsIndoorLevelPicker={false}
         showsPointsOfInterest={false}
         zoomControlEnabled={false}
+        // onRegionChange={(r) => updateRegion(r)}
+        onMapReady={() => getUserPosition()}
+        onTouchStart={() => {
+          state.showIndicatorForm &&
+            dispatch({
+              type: "TOGGLE_INDICATOR_FORM",
+            });
+        }}
       >
         <UrlTile urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {state.showQuests && questsInfo.markers}
@@ -166,6 +180,28 @@ export default function RnMaps({ polygons, quests }) {
           }
         />
       )}
+      {!!polygons?.length && (
+        <IconButton
+          onPress={() =>
+            dispatch({
+              type: "TOGGLE_INDICATOR_FORM",
+            })
+          }
+          position="absolute"
+          right="3"
+          top="40"
+          mt={5}
+          rounded="full"
+          icon={
+            <FontAwesome
+              name="calculator"
+              size={25}
+              color={state.showIndicatorForm ? "#0047AB" : "#8c92ac"}
+            />
+          }
+        />
+      )}
+      {state.showIndicatorForm && <IndicatorForm />}
       <IconButton
         onPress={() => getUserPosition()}
         position="absolute"
