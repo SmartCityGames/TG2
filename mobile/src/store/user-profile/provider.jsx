@@ -84,11 +84,6 @@ export default function UserProfileProvider({ children }) {
       )
       .eq("id", session.user.id);
 
-    console.log({
-      anewProfile: data,
-      error,
-    });
-
     if (error) {
       showUserProfileError({ error });
       return;

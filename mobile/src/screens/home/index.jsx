@@ -3,11 +3,14 @@ import { Center } from "native-base";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LeafletWebviewMap from "../../components/map/leaflet-webview-map";
 import RnMaps from "../../components/rn-maps";
+import {
+  INDICATORS_LABELS,
+  useIndicators,
+} from "../../store/indicators/provider";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
-import { generateDistrictsColors } from "./util/generate-districts-colors";
+import { generateGreenRedGradientColors } from "./util/generate-districts-colors";
 import { generateQuestCircleColor } from "./util/generate-quest-circle-color";
 import { generateQuestEmoji } from "./util/generate-quest-emoji";
 
@@ -16,32 +19,41 @@ export default function HomeScreen() {
   const [questShapes, setQuestShapes] = useState([]);
   const [questMarkers, setQuestMarkers] = useState([]);
   const { isConnected } = useNetInfo();
+  const {
+    state: { selectedIndicator },
+  } = useIndicators();
 
   const {
-    state: { loadingLoc, geojson },
+    state: { loading: loadingLoc, geojson },
   } = useUserLocation();
   const {
-    state: { loadingQuests, availableQuests },
+    state: { loading: loadingQuests, availableQuests },
   } = useQuests();
+  const {
+    state: { loading: loadingIndicators, indicators },
+  } = useIndicators();
 
   useEffect(() => {
-    if (!geojson || !isConnected) return;
+    if (!geojson || !isConnected || !indicators) return;
 
     const parsedShapes = geojson.features.map((f) => ({
-      id: `geojson_${f.properties.CD_SUBDIST}`,
+      id: `geojson_${f.properties.CD_SUBDIST}_${f.properties.NM_SUBDIST}`,
+      indicators: indicators?.filter((i) =>
+        i.udh.toLowerCase().includes(f.properties.NM_SUBDIST.toLowerCase())
+      ),
       features: [f],
     }));
 
-    const colors = generateDistrictsColors({
-      quantity: parsedShapes.length,
-      shuffle: true,
-      offset: 45,
-    });
-
     setPolygons(
-      parsedShapes.map((shape, i) => ({ ...shape, color: colors[i] }))
+      parsedShapes.map((shape, _i) => ({
+        ...shape,
+        color: generateGreenRedGradientColors({
+          percentage: shape.indicators[0][selectedIndicator],
+          order: INDICATORS_LABELS[selectedIndicator].order,
+        }),
+      }))
     );
-  }, [geojson, isConnected]);
+  }, [geojson, isConnected, indicators, selectedIndicator]);
 
   useEffect(() => {
     if (!availableQuests || !isConnected) return;
@@ -66,6 +78,7 @@ export default function HomeScreen() {
   const allDataReady = [
     !loadingLoc,
     !loadingQuests,
+    !loadingIndicators,
     polygons.length,
     questShapes,
     questMarkers,

@@ -1,4 +1,4 @@
-export const generateDistrictsColors = ({
+export const generateRandomDistrictsColors = ({
   quantity = 1,
   shuffle = false,
   order = "0,360",
@@ -34,3 +34,13 @@ export const generateDistrictsColors = ({
 
   return colours;
 };
+
+export function generateGreenRedGradientColors({
+  percentage,
+  maxHue = 120,
+  minHue = 0,
+  opacity = 0.4,
+}) {
+  const hue = percentage * (maxHue - minHue) + minHue;
+  return `hsla(${hue}, 100%, 50%, ${opacity})`;
+}

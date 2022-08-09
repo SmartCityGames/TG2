@@ -1,23 +1,26 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 import { IconButton } from "native-base";
-import { useEffect, useReducer } from "react";
+import { useEffect, useMemo, useReducer, useRef } from "react";
 import { Alert } from "react-native";
 import MapView, {
   Circle,
   Geojson,
   MAP_TYPES,
   Marker,
+  PROVIDER_DEFAULT,
   UrlTile,
 } from "react-native-maps";
 import { useUserLocation } from "../../store/location/provider";
-import { mapInitialState, mapReducer } from "../map/utils/reducer";
+import IndicatorForm from "./utils/indicator-form";
+import { mapInitialState, mapReducer } from "./utils/reducer";
 
 export default function RnMaps({ polygons, quests }) {
+  const mapRef = useRef(null);
   const [state, dispatch] = useReducer(mapReducer, mapInitialState);
-
+  const { navigate } = useNavigation();
   const {
-    state: { position },
-    actions: { getUserPosition, removeQuestsMarkers, addQuestsMarkers },
+    actions: { removeQuestsMarkers, addQuestsMarkers, getUserPosition },
   } = useUserLocation();
 
   useEffect(() => {
@@ -39,19 +42,71 @@ export default function RnMaps({ polygons, quests }) {
     addQuestsMarkers(quests.markers);
   }, [state.showQuests]);
 
+  const questsInfo = useMemo(
+    () => ({
+      markers: quests.markers.map((m) => (
+        <Marker
+          key={`marker_${m.position.lat}_${m.position.lng}`}
+          identifier={m.id}
+          tracksViewChanges={false}
+          tracksInfoWindowChanges={false}
+          title={m.name}
+          description={m.description}
+          coordinate={{
+            latitude: m.position.lat,
+            longitude: m.position.lng,
+          }}
+          onPress={() => {
+            Alert.alert(`this is ${m.id}`);
+          }}
+        />
+      )),
+      shapes: quests.shapes.map((s) => (
+        <Circle
+          key={`circle_${s.center.lat}_${s.center.lng}`}
+          center={{
+            latitude: s.center.lat,
+            longitude: s.center.lng,
+          }}
+          radius={s.radius}
+          fillColor={`${s.color}99`}
+        />
+      )),
+    }),
+    [quests]
+  );
+
+  const polygonsShapes = useMemo(
+    () =>
+      polygons.map((p) => (
+        <Geojson
+          key={p.id}
+          fillColor={p.color}
+          title={p.features[0].properties.NM_SUBDIST}
+          geojson={p}
+          tappable={true}
+          strokeWidth={2}
+          onPress={() => {
+            state.showIndicatorForm
+              ? dispatch({
+                  type: "TOGGLE_INDICATOR_FORM",
+                })
+              : navigate("Indicators", {
+                  district: p.features[0].properties.NM_SUBDIST,
+                });
+          }}
+        />
+      )),
+    [polygons, state.showIndicatorForm]
+  );
+
   return (
     <>
       <MapView
+        ref={mapRef}
         userLocationPriority="high"
-        userLocationCalloutEnabled
-        region={{
-          latitude: position?.lat,
-          longitude: position?.lng,
-          latitudeDelta: 0.014,
-          longitudeDelta: 0.014,
-        }}
         style={{ flex: 1 }}
-        provider={null}
+        provider={PROVIDER_DEFAULT}
         mapType={MAP_TYPES.STANDARD}
         showsUserLocation
         rotateEnabled={false}
@@ -59,62 +114,31 @@ export default function RnMaps({ polygons, quests }) {
         showsMyLocationButton={false}
         showsScale={false}
         showsTraffic={false}
+        maxZoomLevel={17}
+        minZoomLevel={3}
+        showsBuildings={false}
+        showsIndoors={false}
+        showsIndoorLevelPicker={false}
+        showsPointsOfInterest={false}
+        zoomControlEnabled={false}
+        onTouchStart={() => {
+          !state.showDistricts &&
+            state.showIndicatorForm &&
+            dispatch({
+              type: "TOGGLE_INDICATOR_FORM",
+            });
+        }}
       >
-        <UrlTile
-          urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maximumZ={19}
-        />
-        {state.showQuests
-          ? quests.markers.map((m) => (
-              <Marker
-                key={`marker_${m.position.lat}_${m.position.lng}`}
-                identifier={m.id}
-                tracksViewChanges={false}
-                tracksInfoWindowChanges={false}
-                title={m.name}
-                description={m.description}
-                coordinate={{
-                  latitude: m.position.lat,
-                  longitude: m.position.lng,
-                }}
-                onPress={() => {
-                  Alert.alert(`this is ${m.id} of type: ${m.type}`);
-                }}
-              />
-            ))
-          : null}
-        {state.showQuests
-          ? quests.shapes.map((m) => (
-              <Circle
-                key={`circle_${m.center.lat}_${m.center.lng}`}
-                center={{
-                  latitude: m.center.lat,
-                  longitude: m.center.lng,
-                }}
-                radius={m.radius}
-                fillColor={`${m.color}99`}
-              />
-            ))
-          : null}
-        {state.showDistricts
-          ? state.districts.map((p) => (
-              <Geojson
-                key={p.id}
-                fillColor={p.color}
-                title={p.features[0].properties.name}
-                geojson={p}
-                tappable={false}
-                strokeWidth={2}
-              />
-            ))
-          : null}
+        <UrlTile urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {state.showQuests && questsInfo.markers}
+        {state.showQuests && questsInfo.shapes}
+        {state.showDistricts && polygonsShapes}
       </MapView>
-      {polygons?.length ? (
+      {!!polygons?.length && (
         <IconButton
           onPress={() =>
             dispatch({
               type: "TOGGLE_DISTRICTS",
-              payload: polygons,
             })
           }
           position="absolute"
@@ -129,8 +153,8 @@ export default function RnMaps({ polygons, quests }) {
             />
           }
         />
-      ) : null}
-      {quests.shapes.length && quests.markers.length ? (
+      )}
+      {!!quests?.shapes?.length && !!quests?.markers?.length && (
         <IconButton
           onPress={() =>
             dispatch({
@@ -151,9 +175,34 @@ export default function RnMaps({ polygons, quests }) {
             />
           }
         />
-      ) : null}
+      )}
+      {!!polygons?.length && (
+        <IconButton
+          onPress={() =>
+            dispatch({
+              type: "TOGGLE_INDICATOR_FORM",
+            })
+          }
+          position="absolute"
+          right="3"
+          top="40"
+          mt={5}
+          rounded="full"
+          icon={
+            <FontAwesome
+              name="calculator"
+              size={25}
+              color={state.showIndicatorForm ? "#0047AB" : "#8c92ac"}
+            />
+          }
+        />
+      )}
+      {state.showIndicatorForm && <IndicatorForm />}
       <IconButton
-        onPress={() => getUserPosition()}
+        onPress={async () => {
+          const loc = await getUserPosition();
+          mapRef.current.animateToRegion(loc, 1500);
+        }}
         position="absolute"
         right="3"
         bottom="3"

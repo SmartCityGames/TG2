@@ -1,7 +1,7 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Button, Center, HStack, Text, VStack } from "native-base";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function NoLocationPermissions() {
   return (
@@ -17,11 +17,11 @@ export default function NoLocationPermissions() {
             </Text>
             <VStack space={2}>
               <HStack space={3}>
-                <Icon name="location-arrow" size={20} color="blue" />
+                <FontAwesome name="location-arrow" size={20} color="blue" />
                 <Text>Select location</Text>
               </HStack>
               <HStack space={3}>
-                <Icon name="check" size={16} color="green" />
+                <FontAwesome name="check" size={16} color="green" />
                 <Text>
                   Allow
                   <Text fontWeight={"bold"}>Always</Text> or{" "}
