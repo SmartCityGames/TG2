@@ -11,14 +11,18 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { Dimensions } from "react-native";
 import { mapConfig } from "../../components/map/utils/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { sanitizeText } from "../../utils/sanitize-text";
-import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
-import { generateEmojiMarker } from "./utils/generate-emoji-marker";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
+
+const { width, height } = Dimensions.get("window");
+const ASPECT_RATIO = width / height;
+const LATITUDE_DELTA = 0.0922;
+const LONGTITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const userLocationInitialState = {
   ownMarker: {
@@ -28,8 +32,10 @@ const userLocationInitialState = {
     size: [32, 32],
   },
   region: {
-    latitudeDelta: 0.014,
-    longitudeDelta: 0.014,
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGTITUDE_DELTA,
   },
   zoom: mapConfig.maxZoom,
   markers: [],
@@ -49,25 +55,18 @@ export default function UserLocationProvider({ children }) {
     userLocationReducer,
     userLocationInitialState
   );
-  const {
-    state: { session },
-  } = useUserAuth();
   const supabase = useSupabase();
 
-  useEffect(() => {
-    dispatch({
-      type: "UPDATE_USER_MARKER_INFO",
-      payload: {
-        id: session.user.email,
-        icon: generateEmojiMarker(),
-      },
-    });
-  }, [session.user]);
-
-  useEffect(() => {
-    toggleLoading(dispatch);
-    getUserPosition();
-  }, []);
+  //* users already have an icon
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "UPDATE_USER_MARKER_INFO",
+  //     payload: {
+  //       id: session.user.email,
+  //       icon: generateEmojiMarker(),
+  //     },
+  //   });
+  // }, [session.user]);
 
   useEffect(() => {
     async function getGeojson() {
@@ -133,15 +132,24 @@ export default function UserLocationProvider({ children }) {
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();
 
-    if (!loc) return;
+    if (!loc) return null;
 
-    dispatch({
-      type: "UPDATE_POS_ZOOM",
-      payload: {
-        region: locationObjectToLiteral(loc),
-        zoom: mapConfig.maxZoom,
-      },
-    });
+    return {
+      ...locationObjectToLiteral(loc),
+      latitudeDelta: 0.003,
+      longitudeDelta: 0.002,
+    };
+
+    //* theres no need to manipulate the region
+    // dispatch({
+    //   type: "UPDATE_POS_ZOOM",
+    //   payload: {
+    //     region,
+    //     zoom: Math.round(Math.log(360 / region.longitudeDelta) / Math.LN2),
+    //   },
+    // });
+
+    // return region;
   }
 
   function addQuestsMarkers(quests) {

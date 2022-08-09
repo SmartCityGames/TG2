@@ -20,13 +20,7 @@ export default function RnMaps({ polygons, quests }) {
   const [state, dispatch] = useReducer(mapReducer, mapInitialState);
   const { navigate } = useNavigation();
   const {
-    state: { region },
-    actions: {
-      removeQuestsMarkers,
-      addQuestsMarkers,
-      getUserPosition,
-      updateRegion,
-    },
+    actions: { removeQuestsMarkers, addQuestsMarkers, getUserPosition },
   } = useUserLocation();
 
   useEffect(() => {
@@ -92,14 +86,18 @@ export default function RnMaps({ polygons, quests }) {
           geojson={p}
           tappable={true}
           strokeWidth={2}
-          onPress={() =>
-            navigate("Indicators", {
-              district: p.features[0].properties.NM_SUBDIST,
-            })
-          }
+          onPress={() => {
+            state.showIndicatorForm
+              ? dispatch({
+                  type: "TOGGLE_INDICATOR_FORM",
+                })
+              : navigate("Indicators", {
+                  district: p.features[0].properties.NM_SUBDIST,
+                });
+          }}
         />
       )),
-    [polygons]
+    [polygons, state.showIndicatorForm]
   );
 
   return (
@@ -107,7 +105,6 @@ export default function RnMaps({ polygons, quests }) {
       <MapView
         ref={mapRef}
         userLocationPriority="high"
-        region={region}
         style={{ flex: 1 }}
         provider={PROVIDER_DEFAULT}
         mapType={MAP_TYPES.STANDARD}
@@ -124,10 +121,9 @@ export default function RnMaps({ polygons, quests }) {
         showsIndoorLevelPicker={false}
         showsPointsOfInterest={false}
         zoomControlEnabled={false}
-        // onRegionChange={(r) => updateRegion(r)}
-        onMapReady={() => getUserPosition()}
         onTouchStart={() => {
-          state.showIndicatorForm &&
+          !state.showDistricts &&
+            state.showIndicatorForm &&
             dispatch({
               type: "TOGGLE_INDICATOR_FORM",
             });
@@ -203,7 +199,10 @@ export default function RnMaps({ polygons, quests }) {
       )}
       {state.showIndicatorForm && <IndicatorForm />}
       <IconButton
-        onPress={() => getUserPosition()}
+        onPress={async () => {
+          const loc = await getUserPosition();
+          mapRef.current.animateToRegion(loc, 1500);
+        }}
         position="absolute"
         right="3"
         bottom="3"
