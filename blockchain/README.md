@@ -23,9 +23,14 @@ To get a local copy up and running follow these simple steps.
 ## Usage
 
 ```bash
-$ npm install -g truffle ganache-cli
-[1] $ ganache-cli
-[2] $ truffle migrate --reset # --reset only for development mode
+$ npx hardhat
+$ npm install --save-dev @nomicfoundation/hardhat-chai-matchers @nomicfoundation/hardhat-toolbox chai @nomiclabs/hardhat-ethers ethers @openzeppelin/contracts
+
+[1] $ npx hardhat node
+[2] $ npx hardhat clean # clean only for development mode
+[3] $ npx hardhat compile
+[4] $ npx hardhat run scripts/deploy.js --network localhost
+[5] $ npx hardhat test
 ```
 
 ## License
