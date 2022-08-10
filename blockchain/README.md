@@ -23,8 +23,7 @@ To get a local copy up and running follow these simple steps.
 ## Usage
 
 ```bash
-$ npx hardhat
-$ npm install --save-dev @nomicfoundation/hardhat-chai-matchers @nomicfoundation/hardhat-toolbox chai @nomiclabs/hardhat-ethers ethers @openzeppelin/contracts
+$ yarn
 
 [1] $ npx hardhat node
 [2] $ npx hardhat clean # clean only for development mode
