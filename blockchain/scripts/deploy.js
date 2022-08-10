@@ -14,7 +14,6 @@ async function main() {
   // const lockedAmount = hre.ethers.utils.parseEther("1");
 
   const SmartCityGames = await hre.ethers.getContractFactory("SmartCityGames");
-  console.log(JSON.stringify(SmartCityGames));
   const smartCityGames = await SmartCityGames.deploy();
 
   await smartCityGames.deployed();
