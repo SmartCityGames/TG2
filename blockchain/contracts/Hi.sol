@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.14;
+pragma solidity ^0.8.4;
 
 contract Hi {
     string message;
@@ -8,7 +8,7 @@ contract Hi {
         message = _message;
     }
 
-    function getMessage() view public returns (string memory) {
+    function getMessage() public view returns (string memory) {
         return message;
     }
 }

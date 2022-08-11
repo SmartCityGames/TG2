@@ -12,6 +12,9 @@ export default function Home() {
       checkDbWalletWithMetamask,
       setMessageBlockchain,
       getMessageBlockchain,
+      getMintedNFT,
+      mint,
+      getMintedToken
     },
   } = useMetamask();
   const {
@@ -36,9 +39,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!contracts.hello || !account) return;
-    (async () => setMessage(await getMessageBlockchain()))();
-  }, [contracts.hello, account]);
+    if (!contracts.smartCityGames || !account) return;
+    (async () => setMessage(await getMintedNFT()))();
+    (async () => setMessage(await getMintedToken()))();
+  }, [contracts.smartCityGames, account]);
 
   if (!account) {
     return (
@@ -62,14 +66,14 @@ export default function Home() {
           Account: {shortenAccount(account)}
         </Text>
         <Text size="2xl" color="skyblue">
-          Contract Message: {message}
+          Contract Message: {JSON.stringify(message)}
         </Text>
 
         <Button
           p={3}
           bg="pink.400"
           rounded="lg"
-          onClick={() => setMessageBlockchain()}
+          onClick={() => mint()}
           disabled={loading}
         >
           Change stored message

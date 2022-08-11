@@ -128,18 +128,18 @@ export default function MetamaskProvider({ children }) {
       return;
     }
 
-    if (dbWallet !== account) {
-      logout();
-      toast({
-        title: "wrong metamask account",
-        description: "please select your binded wallet",
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      return;
-    }
+    // if (dbWallet !== account) {
+    //   logout();
+    //   toast({
+    //     title: "wrong metamask account",
+    //     description: "please select your binded wallet",
+    //     status: "info",
+    //     duration: 5000,
+    //     isClosable: true,
+    //     position: "top",
+    //   });
+    // return;
+    // }
 
     dispatch({
       type: "LOGIN",
@@ -150,6 +150,52 @@ export default function MetamaskProvider({ children }) {
   async function getMessageBlockchain() {
     try {
       return state.contracts.hello.getMessage();
+    } catch (error) {
+      console.log({ error });
+      showBlockchainError({
+        ...error,
+        description: "failed to get contract message",
+      });
+    }
+  }
+
+  async function getMintedNFT() {
+    try {
+      return state.contracts.smartCityGames.count();
+    } catch (error) {
+      console.log({ error });
+      showBlockchainError({
+        ...error,
+        description: "failed to get contract message",
+      });
+    }
+  }
+
+  async function mint() {
+    try {
+      const contentId = 'QmWoAd19aCmkax45YsaH1exYKHk5erv81fMRdMPxgGKmpz';
+      const tokenId = `https://gateway.pinata.cloud/ipfs/${contentId}/samambaia01.png`;
+      await state.contracts.smartCityGames.connect(state.signer).payToMint(state.account, tokenId, { value: ethers.utils.parseEther('0.5') });
+    } catch (error) {
+      console.log({ error });
+      showBlockchainError({
+        ...error,
+        description: "failed to get contract message",
+      });
+    }
+  }
+
+  async function getMintedToken() {
+    try {
+      const instance = await state.contracts.smartCityGames.connect(state.signer);
+      const balanceOf = await instance.balanceOf(state.account);
+      console.log({ balanceOf });
+      const prevEarnedTokens = [];
+      for (let i = 0; i < balanceOf; i++) {
+        const id = await instance.tokenOfOwnerByIndex(state.account, i);
+        prevEarnedTokens.push(await instance.tokenURI(id));
+      }
+      return prevEarnedTokens;
     } catch (error) {
       console.log({ error });
       showBlockchainError({
@@ -185,8 +231,11 @@ export default function MetamaskProvider({ children }) {
       checkDbWalletWithMetamask,
       setMessageBlockchain,
       getMessageBlockchain,
+      getMintedNFT,
+      mint,
+      getMintedToken,
     }),
-    [state.provider]
+    [state.provider, state.account]
   );
 
   return (
