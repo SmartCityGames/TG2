@@ -92,6 +92,20 @@ export default function UserProfileProvider({ children }) {
     updateProfile(data[0]);
   }
 
+  async function updateProfilePicture(avatar_url) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({ avatar_url }, { returning: "representation" })
+      .eq("id", session.user.id);
+
+    if (error) {
+      showUserProfileError({ error });
+      return;
+    }
+
+    updateProfile(data[0]);
+  }
+
   function updateProfile(data) {
     if (data) {
       dispatch({
@@ -120,6 +134,7 @@ export default function UserProfileProvider({ children }) {
     () => ({
       updateExperience,
       updateProfile,
+      updateProfilePicture,
     }),
     [session.user.id, state.experience]
   );
