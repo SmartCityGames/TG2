@@ -1,5 +1,13 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you pick an nice profile picture."
+        }
+      ]
+    ],
     "name": "mobile",
     "slug": "mobile",
     "version": "1.0.0",
