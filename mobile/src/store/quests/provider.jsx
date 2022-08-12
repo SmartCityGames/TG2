@@ -8,6 +8,7 @@ import {
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useIndicators } from "../indicators/provider";
+import { haversine } from "../location/utils/haversine";
 import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
 
@@ -62,6 +63,9 @@ export default function QuestsProvider({ children }) {
         .map((v, i) => ({
           ...v,
           id: i,
+          remote: i % 2 === 0,
+          description:
+            i % 2 ? "walk around and get into the circle" : "click to earn exp",
           name: `${v.name} ${i}`,
           expires_at: v.expires_at + 10000000 * i,
           type: ["trash", "fire", "water", "sewer", "electricity"][
@@ -71,8 +75,8 @@ export default function QuestsProvider({ children }) {
             shapeType: "Circle",
             id: i,
             center: {
-              lat: -15.7093 + Math.random() * 0.013,
-              lng: -47.8757 - Math.random() * 0.01,
+              lat: -15.709134792137093 + Math.random() * 0.001,
+              lng: -47.87964955278737 + Math.random() * 0.002,
             },
             radius: 75,
           },
@@ -107,7 +111,31 @@ export default function QuestsProvider({ children }) {
     }
   }
 
-  const actions = useMemo(() => ({ retrieveQuests }), []);
+  function updateUsersNearbyQuests(userLoc) {
+    const { latitude: ulat, longitude: ulng } = userLoc.coords;
+
+    const quests = state.availableQuests.map((q) => {
+      const { lat: qlat, lng: qlng } = q.shape.center;
+      return q.remote
+        ? {
+            ...q,
+            isInside: haversine(ulat, ulng, qlat, qlng) <= q.shape.radius,
+          }
+        : q;
+    });
+
+    if (quests.length) {
+      dispatch({
+        type: "RETRIEVE_QUESTS",
+        payload: quests,
+      });
+    }
+  }
+
+  const actions = useMemo(
+    () => ({ retrieveQuests, updateUsersNearbyQuests }),
+    []
+  );
 
   const dependentActions = useMemo(
     () => ({ completeQuest }),

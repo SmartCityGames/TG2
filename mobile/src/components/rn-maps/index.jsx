@@ -115,7 +115,6 @@ export default function RnMaps({ polygons, quests }) {
         showsScale={false}
         showsTraffic={false}
         maxZoomLevel={17}
-        minZoomLevel={3}
         showsBuildings={false}
         showsIndoors={false}
         showsIndoorLevelPicker={false}

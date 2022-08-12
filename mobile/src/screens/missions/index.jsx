@@ -1,11 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
+  Button,
   Center,
   Divider,
   FlatList,
   Flex,
   HStack,
-  IconButton,
   Text,
 } from "native-base";
 import { RefreshControl } from "react-native";
@@ -52,14 +52,23 @@ export default function MissionsScreen() {
                     : "take your time"}
                 </Text>
               </HStack>
-              <IconButton
-                alignSelf="flex-start"
-                onPress={() => completeQuest(item)}
-                rounded="full"
-                icon={
-                  <FontAwesome name="thumbs-up" size={35} color="#FA47AB" />
-                }
-              />
+              {!item.remote || item?.isInside ? (
+                <Button
+                  alignSelf="center"
+                  onPress={() => completeQuest(item)}
+                  rounded="lg"
+                  bg="#4DD0E1"
+                  leftIcon={
+                    <FontAwesome name="thumbs-up" size={35} color="#2196F3" />
+                  }
+                >
+                  Complete
+                </Button>
+              ) : (
+                <Text p={3} fontWeight="bold" color="info.400">
+                  ⚠️ Go to the mission area 🏃
+                </Text>
+              )}
             </Flex>
           </Flex>
         )}

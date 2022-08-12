@@ -15,6 +15,7 @@ import { Dimensions } from "react-native";
 import { mapConfig } from "../../components/map/utils/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { sanitizeText } from "../../utils/sanitize-text";
+import { useQuests } from "../quests/provider";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
@@ -56,6 +57,9 @@ export default function UserLocationProvider({ children }) {
     userLocationInitialState
   );
   const supabase = useSupabase();
+  const {
+    actions: { updateUsersNearbyQuests },
+  } = useQuests();
 
   //* users already have an icon
   // useEffect(() => {
@@ -108,16 +112,10 @@ export default function UserLocationProvider({ children }) {
       if (!ok) return;
 
       subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 1000 },
-        (_loc) => {
-          // const domain = locationObjectToLiteral(loc);
-          // console.log({ domain });
-          // dispatch({
-          //   type: "UPDATE_POS",
-          //   payload: domain,
-          // });
-          // this leads to high memory consumption
-          // retrieveQuests(domain);
+        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 3000 },
+        (loc) => {
+          dispatch({ type: "UPDATE_NEARBY_QUESTS" });
+          updateUsersNearbyQuests(loc);
         }
       );
     }
