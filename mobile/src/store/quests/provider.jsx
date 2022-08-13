@@ -8,9 +8,11 @@ import {
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useIndicators } from "../indicators/provider";
+import { useUserLocation } from "../location/provider";
 import { haversine } from "../location/utils/haversine";
 import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
+import RandomPointsOnPolygon from "random-points-on-polygon";
 
 const questsInitialState = {
   availableQuests: [],
@@ -36,56 +38,58 @@ export default function QuestsProvider({ children }) {
     actions: { incrementIndicator },
   } = useIndicators();
 
+  const {
+    state: { geojson },
+  } = useUserLocation();
+
   useEffect(() => {
     retrieveQuests();
-  }, []);
+  }, [geojson]);
 
   async function retrieveQuests() {
+    if (!geojson) return;
+
     toggleLoading(dispatch);
 
-    const quests = await Promise.resolve(
-      Array(3)
-        .fill({
-          name: "complete me",
-          description: "click to earn exp",
-          expires_at: Date.now() - 9812300,
+    const quests = geojson.features
+      .map((feature, j) =>
+        RandomPointsOnPolygon(1, feature).map((point, i) => ({
+          id: i + j,
+          remote: (i + j) % 2 === 0,
+          description:
+            (i + j) % 2 === 0
+              ? "get into the circle so the mission can be completed"
+              : "click to earn exp",
+          name: `complete me - ${i + j}`,
+          expires_at: Date.now() - 9812300 + 10000000 * (i + j),
+          type: ["trash", "fire", "water", "sewer", "electricity"][
+            Math.floor(Math.random() * 13) % 5
+          ],
           rewards: {
             indicators: [
               {
-                indicator: "ivs",
-                target: "c1cbb652-141a-42aa-a2a2-12ca9cf7dcb3",
+                indicator: (i + j) % 5 === 0 ? "ivs" : "idhm",
                 amount: 1,
               },
             ],
             experience: 100,
           },
-        })
-        .map((v, i) => ({
-          ...v,
-          id: i,
-          remote: i % 2 === 0,
-          description:
-            i % 2 ? "walk around and get into the circle" : "click to earn exp",
-          name: `${v.name} ${i}`,
-          expires_at: v.expires_at + 10000000 * i,
-          type: ["trash", "fire", "water", "sewer", "electricity"][
-            Math.floor(Math.random() * 13) % 5
-          ],
           shape: {
             shapeType: "Circle",
-            id: i,
+            id: `circle-${point.geometry.coordinates}`,
             center: {
-              lat: -15.709134792137093 + Math.random() * 0.001,
-              lng: -47.87964955278737 + Math.random() * 0.002,
+              lat: point.geometry.coordinates[1],
+              lng: point.geometry.coordinates[0],
             },
             radius: 75,
           },
         }))
-    );
+      )
+      .flat();
 
     dispatch({
       type: "RETRIEVE_QUESTS",
-      payload: quests,
+      payload: quests ?? [],
     });
   }
 
@@ -119,7 +123,7 @@ export default function QuestsProvider({ children }) {
       return q.remote
         ? {
             ...q,
-            isInside: haversine(ulat, ulng, qlat, qlng) <= q.shape.radius,
+            isUserInside: haversine(ulat, ulng, qlat, qlng) <= q.shape.radius,
           }
         : q;
     });
@@ -132,14 +136,11 @@ export default function QuestsProvider({ children }) {
     }
   }
 
-  const actions = useMemo(
-    () => ({ retrieveQuests, updateUsersNearbyQuests }),
-    []
-  );
+  const actions = useMemo(() => ({ updateUsersNearbyQuests }), []);
 
   const dependentActions = useMemo(
-    () => ({ completeQuest }),
-    [updateExperience, incrementIndicator]
+    () => ({ completeQuest, retrieveQuests }),
+    [updateExperience, incrementIndicator, state.geojson]
   );
 
   return (

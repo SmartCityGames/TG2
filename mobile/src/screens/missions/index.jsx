@@ -1,14 +1,15 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import {
-  Button,
   Center,
   Divider,
   FlatList,
   Flex,
   HStack,
+  IconButton,
   Text,
 } from "native-base";
-import { RefreshControl } from "react-native";
+import { Linking, RefreshControl } from "react-native";
+import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { formatTimeLeft } from "./utils/format-expiration-time";
 
@@ -17,6 +18,10 @@ export default function MissionsScreen() {
     state: { availableQuests, loading },
     actions: { retrieveQuests, completeQuest },
   } = useQuests();
+
+  const {
+    actions: { getPolygonWhichGeometryLies, getUserPosition },
+  } = useUserLocation();
 
   return (
     <Flex flex={1} mt={5}>
@@ -37,9 +42,19 @@ export default function MissionsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Flex>
-            <Text fontSize={28} fontWeight="bold" alignSelf="center" px={3}>
-              {item.name}
-            </Text>
+            <Center px={3}>
+              <Text fontSize={28} fontWeight="bold">
+                {item.name}
+              </Text>
+              <Text fontSize={20} fontWeight="semibold">
+                {
+                  getPolygonWhichGeometryLies({
+                    coordinates: [item.shape.center.lng, item.shape.center.lat],
+                    type: "Point",
+                  }).properties.NM_SUBDIST
+                }
+              </Text>
+            </Center>
             <Flex direction="column" justify="space-around" my={2}>
               <Text px={3} textAlign="justify" color="gray.600">
                 {item.description}
@@ -52,23 +67,28 @@ export default function MissionsScreen() {
                     : "take your time"}
                 </Text>
               </HStack>
-              {!item.remote || item?.isInside ? (
-                <Button
-                  alignSelf="center"
-                  onPress={() => completeQuest(item)}
-                  rounded="lg"
-                  bg="#4DD0E1"
-                  leftIcon={
-                    <FontAwesome name="thumbs-up" size={35} color="#2196F3" />
-                  }
-                >
-                  Complete
-                </Button>
-              ) : (
-                <Text p={3} fontWeight="bold" color="info.400">
-                  ⚠️ Go to the mission area 🏃
-                </Text>
-              )}
+              <Center>
+                {!item.remote || item?.isUserInside ? (
+                  <IconButton
+                    onPress={() => completeQuest(item)}
+                    rounded="full"
+                    icon={
+                      <FontAwesome name="thumbs-up" size={28} color="black" />
+                    }
+                  />
+                ) : (
+                  <IconButton
+                    rounded="full"
+                    icon={<FontAwesome5 name="car" size={28} color="black" />}
+                    onPress={async () => {
+                      const user = await getUserPosition();
+                      Linking.openURL(
+                        `https://www.google.com/maps/dir/?api=1&origin=${user.latitude},${user.longitude}&destination=${item.shape.center.lat},${item.shape.center.lng}&travelmode=walking`
+                      );
+                    }}
+                  />
+                )}
+              </Center>
             </Flex>
           </Flex>
         )}
