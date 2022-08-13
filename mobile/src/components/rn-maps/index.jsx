@@ -24,6 +24,10 @@ export default function RnMaps({ polygons, quests }) {
   } = useUserLocation();
 
   useEffect(() => {
+    center();
+  }, []);
+
+  useEffect(() => {
     if (!state.showQuests) return;
 
     addQuestsMarkers(quests.markers);
@@ -99,6 +103,11 @@ export default function RnMaps({ polygons, quests }) {
       )),
     [polygons, state.showIndicatorForm]
   );
+
+  async function center() {
+    const loc = await getUserPosition();
+    mapRef.current.animateToRegion(loc, 1500);
+  }
 
   return (
     <>
@@ -198,10 +207,7 @@ export default function RnMaps({ polygons, quests }) {
       )}
       {state.showIndicatorForm && <IndicatorForm />}
       <IconButton
-        onPress={async () => {
-          const loc = await getUserPosition();
-          mapRef.current.animateToRegion(loc, 1500);
-        }}
+        onPress={() => center()}
         position="absolute"
         right="3"
         bottom="3"
