@@ -39,6 +39,7 @@ export default function QuestsProvider({ children }) {
   } = useIndicators();
 
   const {
+    actions: { getPolygonWhichGeometryLies },
     state: { geojson },
   } = useUserLocation();
 
@@ -102,7 +103,15 @@ export default function QuestsProvider({ children }) {
     });
 
     updateExperience(rewards.experience);
-    incrementIndicator(rewards.indicators);
+
+    const subdistrictId = getPolygonWhichGeometryLies({
+      coordinates: [quest.shape.center.lng, quest.shape.center.lat],
+      type: "Point",
+    }).properties.ID_SUPABASE;
+
+    incrementIndicator(
+      rewards.indicators.map((i) => ({ ...i, target: subdistrictId }))
+    );
 
     if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
       toast.show({

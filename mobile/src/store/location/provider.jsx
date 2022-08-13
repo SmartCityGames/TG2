@@ -89,19 +89,30 @@ export default function UserLocationProvider({ children }) {
         .from("assets")
         .createSignedUrl("geojson/polygon-subdistrict-2017.geojson", 60);
 
-      const geojsonFile = await fetch(signedURL).then((response) =>
-        response.json()
-      );
+      const [geojsonFile, { data: udhs }] = await Promise.all([
+        fetch(signedURL).then((response) => response.json()),
+        supabase.from("udhs").select(),
+      ]);
 
       const geojson = {
         ...geojsonFile,
-        features: geojsonFile.features.map((feature) => ({
-          ...feature,
-          properties: {
-            ...feature.properties,
-            NM_SUBDIST: sanitizeText(feature.properties.NM_SUBDIST),
-          },
-        })),
+        features: geojsonFile.features.map((feature) => {
+          const sanitizedName = sanitizeText(feature.properties.NM_SUBDIST);
+
+          const udh = udhs.find(
+            (u) =>
+              sanitizeText(u.name).toLowerCase() === sanitizedName.toLowerCase()
+          );
+
+          return {
+            ...feature,
+            properties: {
+              ...feature.properties,
+              NM_SUBDIST: sanitizeText(feature.properties.NM_SUBDIST),
+              ID_SUPABASE: udh.id,
+            },
+          };
+        }),
       };
 
       dispatch({
@@ -160,7 +171,7 @@ export default function UserLocationProvider({ children }) {
   }
 
   function getPolygonWhichGeometryLies(geometry) {
-    return geojsonLookup.getContainers(geometry).features[0];
+    return geojsonLookup?.getContainers(geometry).features[0];
   }
 
   function addQuestsMarkers(quests) {
@@ -202,7 +213,6 @@ export default function UserLocationProvider({ children }) {
     <UserLocationContext.Provider
       value={{
         state,
-        geojsonLookup,
         actions: { ...actions, ...dependentActions },
       }}
     >
