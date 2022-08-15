@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { AppState, Platform } from "react-native";
 import HomeScreen from "../../screens/home";
 import IndicatorsScreen from "../../screens/indicators";
-import MissionsScreen from "../../screens/missions";
 import LoggedProviders from "../../store/combined/logged";
 import Left from "../navbar/left";
 import Middle from "../navbar/middle";
 import Right from "../navbar/right";
+import MissionStack from "./mission-stack";
 import NoLocationPermissions from "./no-location-permissions";
 
 const Tab = createBottomTabNavigator();
@@ -73,7 +73,7 @@ export default function LoggedTabs() {
           options={{
             tabBarIcon: (props) => <FontAwesome name="gamepad" {...props} />,
           }}
-          component={MissionsScreen}
+          component={MissionStack}
         />
         <Tab.Screen
           name="Indicators"

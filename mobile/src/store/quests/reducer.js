@@ -13,6 +13,15 @@ export function questsReducer(state, action) {
         loading: false,
         error: undefined,
       };
+    case "UPDATE_QUEST":
+      return {
+        ...state,
+        availableQuests: state.availableQuests.map((q) =>
+          q.id === action.payload.id ? action.payload.quest : q
+        ),
+        loading: false,
+        error: undefined,
+      };
     case "RETRIEVE_QUESTS":
       return {
         ...state,

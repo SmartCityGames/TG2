@@ -63,8 +63,29 @@ export default function QuestsProvider({ children }) {
               : "click to earn exp",
           name: `complete me - ${i + j}`,
           expires_at: Date.now() - 9812300 + 10000000 * (i + j),
-          type: ["trash", "fire", "water", "sewer", "electricity"][
+          category: ["trash", "fire", "water", "sewer", "electricity"][
             Math.floor(Math.random() * 13) % 5
+          ],
+          steps: [
+            {
+              type: "true/false",
+              values: [
+                "A melhor forma de se livrar de um problema é enfrentá-lo",
+                "Eu não tenho medo de nada",
+              ],
+              answer: [0],
+              completed: false,
+            },
+            {
+              type: "multiple",
+              values: [
+                "A melhor forma de se livrar de um problema é enfrentá-lo",
+                "O medo é o pior inimigo do homem",
+                "A vida é uma caixinha de surpresas",
+              ],
+              answer: [1, 2],
+              completed: false,
+            },
           ],
           rewards: {
             indicators: [
@@ -97,35 +118,45 @@ export default function QuestsProvider({ children }) {
   function completeQuest(quest) {
     const { id, rewards } = quest;
 
-    dispatch({
-      type: "COMPLETE_QUEST",
-      payload: id,
-    });
+    if (quest.steps.every((step) => step.completed)) {
+      dispatch({
+        type: "COMPLETE_QUEST",
+        payload: id,
+      });
 
-    updateExperience(rewards.experience);
+      updateExperience(rewards.experience);
 
-    const subdistrictId = getPolygonWhichGeometryLies({
-      coordinates: [quest.shape.center.lng, quest.shape.center.lat],
-      type: "Point",
-    }).properties.ID_SUPABASE;
+      const subdistrictId = getPolygonWhichGeometryLies({
+        coordinates: [quest.shape.center.lng, quest.shape.center.lat],
+        type: "Point",
+      }).properties.ID_SUPABASE;
 
-    incrementIndicator(
-      rewards.indicators.map((i) => ({ ...i, target: subdistrictId }))
-    );
+      incrementIndicator(
+        rewards.indicators.map((i) => ({ ...i, target: subdistrictId }))
+      );
 
-    if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
-      toast.show({
-        id: TOAST_QUEST_COMPLETED_ID,
-        title: "congrats! 😊",
-        description: "Continue to gain more EXP and rewards",
-        collapsable: true,
-        duration: 2000,
+      if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
+        toast.show({
+          id: TOAST_QUEST_COMPLETED_ID,
+          title: "congrats! 😊",
+          description: "Continue to gain more EXP and rewards",
+          collapsable: true,
+          duration: 2000,
+        });
+      }
+    } else {
+      dispatch({
+        type: "UPDATE_QUEST",
+        payload: {
+          id,
+          quest,
+        },
       });
     }
   }
 
   function updateUsersNearbyQuests(userLoc) {
-    const { latitude: ulat, longitude: ulng } = userLoc.coords;
+    const { latitude: ulat, longitude: ulng } = userLoc;
 
     const quests = state.availableQuests.map((q) => {
       const { lat: qlat, lng: qlng } = q.shape.center;
@@ -149,7 +180,7 @@ export default function QuestsProvider({ children }) {
 
   const dependentActions = useMemo(
     () => ({ completeQuest, retrieveQuests }),
-    [updateExperience, incrementIndicator, state.geojson]
+    [updateExperience, incrementIndicator, getPolygonWhichGeometryLies]
   );
 
   return (

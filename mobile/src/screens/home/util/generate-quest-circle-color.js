@@ -1,5 +1,5 @@
 export function generateQuestCircleColor(quest) {
-  switch (quest.type) {
+  switch (quest.category) {
     case "trash":
       return "#654321";
     case "fire":
