@@ -21,7 +21,10 @@ export function indicatorReducer(state, action) {
 
         nis[idx] = {
           ...indicator,
-          [lowerIndicatorName]: indicator[lowerIndicatorName] + val.amount,
+          [lowerIndicatorName]: Math.min(
+            indicator[lowerIndicatorName] + val.amount,
+            1
+          ),
         };
       }
 

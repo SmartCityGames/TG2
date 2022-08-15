@@ -18,6 +18,7 @@ import { sanitizeText } from "../../utils/sanitize-text";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
+import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -55,7 +56,19 @@ export default function UserLocationProvider({ children }) {
     userLocationReducer,
     userLocationInitialState
   );
+
   const supabase = useSupabase();
+
+  const geojsonLookup = useMemo(
+    () =>
+      state.geojson
+        ? new GeoJsonGeometriesLookup({
+            type: "FeatureCollection",
+            features: state.geojson.features,
+          })
+        : null,
+    [state.geojson]
+  );
 
   //* users already have an icon
   // useEffect(() => {
@@ -76,24 +89,35 @@ export default function UserLocationProvider({ children }) {
         .from("assets")
         .createSignedUrl("geojson/polygon-subdistrict-2017.geojson", 60);
 
-      const geojson = await fetch(signedURL).then((response) =>
-        response.json()
-      );
+      const [geojsonFile, { data: udhs }] = await Promise.all([
+        fetch(signedURL).then((response) => response.json()),
+        supabase.from("udhs").select(),
+      ]);
+
+      const geojson = {
+        ...geojsonFile,
+        features: geojsonFile.features.map((feature) => {
+          const sanitizedName = sanitizeText(feature.properties.NM_SUBDIST);
+
+          const udh = udhs.find(
+            (u) =>
+              sanitizeText(u.name).toLowerCase() === sanitizedName.toLowerCase()
+          );
+
+          return {
+            ...feature,
+            properties: {
+              ...feature.properties,
+              NM_SUBDIST: sanitizeText(feature.properties.NM_SUBDIST),
+              ID_SUPABASE: udh.id,
+            },
+          };
+        }),
+      };
 
       dispatch({
         type: "LOAD_GEOJSON",
-        payload: {
-          ...geojson,
-          features: geojson.features.map((feature) => {
-            return {
-              ...feature,
-              properties: {
-                ...feature.properties,
-                NM_SUBDIST: sanitizeText(feature.properties.NM_SUBDIST),
-              },
-            };
-          }),
-        },
+        payload: geojson,
       });
     }
 
@@ -108,16 +132,10 @@ export default function UserLocationProvider({ children }) {
       if (!ok) return;
 
       subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 1000 },
+        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 3000 },
         (_loc) => {
-          // const domain = locationObjectToLiteral(loc);
-          // console.log({ domain });
-          // dispatch({
-          //   type: "UPDATE_POS",
-          //   payload: domain,
-          // });
-          // this leads to high memory consumption
-          // retrieveQuests(domain);
+          dispatch({ type: "FAKE_UPDATE_NEARBY_QUESTS" });
+          // updateUsersNearbyQuests(loc);
         }
       );
     }
@@ -152,6 +170,10 @@ export default function UserLocationProvider({ children }) {
     // return region;
   }
 
+  function getPolygonWhichGeometryLies(geometry) {
+    return geojsonLookup?.getContainers(geometry).features[0];
+  }
+
   function addQuestsMarkers(quests) {
     dispatch({
       type: "ADD_QUESTS_MARKERS",
@@ -182,8 +204,18 @@ export default function UserLocationProvider({ children }) {
     []
   );
 
+  const dependentActions = useMemo(
+    () => ({ getPolygonWhichGeometryLies }),
+    [state.geojson]
+  );
+
   return (
-    <UserLocationContext.Provider value={{ state, actions }}>
+    <UserLocationContext.Provider
+      value={{
+        state,
+        actions: { ...actions, ...dependentActions },
+      }}
+    >
       {children}
     </UserLocationContext.Provider>
   );

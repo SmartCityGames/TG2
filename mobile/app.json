@@ -34,7 +34,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yuriserka.mobile"
+      "package": "com.yuriserka.mobile",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDtbPnRIXbOOpsvEQ-a6nrLnZSjofObpXc"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

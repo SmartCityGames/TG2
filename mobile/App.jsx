@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
@@ -23,7 +23,11 @@ export default function App() {
           Asset.fromModule(image).downloadAsync()
         );
 
-        await Promise.all([Font.loadAsync(FontAwesome.font), ...cacheImages]);
+        await Promise.all([
+          Font.loadAsync(FontAwesome.font),
+          Font.loadAsync(FontAwesome5.font),
+          ...cacheImages,
+        ]);
       } catch (error) {
         console.warn({ error });
       } finally {

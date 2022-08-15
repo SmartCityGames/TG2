@@ -49,7 +49,8 @@ export default function HomeScreen() {
         ...shape,
         color: generateGreenRedGradientColors({
           percentage: shape.indicators[0][selectedIndicator],
-          order: INDICATORS_LABELS[selectedIndicator].order,
+          maxHue: 120 * +(INDICATORS_LABELS[selectedIndicator].order === "RG"),
+          minHue: 120 * +(INDICATORS_LABELS[selectedIndicator].order !== "RG"),
         }),
       }))
     );
