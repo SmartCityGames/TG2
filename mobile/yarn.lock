@@ -4284,6 +4284,11 @@ expo-leaflet@^1.0.3:
     lodash.isequal "^4.5.0"
     react-leaflet "^3.2.0"
 
+expo-linear-gradient@~11.3.0:
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-11.3.0.tgz#855f470c9684f5b979c3c1be0ed1fe1943d57158"
+  integrity sha512-gm0cULqE5cTP39HZHi+eCGgQ2qMcwym92DwSzRpA5nA4Ah5oKksV+PwD7zzo6YJt3X3lgqrTYEqts9VQISCTgw==
+
 expo-location@~14.2.2:
   version "14.2.2"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-14.2.2.tgz#5797f52be4e990b25e00bf6341be0c573c1393c1"
@@ -7083,7 +7088,7 @@ react-native-screens@~3.11.1:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-svg@^12.3.0:
+react-native-svg@12.3.0:
   version "12.3.0"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.3.0.tgz#40f657c5d1ee366df23f3ec8dae76fd276b86248"
   integrity sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==

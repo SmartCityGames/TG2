@@ -8,6 +8,7 @@ import {
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useSupabase } from "../supabase/provider";
 import { indicatorReducer } from "./reducer";
+import { INDICATORS_LABELS } from "./utils/indicators-labels";
 
 const indicatorInitialState = {
   indicators: undefined,
@@ -21,17 +22,6 @@ const IndicatorsContext = createContext({
 });
 
 export const useIndicators = () => useContext(IndicatorsContext);
-
-export const INDICATORS_LABELS = {
-  idhm: {
-    description: "Municipal Human Development Indicator",
-    order: "RG",
-  },
-  ivs: {
-    description: "Social Vulnerability Indicator",
-    order: "GR",
-  },
-};
 
 export default function IndicatorsProvider({ children }) {
   const [state, dispatch] = useReducer(indicatorReducer, indicatorInitialState);
@@ -51,10 +41,19 @@ export default function IndicatorsProvider({ children }) {
     )
   `);
 
+    const indicators = data.map((i) => ({
+      id: i.id,
+      udh: i.udhs.name,
+      udhs: undefined,
+      ...Object.keys(i)
+        .filter((j) => !!INDICATORS_LABELS[j])
+        .reduce((acc, curr) => ({ ...acc, [curr]: i[curr] }), {}),
+    }));
+
     dispatch({
       type: "LOAD_IVS_INDICATORS",
       payload: {
-        data: data.map((d) => ({ ...d, udh: d.udhs.name, udhs: undefined })),
+        data: indicators,
       },
     });
   }

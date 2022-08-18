@@ -35,10 +35,13 @@ export default function IndicatorForm() {
       position="absolute"
       right="12"
       top="40"
-      w={"3/6"}
+      w={"4/6"}
       maxH={"md"}
       mt={5}
       px={2}
+      bg={"white"}
+      p={3}
+      rounded="lg"
     >
       <DebounceInput
         value={search}
