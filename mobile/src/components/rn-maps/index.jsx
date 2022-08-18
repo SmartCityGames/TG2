@@ -12,7 +12,8 @@ import MapView, {
   UrlTile,
 } from "react-native-maps";
 import { useIndicators } from "../../store/indicators/provider";
-import { SOCIAL_PROSPERITY_MAPPER } from "../../store/indicators/utils/indicators-labels";
+import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
+import { renderSelectedIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
 import { useUserLocation } from "../../store/location/provider";
 import IndicatorForm from "./utils/indicator-form";
 import { mapInitialState, mapReducer } from "./utils/reducer";
@@ -148,14 +149,8 @@ export default function RnMaps({ polygons, quests }) {
           x.map((v) => hsl2rgb(v.color.substring(5).split(",")[0], 1, 0.5))
         ),
       ],
-      min:
-        selectedIndicator === "prosp_soc"
-          ? SOCIAL_PROSPERITY_MAPPER[(Math.floor(min) * 10).toFixed(0)]
-          : min,
-      max:
-        selectedIndicator === "prosp_soc"
-          ? SOCIAL_PROSPERITY_MAPPER[(Math.floor(max) * 10).toFixed(0)]
-          : max,
+      min: renderSelectedIndicatorValue(selectedIndicator, min),
+      max: renderSelectedIndicatorValue(selectedIndicator, max),
     };
   }, [polygons, selectedIndicator]);
 
@@ -260,7 +255,7 @@ export default function RnMaps({ polygons, quests }) {
           }
         />
       )}
-      {state.showIndicatorForm && <IndicatorForm />}
+      {state.showIndicatorForm && <IndicatorForm dispatch={dispatch} />}
       <IconButton
         onPress={() => center()}
         position="absolute"
@@ -271,34 +266,47 @@ export default function RnMaps({ polygons, quests }) {
       />
 
       {!!state.showDistricts && (
-        <Flex
-          position={"absolute"}
-          alignSelf={"center"}
-          bottom={"3"}
-          rounded="full"
-          direction="row"
-          justify="space-between"
-          align="center"
-          px={3}
-          w="1/2"
-          borderColor="black"
-          borderWidth={1}
-          bg={{
-            linearGradient: {
-              colors: scale.colors,
-              start: [0, 0],
-              end: [1, 1],
-            },
-          }}
-          h={"10"}
-        >
-          <Text fontWeight="bold" alignSelf="center">
-            {scale.min}
+        <>
+          <Text
+            position="absolute"
+            alignSelf="center"
+            bottom="12"
+            mb={1}
+            fontWeight="bold"
+            fontSize={15}
+            textTransform="capitalize"
+          >
+            {INDICATORS_LABELS[selectedIndicator].description_short}
           </Text>
-          <Text fontWeight="bold" alignSelf="center">
-            {scale.max}
-          </Text>
-        </Flex>
+          <Flex
+            position="absolute"
+            alignSelf="center"
+            bottom="3"
+            rounded="full"
+            direction="row"
+            justify="space-between"
+            align="center"
+            px={3}
+            w="1/2"
+            borderColor="black"
+            borderWidth={1}
+            bg={{
+              linearGradient: {
+                colors: scale.colors,
+                start: [0, 0],
+                end: [1, 1],
+              },
+            }}
+            h={"10"}
+          >
+            <Text fontWeight="semibold" alignSelf="center">
+              {scale.min}
+            </Text>
+            <Text fontWeight="semibold" alignSelf="center">
+              {scale.max}
+            </Text>
+          </Flex>
+        </>
       )}
     </>
   );

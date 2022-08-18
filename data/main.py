@@ -73,6 +73,7 @@ indicator_values = mean_indicators[mean_indicators.columns.difference(["udh"])]
 
 indicator_values["t_vulner"] = indicator_values["t_vulner"].apply(lambda x: x / 100)
 indicator_values["t_sem_lixo"] = indicator_values["t_sem_lixo"].apply(lambda x: x / 100)
+indicator_values["t_sem_agua_esgoto"] = indicator_values["t_sem_agua_esgoto"].apply(lambda x: x / 100)
 indicator_values["espvida"] = indicator_values["espvida"].apply(np.ceil)
 
 min_indicators_prosp_soc = indicator_values["prosp_soc"].min()

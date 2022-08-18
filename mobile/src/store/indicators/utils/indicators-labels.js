@@ -166,6 +166,7 @@ export const INDICATORS_LABELS = {
     description_long:
       "Ratio between the number of people living in households whose water supply does not come from the general network and whose sanitary sewage is not carried out by a sewage collection network or septic tank, and the total population residing in permanent private households, multiplied by 100. only permanent private households are considered.",
     order: "GR",
+    unit: "%",
   },
   t_sem_lixo: {
     description_short: "without garbage index",

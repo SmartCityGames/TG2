@@ -50,10 +50,31 @@ export default function IndicatorsProvider({ children }) {
         .reduce((acc, curr) => ({ ...acc, [curr]: i[curr] }), {}),
     }));
 
+    const espvida = indicators.map((i) => i.espvida);
+    const renda_per_capita = indicators.map((i) => i.renda_per_capita);
+
+    const espvidaMax = Math.max(...espvida);
+    const espvidaMin = Math.min(...espvida);
+    const rendaPerCapitaMax = Math.max(...renda_per_capita);
+    const rendaPerCapitaMin = Math.min(...renda_per_capita);
+
+    const espvida_normal = espvida.map(
+      (x) => (x - espvidaMin) / (espvidaMax - espvidaMin)
+    );
+    const renda_per_capita_normal = renda_per_capita.map(
+      (x) => (x - rendaPerCapitaMin) / (rendaPerCapitaMax - rendaPerCapitaMin)
+    );
+
+    const indicatorsNormalized = indicators.map((i, idx) => ({
+      ...i,
+      espvida_normal: espvida_normal[idx],
+      renda_per_capita_normal: renda_per_capita_normal[idx],
+    }));
+
     dispatch({
       type: "LOAD_IVS_INDICATORS",
       payload: {
-        data: indicators,
+        data: indicatorsNormalized,
       },
     });
   }

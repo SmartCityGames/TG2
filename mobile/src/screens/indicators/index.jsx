@@ -16,10 +16,8 @@ import { useEffect, useRef, useState } from "react";
 import { RefreshControl } from "react-native";
 import DebounceInput from "react-native-debounce-input";
 import { useIndicators } from "../../store/indicators/provider";
-import {
-  INDICATORS_LABELS,
-  SOCIAL_PROSPERITY_MAPPER,
-} from "../../store/indicators/utils/indicators-labels";
+import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
+import { renderIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
 import { sanitizeText } from "../../utils/sanitize-text";
 
 export default function IndicatorsScreen({ route }) {
@@ -44,26 +42,6 @@ export default function IndicatorsScreen({ route }) {
           iv.udh.toLowerCase().includes(search.toLowerCase())
         )
       : indicators;
-
-  function renderIndicatorValue(district, indicator) {
-    const value = Number(district[indicator]);
-    switch (indicator) {
-      case "prosp_soc":
-        return SOCIAL_PROSPERITY_MAPPER[(Math.floor(value) * 10).toFixed(0)];
-      case "renda_per_capita":
-        return `${INDICATORS_LABELS[indicator].unit} ${value.toFixed(2)}`;
-      case "t_sem_lixo":
-        return `${(value * 100).toFixed(2)} ${
-          INDICATORS_LABELS[indicator].unit
-        }`;
-      case "espvida":
-        return `${value.toFixed(0)} ${INDICATORS_LABELS[indicator].unit} `;
-      default:
-        return `${value.toFixed(2)} ${
-          INDICATORS_LABELS[indicator].unit ?? ""
-        }`.trim();
-    }
-  }
 
   return (
     <Flex flex={1} mt={5}>

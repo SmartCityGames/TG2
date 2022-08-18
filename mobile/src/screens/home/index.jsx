@@ -45,11 +45,18 @@ export default function HomeScreen() {
       features: [f],
     }));
 
+    const showNormal = ["espvida", "renda_per_capita"].includes(
+      selectedIndicator
+    );
+
     setPolygons(
       parsedShapes.map((shape, _i) => ({
         ...shape,
         color: generateGreenRedGradientColors({
-          percentage: shape.indicators[selectedIndicator],
+          percentage:
+            shape.indicators[
+              `${selectedIndicator}${showNormal ? "_normal" : ""}`
+            ],
           maxHue: 120 * +(INDICATORS_LABELS[selectedIndicator].order === "RG"),
           minHue: 120 * +(INDICATORS_LABELS[selectedIndicator].order !== "RG"),
         }),
