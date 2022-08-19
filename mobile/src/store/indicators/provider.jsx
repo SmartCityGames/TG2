@@ -8,6 +8,8 @@ import {
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useSupabase } from "../supabase/provider";
 import { indicatorReducer } from "./reducer";
+import { INDICATORS_LABELS } from "./utils/indicators-labels";
+import { minMaxNormalization } from "./utils/min-max-normal";
 
 const indicatorInitialState = {
   indicators: undefined,
@@ -21,17 +23,6 @@ const IndicatorsContext = createContext({
 });
 
 export const useIndicators = () => useContext(IndicatorsContext);
-
-export const INDICATORS_LABELS = {
-  idhm: {
-    description: "Municipal Human Development Indicator",
-    order: "RG",
-  },
-  ivs: {
-    description: "Social Vulnerability Indicator",
-    order: "GR",
-  },
-};
 
 export default function IndicatorsProvider({ children }) {
   const [state, dispatch] = useReducer(indicatorReducer, indicatorInitialState);
@@ -51,10 +42,38 @@ export default function IndicatorsProvider({ children }) {
     )
   `);
 
+    const indicators = data.map((i) => ({
+      id: i.id,
+      udh: i.udhs.name,
+      udhs: undefined,
+      ...Object.keys(i)
+        .filter((j) => !!INDICATORS_LABELS[j])
+        .reduce((acc, curr) => ({ ...acc, [curr]: i[curr] }), {}),
+    }));
+
+    const espvida_normal = minMaxNormalization(
+      indicators.map((i) => i.espvida)
+    );
+
+    const renda_per_capita_normal = minMaxNormalization(
+      indicators.map((i) => i.renda_per_capita)
+    );
+
+    const prosp_soc_normal = minMaxNormalization(
+      indicators.map((i) => i.prosp_soc)
+    );
+
+    const indicatorsNormalized = indicators.map((i, idx) => ({
+      ...i,
+      espvida_normal: espvida_normal[idx],
+      renda_per_capita_normal: renda_per_capita_normal[idx],
+      prosp_soc_normal: prosp_soc_normal[idx],
+    }));
+
     dispatch({
       type: "LOAD_IVS_INDICATORS",
       payload: {
-        data: data.map((d) => ({ ...d, udh: d.udhs.name, udhs: undefined })),
+        data: indicatorsNormalized,
       },
     });
   }

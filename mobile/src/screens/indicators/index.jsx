@@ -1,3 +1,4 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   Box,
   Center,
@@ -5,16 +6,18 @@ import {
   FlatList,
   Flex,
   Heading,
+  HStack,
+  IconButton,
+  Popover,
   Text,
   VStack,
 } from "native-base";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshControl } from "react-native";
 import DebounceInput from "react-native-debounce-input";
-import {
-  INDICATORS_LABELS,
-  useIndicators,
-} from "../../store/indicators/provider";
+import { useIndicators } from "../../store/indicators/provider";
+import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
+import { renderIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
 import { sanitizeText } from "../../utils/sanitize-text";
 
 export default function IndicatorsScreen({ route }) {
@@ -23,6 +26,7 @@ export default function IndicatorsScreen({ route }) {
     actions: { retrieveIndicators },
   } = useIndicators();
   const [search, setSearch] = useState("");
+  const initialFocusRef = useRef(null);
 
   useEffect(() => {
     setSearch("");
@@ -40,27 +44,29 @@ export default function IndicatorsScreen({ route }) {
       : indicators;
 
   return (
-    <Flex align={"center"} flex={1} mt={5}>
-      <DebounceInput
-        value={search}
-        defaultValue=""
-        returnKeyType="search"
-        keyboardType="default"
-        minLength={1}
-        placeholder={search.length > 0 ? search : "search your district"}
-        delayTimeout={500}
-        clearButtonMode="while-editing"
-        onChangeText={(v) => setSearch(sanitizeText(v))}
-        style={{
-          marginTop: 6,
-          padding: 10,
-          backgroundColor: "white",
-          borderRadius: 12,
-          width: "86%",
-          borderWidth: 1,
-          borderColor: "#ccc",
-        }}
-      />
+    <Flex flex={1} mt={5}>
+      <Center>
+        <DebounceInput
+          value={search}
+          defaultValue=""
+          returnKeyType="search"
+          keyboardType="default"
+          minLength={1}
+          placeholder={search.length > 0 ? search : "search your district"}
+          delayTimeout={500}
+          clearButtonMode="while-editing"
+          onChangeText={(v) => setSearch(sanitizeText(v))}
+          style={{
+            marginTop: 6,
+            padding: 10,
+            backgroundColor: "white",
+            borderRadius: 12,
+            width: "86%",
+            borderWidth: 1,
+            borderColor: "#ccc",
+          }}
+        />
+      </Center>
       <FlatList
         data={filteredIvs}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -77,7 +83,7 @@ export default function IndicatorsScreen({ route }) {
         }
         keyExtractor={(item) => item.udh}
         renderItem={({ item }) => (
-          <Center my={1} mx={2}>
+          <Center my={1} mx={3}>
             <Heading
               fontSize={24}
               fontWeight="bold"
@@ -90,11 +96,38 @@ export default function IndicatorsScreen({ route }) {
               {Object.keys(item).map((value) =>
                 !INDICATORS_LABELS[value] ? null : (
                   <Box key={`${item.udh}-${value}`} textAlign="justify">
-                    <Text fontSize={14} fontWeight="semibold">
-                      {INDICATORS_LABELS[value].description}:
-                    </Text>
-                    <Text textAlign="justify" color="gray.600">
-                      {item[value]}
+                    <HStack alignItems="center">
+                      <Text fontSize={14} fontWeight="semibold">
+                        {INDICATORS_LABELS[value].description_short}:
+                      </Text>
+                      <Popover
+                        initialFocusRef={initialFocusRef}
+                        trigger={(triggerProps) => (
+                          <IconButton
+                            {...triggerProps}
+                            rounded="full"
+                            icon={
+                              <FontAwesome
+                                name="info-circle"
+                                color="#446677"
+                                size={15}
+                              />
+                            }
+                          />
+                        )}
+                      >
+                        <Popover.Content w="56">
+                          <Popover.Arrow />
+                          <Popover.CloseButton />
+                          <Popover.Header>{value}</Popover.Header>
+                          <Popover.Body>
+                            {INDICATORS_LABELS[value].description_long}
+                          </Popover.Body>
+                        </Popover.Content>
+                      </Popover>
+                    </HStack>
+                    <Text textAlign="justify" color="gray.600" ml={10}>
+                      {renderIndicatorValue(item, value)}
                     </Text>
                   </Box>
                 )
