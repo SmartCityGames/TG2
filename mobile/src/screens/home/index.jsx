@@ -45,7 +45,7 @@ export default function HomeScreen() {
       features: [f],
     }));
 
-    const showNormal = ["espvida", "renda_per_capita"].includes(
+    const showNormal = ["espvida", "renda_per_capita", "prosp_soc"].includes(
       selectedIndicator
     );
 

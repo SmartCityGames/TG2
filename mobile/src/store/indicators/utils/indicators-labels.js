@@ -1,8 +1,9 @@
 export const SOCIAL_PROSPERITY_MAPPER = {
-  0: "Low",
+  1: "Very ow",
+  2: "Low",
   3: "Medium",
-  6: "High",
-  10: "Very High",
+  4: "High",
+  5: "Very High",
 };
 
 export const INDICATORS_LABELS = {

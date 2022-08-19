@@ -11,7 +11,7 @@ export function renderSelectedIndicatorValue(selected, num) {
   const value = Number(num);
   switch (selected) {
     case "prosp_soc":
-      return SOCIAL_PROSPERITY_MAPPER[(Math.floor(value) * 10).toFixed(0)];
+      return SOCIAL_PROSPERITY_MAPPER[value];
     case "renda_per_capita":
       return `${INDICATORS_LABELS[selected].unit} ${value.toFixed(2)}`;
     case "t_sem_lixo":
