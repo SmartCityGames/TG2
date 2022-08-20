@@ -24,6 +24,7 @@
     "@nestjs/schedule": "^2.1.0",
     "@nestjs/serve-static": "^3.0.0",
     "@supabase/supabase-js": "^1.35.6",
+    "date-fns": "^2.29.2",
     "random-points-on-polygon": "^0.0.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

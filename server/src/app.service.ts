@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { addDays, addHours } from 'date-fns';
 import * as randomPointsInPolygons from 'random-points-on-polygon';
 import { firstValueFrom, map } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,11 +19,23 @@ export class AppService {
   ) {}
 
   @Cron(CronExpression.EVERY_10_MINUTES)
-  handleCron() {
-    this.generateRandomQuests().then((quests) => {
-      this.logger.debug({ quests });
-      this.logger.debug('update database');
-    });
+  async handleCron() {
+    const quests = await this.generateRandomQuests();
+
+    this.logger.debug({ quests });
+
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('quests')
+      .insert(quests, {
+        returning: 'representation',
+      });
+
+    if (error) {
+      this.logger.error(`fail to insert with cause: ${error.message}`);
+    } else {
+      this.logger.debug(`quests database updated`);
+    }
   }
 
   private async getGeojson() {
@@ -39,11 +52,19 @@ export class AppService {
   private async generateRandomQuests() {
     const geojson = await this.getGeojson();
 
+    const today = new Date();
+
     return geojson.features
       .map((feature) =>
         (randomPointsInPolygons(1, feature) as Point[]).map((point, i) => ({
           id: uuidv4(),
           ...questions[i],
+          expires_at:
+            questions[i].expires_at === 'ONE_DAY'
+              ? addDays(today, 1)
+              : questions[i].expires_at === 'ONE_HOUR'
+              ? addHours(today, 1)
+              : null,
           shape: {
             shapeType: 'Circle',
             id: `circle-${point.geometry.coordinates}`,

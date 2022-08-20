@@ -1,6 +1,7 @@
 export interface Quest {
   remote: boolean;
   description: string;
+  source?: string;
   name: string;
   expires_at: 'NEVER' | 'ONE_DAY' | 'ONE_HOUR';
   category: 'trash' | 'fire' | 'water' | 'sewer' | 'electricity' | string;
