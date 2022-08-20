@@ -1,8 +1,7 @@
 import { useNetInfo } from "@react-native-community/netinfo";
-import { Center } from "native-base";
 import { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import LoadingInterceptor from "../../components/loading/loading-interceptor";
 import RnMaps from "../../components/rn-maps";
 import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
@@ -17,19 +16,16 @@ export default function HomeScreen() {
   const [polygons, setPolygons] = useState([]);
   const [questShapes, setQuestShapes] = useState([]);
   const [questMarkers, setQuestMarkers] = useState([]);
+
   const { isConnected } = useNetInfo();
   const {
-    state: { selectedIndicator },
-  } = useIndicators();
-
-  const {
-    state: { loading: loadingLoc, geojson },
+    state: { geojson },
   } = useUserLocation();
   const {
-    state: { loading: loadingQuests, availableQuests },
+    state: { availableQuests },
   } = useQuests();
   const {
-    state: { loading: loadingIndicators, indicators },
+    state: { indicators, selectedIndicator },
   } = useIndicators();
 
   useEffect(() => {
@@ -84,33 +80,20 @@ export default function HomeScreen() {
     );
   }, [availableQuests, isConnected]);
 
-  const allDataReady = [
-    !loadingLoc,
-    !loadingQuests,
-    !loadingIndicators,
-    polygons.length,
-    questShapes,
-    questMarkers,
-  ].every((v) => v);
-
-  if (!allDataReady) {
-    return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" />
-      </Center>
-    );
-  }
-
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
       {/* <LeafletWebviewMap
         polygons={polygons}
         quests={{ markers: questMarkers, shapes: questShapes }}
       /> */}
-      <RnMaps
-        polygons={polygons}
-        quests={{ markers: questMarkers, shapes: questShapes }}
-      />
+      <LoadingInterceptor
+        extra={[!polygons.length, !questMarkers.length, !questShapes.length]}
+      >
+        <RnMaps
+          polygons={polygons}
+          quests={{ markers: questMarkers, shapes: questShapes }}
+        />
+      </LoadingInterceptor>
     </SafeAreaView>
   );
 }

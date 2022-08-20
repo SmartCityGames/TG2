@@ -17,14 +17,7 @@ export default function IndicatorForm({ dispatch }) {
 
   const indicatorsIndicators =
     Object.keys(indicators?.[0] ?? {})?.filter(
-      (i) =>
-        ![
-          "id",
-          "udhs",
-          "udh",
-          "espvida_normal",
-          "renda_per_capita_normal",
-        ].includes(i)
+      (i) => !["id", "udhs", "udh"].includes(i) && !i.includes("_normal")
     ) ?? [];
 
   const filteredIndicators = [

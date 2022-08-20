@@ -234,7 +234,7 @@ export default function RnMaps({ polygons, quests }) {
           }
         />
       )}
-      {!!polygons?.length && (
+      {state.showDistricts && (
         <IconButton
           onPress={() =>
             dispatch({

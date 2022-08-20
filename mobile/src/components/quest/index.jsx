@@ -1,15 +1,28 @@
 import { useNavigation } from "@react-navigation/native";
-import { Button, Center, Checkbox, Radio, Text } from "native-base";
+import {
+  Button,
+  Heading,
+  ScrollView,
+  Text,
+  useToast,
+  VStack,
+} from "native-base";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuests } from "../../store/quests/provider";
-import AsyncAlert from "../utils/AsyncAlert";
 import { isArrayEquals } from "./utils/array-equality";
+import Options from "./utils/options";
+
+const TOAST_STEP_ANSWER_ID = "TOAST_STEP_ANSWER_ID";
+
+const NOTHING_SELECTED = [-1];
 
 export default function Quest({ route }) {
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState(NOTHING_SELECTED);
 
   const { goBack } = useNavigation();
+
   const { id } = route.params;
 
   const {
@@ -17,8 +30,14 @@ export default function Quest({ route }) {
     actions: { completeQuest },
   } = useQuests();
 
+  const toast = useToast();
+
   const quest = availableQuests.find((q) => q.id === id);
   const actualStep = quest?.steps?.find((step) => !step.completed);
+
+  useEffect(() => {
+    console.log({ selectedOptions });
+  }, [selectedOptions]);
 
   useEffect(() => {
     if (!quest) {
@@ -29,67 +48,45 @@ export default function Quest({ route }) {
   async function handleAnswer() {
     let correct = false;
     switch (actualStep.type) {
-      case "menu":
-      case "multiple":
+      case "multiple_choice":
         correct = isArrayEquals(actualStep.answer, selectedOptions);
         break;
-      case "true/false":
+      case "one_choice":
         correct = actualStep.answer.every((ans) =>
           selectedOptions.includes(ans)
         );
         break;
     }
     if (correct) {
-      completeQuest({
+      const updated = {
         ...quest,
         steps: [...quest.steps.slice(1), { ...actualStep, completed: true }],
-      });
-      setSelectedOptions([]);
-    } else {
-      await AsyncAlert("Incorrect answer", "Please Try again");
-    }
-  }
+      };
 
-  function renderOptions() {
-    switch (actualStep.type) {
-      case "menu":
-      case "multiple":
-        return (
-          <>
-            <Text fontWeight={"bold"} fontSize={28}>
-              Select all aplicable answers:
-            </Text>
-            <Checkbox.Group
-              value={selectedOptions}
-              onChange={setSelectedOptions}
-              accessibilityLabel="choose the correct answers"
-            >
-              {actualStep.values.map((v, i) => (
-                <Checkbox key={v} value={i}>
-                  {v}
-                </Checkbox>
-              ))}
-            </Checkbox.Group>
-          </>
-        );
-      case "true/false":
-        return (
-          <>
-            <Text fontWeight={"bold"} fontSize={28}>
-              Select the correct answer:
-            </Text>
-            <Radio.Group
-              onChange={(next) => setSelectedOptions([next])}
-              accessibilityLabel="choose the correct answer"
-            >
-              {actualStep.values.map((v, i) => (
-                <Radio key={v} value={i}>
-                  {v}
-                </Radio>
-              ))}
-            </Radio.Group>
-          </>
-        );
+      const someNotCompleted = updated.steps.some((step) => !step.completed);
+
+      if (someNotCompleted && !toast.isActive(TOAST_STEP_ANSWER_ID)) {
+        toast.show({
+          id: TOAST_STEP_ANSWER_ID,
+          title: "good job! 😊",
+          description: "moving to the next step",
+          collapsable: true,
+          duration: 2000,
+          bg: "green.500",
+        });
+      }
+
+      completeQuest(updated);
+      setSelectedOptions(NOTHING_SELECTED);
+    } else {
+      toast.show({
+        id: TOAST_STEP_ANSWER_ID,
+        title: "ops... something is wrong! 😔",
+        description: "please try again",
+        collapsable: true,
+        duration: 3000,
+        bg: "danger.500",
+      });
     }
   }
 
@@ -98,15 +95,30 @@ export default function Quest({ route }) {
   }
 
   return (
-    <Center flex={1}>
-      <Center space={3}>
-        <Text fontSize={28} fontWeight="bold">
-          {quest.name}
-        </Text>
-        <Text fontSize={18}>{quest.description}</Text>
-      </Center>
-      <Center flex={0.9}>{renderOptions()}</Center>
-      <Button onPress={() => handleAnswer()}>Submit your choices</Button>
-    </Center>
+    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
+      <ScrollView px={4} mt={5}>
+        <VStack space={3}>
+          <Heading fontSize={28} fontWeight="bold" textAlign="center">
+            {quest.name}
+          </Heading>
+          <Text fontSize={14} textAlign="justify">
+            {quest.description}
+          </Text>
+          <Options
+            selectedOptions={selectedOptions}
+            setSelectedOptions={setSelectedOptions}
+            type={actualStep.type}
+            choices={actualStep.choices}
+          />
+        </VStack>
+        <Button
+          isDisabled={!selectedOptions.length}
+          my="6"
+          onPress={() => handleAnswer()}
+        >
+          Submit your choices
+        </Button>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
