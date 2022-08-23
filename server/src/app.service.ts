@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { questions } from './questions/bank';
 import { Supabase } from './supabase';
 import { Geojson, Point } from './types';
+import { uniqueRandomArray } from './utils/unique-random-array';
 
 @Injectable()
 export class AppService {
@@ -24,7 +25,7 @@ export class AppService {
 
     this.logger.debug({ quests });
 
-    const { data, error } = await this.supabase
+    const { error } = await this.supabase
       .getClient()
       .from('quests')
       .insert(quests, {
@@ -54,27 +55,32 @@ export class AppService {
 
     const today = new Date();
 
+    const randomQuestGenerator = uniqueRandomArray(questions);
+
     return geojson.features
       .map((feature) =>
-        (randomPointsInPolygons(1, feature) as Point[]).map((point, i) => ({
-          id: uuidv4(),
-          ...questions[i],
-          expires_at:
-            questions[i].expires_at === 'ONE_DAY'
-              ? addDays(today, 1)
-              : questions[i].expires_at === 'ONE_HOUR'
-              ? addHours(today, 1)
-              : null,
-          shape: {
-            shapeType: 'Circle',
-            id: `circle-${point.geometry.coordinates}`,
-            center: {
-              lat: point.geometry.coordinates[1],
-              lng: point.geometry.coordinates[0],
+        (randomPointsInPolygons(1, feature) as Point[]).map((point) => {
+          const quest = randomQuestGenerator();
+          return {
+            id: uuidv4(),
+            ...quest,
+            expires_at:
+              quest.expires_at === 'ONE_DAY'
+                ? addDays(today, 1)
+                : quest.expires_at === 'ONE_HOUR'
+                ? addHours(today, 1)
+                : null,
+            shape: {
+              shapeType: 'Circle',
+              id: `circle-${point.geometry.coordinates}`,
+              center: {
+                lat: point.geometry.coordinates[1],
+                lng: point.geometry.coordinates[0],
+              },
+              radius: 75,
             },
-            radius: 75,
-          },
-        })),
+          };
+        }),
       )
       .flat();
   }
