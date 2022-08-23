@@ -2,7 +2,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, IconButton, Text } from "native-base";
 import { useEffect, useMemo, useReducer, useRef } from "react";
-import { Alert } from "react-native";
 import MapView, {
   Circle,
   Geojson,
@@ -15,25 +14,9 @@ import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { renderSelectedIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
 import { useUserLocation } from "../../store/location/provider";
+import { hsl2rgb } from "./utils/hsl-2-rgb";
 import IndicatorForm from "./utils/indicator-form";
 import { mapInitialState, mapReducer } from "./utils/reducer";
-
-const rgb2hex = (r, g, b) =>
-  `#${[r, g, b]
-    .map((x) =>
-      Math.round(x * 255)
-        .toString(16)
-        .padStart(2, 0)
-    )
-    .join("")}`;
-
-function hsl2rgb(h, s, l) {
-  const a = s * Math.min(l, 1 - l);
-  const f = (n, k = (n + h / 30) % 12) =>
-    l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-
-  return rgb2hex(...[f(0), f(8), f(4)]);
-}
 
 export default function RnMaps({ polygons, quests }) {
   const mapRef = useRef(null);
@@ -87,9 +70,6 @@ export default function RnMaps({ polygons, quests }) {
             latitude: m.position.lat,
             longitude: m.position.lng,
           }}
-          onPress={() => {
-            Alert.alert(`this is ${m.id}`);
-          }}
         />
       )),
       shapes: quests.shapes.map((s) => (
@@ -138,7 +118,6 @@ export default function RnMaps({ polygons, quests }) {
         color: p.color,
       }))
       .sort((a, b) => a.val - b.val);
-    // .filter((v, i, a) => (a?.[i + 1]?.val ?? 0) - v.val > 0.00001);
 
     const min = parseFloat(x[0].val).toFixed(2);
     const max = parseFloat(x[x.length - 1].val).toFixed(2);

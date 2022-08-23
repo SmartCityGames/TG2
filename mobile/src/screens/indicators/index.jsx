@@ -26,7 +26,9 @@ export default function IndicatorsScreen({ route }) {
     state: { indicators, loading },
     actions: { retrieveIndicators },
   } = useIndicators();
+
   const [search, setSearch] = useState("");
+
   const initialFocusRef = useRef(null);
 
   useEffect(() => {

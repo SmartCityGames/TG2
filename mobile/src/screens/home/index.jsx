@@ -13,9 +13,9 @@ import { generateQuestCircleColor } from "./util/generate-quest-circle-color";
 import { generateQuestEmoji } from "./util/generate-quest-emoji";
 
 export default function HomeScreen() {
-  const [polygons, setPolygons] = useState([]);
-  const [questShapes, setQuestShapes] = useState([]);
-  const [questMarkers, setQuestMarkers] = useState([]);
+  const [polygons, setPolygons] = useState(null);
+  const [questShapes, setQuestShapes] = useState(null);
+  const [questMarkers, setQuestMarkers] = useState(null);
 
   const { isConnected } = useNetInfo();
   const {
@@ -87,7 +87,7 @@ export default function HomeScreen() {
         quests={{ markers: questMarkers, shapes: questShapes }}
       /> */}
       <LoadingInterceptor
-        extra={[!polygons.length, !questMarkers.length, !questShapes.length]}
+        extra={[!polygons?.length, !questMarkers, !questShapes]}
       >
         <RnMaps
           polygons={polygons}

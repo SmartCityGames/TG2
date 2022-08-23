@@ -1,25 +1,28 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
-  Box,
   Center,
   Divider,
   FlatList,
   Flex,
   HStack,
   IconButton,
+  Popover,
   Pressable,
   Text,
 } from "native-base";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Linking, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingInterceptor from "../../components/loading/loading-interceptor";
+import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { formatTimeLeft } from "./utils/format-expiration-time";
 
 export default function MissionsScreen() {
+  const initialFocusRef = useRef(null);
+
   const {
     state: { availableQuests, loading },
     actions: { retrieveQuests, updateUsersNearbyQuests },
@@ -39,6 +42,29 @@ export default function MissionsScreen() {
 
     updateQuestsInfo();
   }, []);
+
+  function renderIndicatorIcons(indicator) {
+    switch (indicator) {
+      case "espvida":
+        return <FontAwesome name="heart" size={20} color="#5BB320" />;
+      case "idhm":
+        return <FontAwesome5 name="city" size={20} color="#5BB320" />;
+      case "ivs":
+        return <FontAwesome name="warning" size={20} color="#5BB320" />;
+      case "prosp_soc":
+        return <FontAwesome name="trophy" size={20} color="#5BB320" />;
+      case "renda_per_capita":
+        return <FontAwesome name="money" size={20} color="#5BB320" />;
+      case "t_sem_agua_esgoto":
+        return <FontAwesome5 name="water" size={20} color="#5BB320" />;
+      case "t_sem_lixo":
+        return <FontAwesome name="trash" size={20} color="#5BB320" />;
+      case "t_vulner":
+        return (
+          <FontAwesome name="balance-scale-left" size={20} color="#5BB320" />
+        );
+    }
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
@@ -77,31 +103,61 @@ export default function MissionsScreen() {
                   }
                 </Text>
               </Center>
-              <Text px={3} textAlign="justify" color="gray.600">
+              {/* <Text px={3} textAlign="justify" color="gray.600">
                 {item.description}
-              </Text>
+              </Text> */}
               <Flex
                 direction="row"
                 justify="space-between"
                 align={"center"}
                 my={2}
               >
-                {!!!item.isUserInside ? (
-                  <IconButton
-                    rounded="full"
-                    icon={
-                      <FontAwesome5 name="route" size={24} color="#4453ad" />
-                    }
-                    onPress={async () => {
-                      const user = await getUserPosition();
-                      Linking.openURL(
-                        `https://www.google.com/maps/dir/?api=1&origin=${user.latitude},${user.longitude}&destination=${item.shape.center.lat},${item.shape.center.lng}&travelmode=walking`
-                      );
-                    }}
-                  />
-                ) : (
-                  <Box />
-                )}
+                <Flex direction="row">
+                  {!!!item.isUserInside && (
+                    <IconButton
+                      rounded="full"
+                      icon={
+                        <FontAwesome5 name="route" size={20} color="#4453ad" />
+                      }
+                      onPress={async () => {
+                        const user = await getUserPosition();
+                        Linking.openURL(
+                          `https://www.google.com/maps/dir/?api=1&origin=${user.latitude},${user.longitude}&destination=${item.shape.center.lat},${item.shape.center.lng}&travelmode=walking`
+                        );
+                      }}
+                    />
+                  )}
+                  {!!item.source && (
+                    <IconButton
+                      rounded="full"
+                      icon={
+                        <FontAwesome5 name="globe" size={20} color="#4453ad" />
+                      }
+                      onPress={() => Linking.openURL(item.source)}
+                    />
+                  )}
+                  {item.rewards.indicators.map((i) => (
+                    <Popover
+                      key={`popover-${item.id}-${i.indicator}-${i.amount}`}
+                      initialFocusRef={initialFocusRef}
+                      trigger={(triggerProps) => (
+                        <IconButton
+                          {...triggerProps}
+                          rounded="full"
+                          icon={renderIndicatorIcons(i.indicator)}
+                        />
+                      )}
+                    >
+                      <Popover.Content w={"56"}>
+                        <Popover.Arrow />
+                        <Popover.CloseButton />
+                        <Popover.Body>
+                          {INDICATORS_LABELS[i.indicator].description_short}
+                        </Popover.Body>
+                      </Popover.Content>
+                    </Popover>
+                  ))}
+                </Flex>
                 <HStack alignItems="center">
                   <FontAwesome name="hourglass" />
                   <Text p={3} fontWeight="bold" color="danger.500">
