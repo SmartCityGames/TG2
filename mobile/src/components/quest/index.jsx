@@ -36,10 +36,6 @@ export default function Quest({ route }) {
   const actualStep = quest?.steps?.find((step) => !step.completed);
 
   useEffect(() => {
-    console.log({ selectedOptions });
-  }, [selectedOptions]);
-
-  useEffect(() => {
     if (!quest) {
       goBack();
     }
@@ -49,7 +45,7 @@ export default function Quest({ route }) {
     let correct = false;
     switch (actualStep.type) {
       case "multiple_choice":
-        correct = isArrayEquals(actualStep.answer, selectedOptions);
+        correct = isArrayEquals(actualStep.answer, selectedOptions.slice(1));
         break;
       case "one_choice":
         correct = actualStep.answer.every((ans) =>
@@ -112,9 +108,13 @@ export default function Quest({ route }) {
           />
         </VStack>
         <Button
-          isDisabled={!selectedOptions.length}
+          isDisabled={
+            actualStep.type === "one_choice"
+              ? selectedOptions[0] < 0
+              : selectedOptions.length < 2
+          }
           my="6"
-          onPress={() => handleAnswer()}
+          onPress={handleAnswer}
         >
           Submit your choices
         </Button>

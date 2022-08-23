@@ -1,11 +1,4 @@
-import {
-  Checkbox,
-  FormControl,
-  Radio,
-  Text,
-  VStack,
-  WarningOutlineIcon,
-} from "native-base";
+import { Checkbox, FormControl, Radio, Text, VStack } from "native-base";
 
 const Choice = ({ v }) => (
   <Text w={"xs"} textAlign="justify" textBreakStrategy="highQuality">
@@ -40,7 +33,7 @@ export default function Options({
       <Checkbox.Group
         value={selectedOptions}
         onChange={setSelectedOptions}
-        accessibilityLabel="choose the correct answer"
+        accessibilityLabel="choose the correct answers"
       >
         <ChoicesWrapper>
           {choices.map((v, i) => (
@@ -55,26 +48,19 @@ export default function Options({
 
   return (
     <VStack space={3}>
-      <FormControl isInvalid={!selectedOptions?.[0] || selectedOptions[0] < 0}>
-        <FormControl.Label
-          _text={{
-            fontSize: "28",
-            bold: true,
-            textAlign: "center",
-            textTransform: "capitalize",
-          }}
-        >
-          {type === "one_choice"
-            ? "Select the correct answer"
-            : "select all aplicable answers"}{" "}
-        </FormControl.Label>
-        {getOptions()}
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          {type === "one_choice"
-            ? "You must select one option"
-            : "You must select at least one option"}
-        </FormControl.ErrorMessage>
-      </FormControl>
+      <FormControl.Label
+        _text={{
+          fontSize: "2xl",
+          bold: true,
+          textAlign: "center",
+          textTransform: "capitalize",
+        }}
+      >
+        {type === "one_choice"
+          ? "Select the correct answer"
+          : "select all aplicable answers"}
+      </FormControl.Label>
+      {getOptions()}
     </VStack>
   );
 }

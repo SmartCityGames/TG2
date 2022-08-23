@@ -16,6 +16,7 @@ const userProfileinitialState = {
   wallet: undefined,
   level: 1,
   experience: 0,
+  completed_quests: [],
 };
 
 const UserProfileContext = createContext({
@@ -67,7 +68,7 @@ export default function UserProfileProvider({ children }) {
     return data[0];
   }
 
-  async function updateExperience(amount) {
+  async function updateExperience({ amount, questId }) {
     const xp = state.experience + amount;
     const xpLevel = state.level * MAX_XP_PER_LEVEL;
 
@@ -77,6 +78,7 @@ export default function UserProfileProvider({ children }) {
         {
           level: xp >= xpLevel ? state.level + 1 : state.level,
           experience: xp >= xpLevel ? xp - xpLevel : xp,
+          completed_quests: [...state.completed_quests, questId],
         },
         {
           returning: "representation",
@@ -126,6 +128,8 @@ export default function UserProfileProvider({ children }) {
   const actions = useMemo(
     () => ({
       getUserProfile,
+      updateProfile,
+      updateProfilePicture,
     }),
     [session]
   );
@@ -133,10 +137,8 @@ export default function UserProfileProvider({ children }) {
   const dependentActions = useMemo(
     () => ({
       updateExperience,
-      updateProfile,
-      updateProfilePicture,
     }),
-    [session.user.id, state.experience]
+    [state.experience, state.completed_quests]
   );
 
   return (

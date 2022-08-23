@@ -1,3 +1,4 @@
+import { isBefore } from "date-fns";
 import { useToast } from "native-base";
 import {
   createContext,
@@ -33,6 +34,7 @@ export default function QuestsProvider({ children }) {
   const supabase = useSupabase();
 
   const {
+    state: { completed_quests },
     actions: { updateExperience },
   } = useUserProfile();
 
@@ -41,7 +43,7 @@ export default function QuestsProvider({ children }) {
   } = useIndicators();
 
   const {
-    actions: { getPolygonWhichGeometryLies },
+    actions: { getPolygonWhichGeometryLies, getUserPosition },
   } = useUserLocation();
 
   useEffect(() => {
@@ -51,7 +53,16 @@ export default function QuestsProvider({ children }) {
   async function retrieveQuests() {
     toggleLoading(dispatch);
 
-    const { data } = await supabase.from("quests").select("*");
+    let { data } = await supabase.from("quests").select("*");
+
+    if (completed_quests.length > 0) {
+      data = data.filter((quest) => !completed_quests.includes(quest.id));
+    }
+
+    data = data.filter(
+      (quest) =>
+        !quest.expires_at || isBefore(new Date(), new Date(quest.expires_at))
+    );
 
     dispatch({
       type: "RETRIEVE_QUESTS",
@@ -68,7 +79,7 @@ export default function QuestsProvider({ children }) {
         payload: id,
       });
 
-      updateExperience(rewards.experience);
+      updateExperience({ amount: rewards.experience, questId: id });
 
       const subdistrictId = getPolygonWhichGeometryLies({
         coordinates: [quest.shape.center.lng, quest.shape.center.lat],
@@ -120,11 +131,19 @@ export default function QuestsProvider({ children }) {
     }
   }
 
-  const actions = useMemo(() => ({ updateUsersNearbyQuests }), []);
+  const actions = useMemo(
+    () => ({ updateUsersNearbyQuests }),
+    [state.availableQuests]
+  );
 
   const dependentActions = useMemo(
     () => ({ completeQuest, retrieveQuests }),
-    [updateExperience, incrementIndicator, getPolygonWhichGeometryLies]
+    [
+      updateExperience,
+      incrementIndicator,
+      getPolygonWhichGeometryLies,
+      getUserPosition,
+    ]
   );
 
   return (

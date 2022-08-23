@@ -81,12 +81,12 @@ export default function IndicatorsProvider({ children }) {
   async function incrementIndicator(values) {
     await Promise.all(
       values.map((val) => {
-        const [tgt] = state.indicators.filter((i) => i.id === val.target);
+        const tgt = state.indicators.find((i) => i.id === val.target);
         const lowerIndicator = val.indicator.toLowerCase();
         return supabase
           .from("indicators")
           .update({
-            [lowerIndicator]: tgt[lowerIndicator] + val.amount,
+            [lowerIndicator]: Math.min(tgt[lowerIndicator] + val.amount, 1),
           })
           .eq("id", val.target);
       })
