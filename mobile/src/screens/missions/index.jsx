@@ -16,6 +16,7 @@ import { Linking, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingInterceptor from "../../components/loading/loading-interceptor";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
+import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { formatTimeLeft } from "./utils/format-expiration-time";
@@ -42,29 +43,6 @@ export default function MissionsScreen() {
 
     updateQuestsInfo();
   }, []);
-
-  function renderIndicatorIcons(indicator) {
-    switch (indicator) {
-      case "espvida":
-        return <FontAwesome name="heart" size={20} color="#5BB320" />;
-      case "idhm":
-        return <FontAwesome5 name="city" size={20} color="#5BB320" />;
-      case "ivs":
-        return <FontAwesome name="warning" size={20} color="#5BB320" />;
-      case "prosp_soc":
-        return <FontAwesome name="trophy" size={20} color="#5BB320" />;
-      case "renda_per_capita":
-        return <FontAwesome name="money" size={20} color="#5BB320" />;
-      case "t_sem_agua_esgoto":
-        return <FontAwesome5 name="water" size={20} color="#5BB320" />;
-      case "t_sem_lixo":
-        return <FontAwesome name="trash" size={20} color="#5BB320" />;
-      case "t_vulner":
-        return (
-          <FontAwesome name="balance-scale-left" size={20} color="#5BB320" />
-        );
-    }
-  }
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
@@ -144,7 +122,7 @@ export default function MissionsScreen() {
                         <IconButton
                           {...triggerProps}
                           rounded="full"
-                          icon={renderIndicatorIcons(i.indicator)}
+                          icon={renderIndicatorIcon(i.indicator)}
                         />
                       )}
                     >

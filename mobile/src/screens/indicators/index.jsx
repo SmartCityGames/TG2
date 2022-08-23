@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingInterceptor from "../../components/loading/loading-interceptor";
 import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
+import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { renderIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
 import { sanitizeText } from "../../utils/sanitize-text";
 
@@ -104,9 +105,15 @@ export default function IndicatorsScreen({ route }) {
                   !INDICATORS_LABELS[value] ? null : (
                     <Box key={`${item.udh}-${value}`} textAlign="justify">
                       <HStack alignItems="center">
-                        <Text fontSize={14} fontWeight="semibold">
-                          {INDICATORS_LABELS[value].description_short}:
-                        </Text>
+                        <HStack space="2" alignItems="center">
+                          {renderIndicatorIcon(value, {
+                            color: "#44aa77",
+                            size: 14,
+                          })}
+                          <Text fontSize={14} fontWeight="semibold">
+                            {INDICATORS_LABELS[value].description_short}:
+                          </Text>
+                        </HStack>
                         <Popover
                           initialFocusRef={initialFocusRef}
                           trigger={(triggerProps) => (
@@ -133,7 +140,7 @@ export default function IndicatorsScreen({ route }) {
                           </Popover.Content>
                         </Popover>
                       </HStack>
-                      <Text textAlign="justify" color="gray.600" ml={10}>
+                      <Text textAlign="justify" color="gray.600" ml="6">
                         {renderIndicatorValue(item, value)}
                       </Text>
                     </Box>
