@@ -1,7 +1,7 @@
 import { Quest } from 'src/types';
 import { F, V } from './utils/constants';
 
-export const waterAndSewerQuestions: Quest[] = [
+export const tSemAguaEsgotoQuestions: Quest[] = [
   {
     remote: true,
     description:
