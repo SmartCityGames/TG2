@@ -1,12 +1,21 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Center, HStack, Image, Input, Stack, Text } from "native-base";
+import {
+  Button,
+  Center,
+  HStack,
+  Image,
+  Input,
+  Link,
+  Stack,
+  Text,
+} from "native-base";
 import { useRef, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useUserAuth } from "../../../store/auth/provider";
 
 export default function SignInScreen() {
-  const navigation = useNavigation();
+  const { navigate } = useNavigation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,7 +65,7 @@ export default function SignInScreen() {
             w="3/4"
             h="12"
             type={show ? "text" : "password"}
-            placeholder="Password"
+            placeholder="Senha"
             onChangeText={(text) => setPassword(text)}
             autoComplete="password"
             autoCapitalize="none"
@@ -78,18 +87,20 @@ export default function SignInScreen() {
           />
           <Button colorScheme="purple" isLoading={loading} onPress={tryToLogin}>
             <Text color="white" fontSize="lg">
-              Sign In
+              Entrar
             </Text>
           </Button>
           <Center>
             <HStack space="1">
-              <Text>Don't have an account?</Text>
-              <Text
-                color="blue.600"
-                onPress={() => navigation.navigate("SignUp")}
+              <Text>Não possui uma conta?</Text>
+              <Link
+                _text={{
+                  color: "blue.600",
+                }}
+                onPress={() => navigate("SignUp")}
               >
-                Register Now
-              </Text>
+                Cadastre-se agora
+              </Link>
             </HStack>
           </Center>
         </Stack>

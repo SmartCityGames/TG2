@@ -24,7 +24,6 @@ export const useUserAuth = () => useContext(UserAuthContext);
 
 export default function UserAuthProvider({ children }) {
   const [state, dispatch] = useReducer(userAuthReducer, userAuthInitialState);
-  const navigation = useNavigation();
   const supabase = useSupabase();
 
   useEffect(() => {
@@ -77,11 +76,20 @@ export default function UserAuthProvider({ children }) {
     });
   }
 
-  async function signup({ email, password }) {
-    const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+  async function signup({ email, password, username }) {
+    toggleLoading(dispatch);
+
+    const { error } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+      },
+      {
+        data: {
+          username,
+        },
+      }
+    );
 
     if (error) {
       await showAuthError({ error });
@@ -89,8 +97,7 @@ export default function UserAuthProvider({ children }) {
     }
 
     await AsyncAlert("Email confirmation sent", "Please check your email!");
-
-    navigation.navigate("SignIn");
+    toggleLoading(dispatch);
   }
 
   async function logout() {
