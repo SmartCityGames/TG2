@@ -10,5 +10,7 @@ export function generateQuestCircleColor(quest) {
       return "#ADD8E6";
     case "electricity":
       return "#FFD700";
+    case "education":
+      return "#8c34eb";
   }
 }

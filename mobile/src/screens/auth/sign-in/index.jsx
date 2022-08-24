@@ -1,8 +1,8 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Center, HStack, Image, Input, Stack, Text } from "native-base";
 import { useRef, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { useUserAuth } from "../../../store/auth/provider";
 
 export default function SignInScreen() {
@@ -46,7 +46,7 @@ export default function SignInScreen() {
             autoFocus
             InputLeftElement={
               <Center ml="3">
-                <Icon name="envelope" size={15} />
+                <FontAwesome name="envelope" size={15} />
               </Center>
             }
             onSubmitEditing={() => pwdRef.current.focus()}
@@ -62,12 +62,12 @@ export default function SignInScreen() {
             autoCapitalize="none"
             InputLeftElement={
               <Center ml="3.5">
-                <Icon name="lock" size={20} />
+                <FontAwesome name="lock" size={20} />
               </Center>
             }
             InputRightElement={
               <Center mr="3">
-                <Icon
+                <FontAwesome
                   size={20}
                   name={show ? "eye-slash" : "eye"}
                   onPress={() => setShow((v) => !v)}

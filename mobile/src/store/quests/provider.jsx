@@ -1,3 +1,4 @@
+import { isBefore } from "date-fns";
 import { useToast } from "native-base";
 import {
   createContext,
@@ -10,9 +11,9 @@ import { toggleLoading } from "../../utils/actions/start-loading";
 import { useIndicators } from "../indicators/provider";
 import { useUserLocation } from "../location/provider";
 import { haversine } from "../location/utils/haversine";
+import { useSupabase } from "../supabase/provider";
 import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
-import RandomPointsOnPolygon from "random-points-on-polygon";
 
 const questsInitialState = {
   availableQuests: [],
@@ -30,7 +31,10 @@ export default function QuestsProvider({ children }) {
   const [state, dispatch] = useReducer(questsReducer, questsInitialState);
   const toast = useToast();
 
+  const supabase = useSupabase();
+
   const {
+    state: { completed_quests },
     actions: { updateExperience },
   } = useUserProfile();
 
@@ -39,79 +43,30 @@ export default function QuestsProvider({ children }) {
   } = useIndicators();
 
   const {
-    actions: { getPolygonWhichGeometryLies },
-    state: { geojson },
+    actions: { getPolygonWhichGeometryLies, getUserPosition },
   } = useUserLocation();
 
   useEffect(() => {
     retrieveQuests();
-  }, [geojson]);
+  }, []);
 
   async function retrieveQuests() {
-    if (!geojson) return;
-
     toggleLoading(dispatch);
 
-    const quests = geojson.features
-      .map((feature, j) =>
-        RandomPointsOnPolygon(1, feature).map((point, i) => ({
-          id: i + j,
-          remote: (i + j) % 2 === 0,
-          description:
-            (i + j) % 2 === 0
-              ? "get into the circle so the mission can be completed"
-              : "click to earn exp",
-          name: `complete me - ${i + j}`,
-          expires_at: Date.now() - 9812300 + 10000000 * (i + j),
-          category: ["trash", "fire", "water", "sewer", "electricity"][
-            Math.floor(Math.random() * 13) % 5
-          ],
-          steps: [
-            {
-              type: "true/false",
-              values: [
-                "A melhor forma de se livrar de um problema é enfrentá-lo",
-                "Eu não tenho medo de nada",
-              ],
-              answer: [0],
-              completed: false,
-            },
-            {
-              type: "multiple",
-              values: [
-                "A melhor forma de se livrar de um problema é enfrentá-lo",
-                "O medo é o pior inimigo do homem",
-                "A vida é uma caixinha de surpresas",
-              ],
-              answer: [1, 2],
-              completed: false,
-            },
-          ],
-          rewards: {
-            indicators: [
-              {
-                indicator: (i + j) % 5 === 0 ? "ivs" : "idhm",
-                amount: 1,
-              },
-            ],
-            experience: 100,
-          },
-          shape: {
-            shapeType: "Circle",
-            id: `circle-${point.geometry.coordinates}`,
-            center: {
-              lat: point.geometry.coordinates[1],
-              lng: point.geometry.coordinates[0],
-            },
-            radius: 75,
-          },
-        }))
-      )
-      .flat();
+    let { data } = await supabase.from("quests").select("*");
+
+    if (completed_quests.length > 0) {
+      data = data.filter((quest) => !completed_quests.includes(quest.id));
+    }
+
+    data = data.filter(
+      (quest) =>
+        !quest.expires_at || isBefore(new Date(), new Date(quest.expires_at))
+    );
 
     dispatch({
       type: "RETRIEVE_QUESTS",
-      payload: quests ?? [],
+      payload: data,
     });
   }
 
@@ -124,7 +79,7 @@ export default function QuestsProvider({ children }) {
         payload: id,
       });
 
-      updateExperience(rewards.experience);
+      updateExperience({ amount: rewards.experience, questId: id });
 
       const subdistrictId = getPolygonWhichGeometryLies({
         coordinates: [quest.shape.center.lng, quest.shape.center.lat],
@@ -176,11 +131,19 @@ export default function QuestsProvider({ children }) {
     }
   }
 
-  const actions = useMemo(() => ({ updateUsersNearbyQuests }), []);
+  const actions = useMemo(
+    () => ({ updateUsersNearbyQuests }),
+    [state.availableQuests]
+  );
 
   const dependentActions = useMemo(
     () => ({ completeQuest, retrieveQuests }),
-    [updateExperience, incrementIndicator, getPolygonWhichGeometryLies]
+    [
+      updateExperience,
+      incrementIndicator,
+      getPolygonWhichGeometryLies,
+      getUserPosition,
+    ]
   );
 
   return (

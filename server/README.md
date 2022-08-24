@@ -24,6 +24,7 @@ To get a local copy up and running follow these simple steps.
 
 ```bash
 $ yarn
+$ cp .env.example .env
 $ yarn start:dev
 ```
 
