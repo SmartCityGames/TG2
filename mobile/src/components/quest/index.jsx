@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { addDays, isBefore } from "date-fns";
 import {
   Button,
+  Center,
   Heading,
   ScrollView,
   Text,
@@ -23,6 +23,8 @@ const NOTHING_SELECTED = [-1];
 
 export default function Quest({ route }) {
   const [selectedOptions, setSelectedOptions] = useState(NOTHING_SELECTED);
+  const [loading, setLoading] = useState(false);
+  const [changes, setChanges] = useState([]);
 
   const { goBack } = useNavigation();
 
@@ -45,11 +47,22 @@ export default function Quest({ route }) {
   useEffect(() => {
     if (!quest) {
       goBack();
+      return;
     }
+
+    setLoading(true);
+    getAllChangesOfUser({ user: username }).then((response) => {
+      setChanges(response.length > 3 ? response.slice(0, 3) : response);
+      setLoading(false);
+    });
   }, [quest]);
 
-  if (!quest) {
-    return <ActivityIndicator />;
+  if (!quest || loading) {
+    return (
+      <Center mt="1/2">
+        <ActivityIndicator size="large" />
+      </Center>
+    );
   }
 
   async function handleAnswer() {
@@ -64,14 +77,11 @@ export default function Quest({ route }) {
         );
         break;
       case "confirm_osm_change": {
-        let changes = await getAllChangesOfUser({ user: username });
-        changes = changes.filter((change) =>
-          isBefore(new Date(change.timestamp), addDays(new Date(), -30))
-        );
-
-        correct = changes.length > 0;
+        const [selected] = selectedOptions;
+        correct = changes.findIndex((change) => change.id === selected) === 0;
       }
     }
+
     if (correct) {
       const updated = {
         ...quest,
@@ -120,6 +130,7 @@ export default function Quest({ route }) {
             setSelectedOptions={setSelectedOptions}
             type={actualStep.type}
             choices={actualStep.choices}
+            changes={changes}
           />
         </VStack>
         <Button

@@ -1,6 +1,7 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { formatDistanceToNow } from "date-fns";
+import pt from "date-fns/locale/pt";
 import {
   Center,
   Divider,
@@ -70,20 +71,12 @@ export default function MissionsScreen() {
                   {item.name}
                 </Text>
                 <Text fontSize={20} fontWeight="semibold">
-                  {
-                    getPolygonWhichGeometryLies({
-                      coordinates: [
-                        item.shape.center.lng,
-                        item.shape.center.lat,
-                      ],
-                      type: "Point",
-                    }).properties.NM_SUBDIST
-                  }
+                  {getPolygonWhichGeometryLies({
+                    coordinates: [item.shape.center.lng, item.shape.center.lat],
+                    type: "Point",
+                  })?.properties?.NM_SUBDIST ?? "outside Federal District"}
                 </Text>
               </Center>
-              {/* <Text px={3} textAlign="justify" color="gray.600">
-                {item.description}
-              </Text> */}
               <Flex
                 direction="row"
                 justify="space-between"
@@ -142,6 +135,7 @@ export default function MissionsScreen() {
                     {item.expires_at
                       ? formatDistanceToNow(item.expires_at, {
                           addSuffix: true,
+                          locale: pt,
                         })
                       : "take your time"}
                   </Text>

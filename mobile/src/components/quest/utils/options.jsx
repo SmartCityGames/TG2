@@ -1,7 +1,8 @@
 import { formatDistanceToNow, parseISO } from "date-fns";
+import pt from "date-fns/locale/pt";
 import {
-  Box,
   Checkbox,
+  Flex,
   FormControl,
   Link,
   Radio,
@@ -9,9 +10,9 @@ import {
   VStack,
 } from "native-base";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Linking } from "react-native";
-import { getAllChangesOfUser } from "../../../services/overpass-turbo";
-import { useUserProfile } from "../../../store/user-profile/provider";
+import { Linking } from "react-native";
+import { useUserLocation } from "../../../store/location/provider";
+import { shuffleArray } from "./shuffle-array";
 
 const Choice = ({ v }) => (
   <Text w={"xs"} textAlign="justify" textBreakStrategy="highQuality">
@@ -21,43 +22,22 @@ const Choice = ({ v }) => (
 
 const ChoicesWrapper = ({ children }) => <VStack space={2}>{children}</VStack>;
 
-// {
-//   "changeset": 120138824,
-//   "id": 2709744061,
-//   "lat": -15.7093167,
-//   "lon": -47.87904,
-//   "tags": Object {
-//     "amenity": "police",
-//     "name": "Polícia Militar - Posto do Varjão",
-//   },
-//   "timestamp": "2022-04-24T20:54:30Z",
-//   "type": "node",
-//   "uid": 15582472,
-//   "user": "yuri serka",
-//   "version": 2,
-// }
-
 export default function Options({
   type,
   setSelectedOptions,
   selectedOptions,
   choices,
+  changes,
 }) {
   const {
-    state: { username },
-  } = useUserProfile();
+    actions: { getPolygonWhichGeometryLies },
+  } = useUserLocation();
 
-  const [loading, setLoading] = useState(false);
-  const [changes, setChanges] = useState([]);
+  const [shuffled, setShuffled] = useState(changes);
 
   useEffect(() => {
     if (type === "confirm_osm_change") {
-      setLoading(true);
-      getAllChangesOfUser({ user: username }).then((response) => {
-        console.log({ response });
-        setChanges(response.length > 3 ? response.slice(0, 3) : response);
-        setLoading(false);
-      });
+      setShuffled(shuffleArray(changes));
     }
   }, [type]);
 
@@ -103,9 +83,9 @@ export default function Options({
             accessibilityLabel="choose the correct answer"
           >
             <ChoicesWrapper>
-              {changes.map((v, i) => (
-                <Radio key={v.id} value={i}>
-                  <Box
+              {shuffled.map((v) => (
+                <Radio key={v.id} value={v.id}>
+                  <Flex
                     w={"xs"}
                     textAlign="justify"
                     textBreakStrategy="highQuality"
@@ -114,28 +94,44 @@ export default function Options({
                     rounded="lg"
                   >
                     <Link
+                      w="30%"
                       onPress={() =>
                         Linking.openURL(
                           `https://www.openstreetmap.org/changeset/${v.changeset}`
                         )
                       }
                     >
-                      {v.changeset}
+                      #{v.changeset}
                     </Link>
                     <Text>
-                      Coordinates: [{v.lat}, {v.lon}]
+                      <Text bold>Coordinates: </Text>[{v.lat}, {v.lon}]
                     </Text>
+                    <Text>
+                      <Text bold>District: </Text>
+                      {getPolygonWhichGeometryLies({
+                        coordinates: [v.lon, v.lat],
+                        type: "Point",
+                      })?.properties?.NM_SUBDIST ?? "outside Federal District"}
+                    </Text>
+
+                    <Text>
+                      <Text bold>change version: </Text>
+                      {v.version}
+                    </Text>
+                    <Text bold>Tags:</Text>
                     {Object.entries(v?.tags ?? {}).map(([key, value]) => (
-                      <Text key={key}>
+                      <Text key={key} ml={2}>
                         {key}: {value}
                       </Text>
                     ))}
                     <Text>
+                      <Text bold>Editado </Text>
                       {formatDistanceToNow(parseISO(v.timestamp), {
                         addSuffix: true,
+                        locale: pt,
                       })}
                     </Text>
-                  </Box>
+                  </Flex>
                 </Radio>
               ))}
             </ChoicesWrapper>
@@ -161,11 +157,7 @@ export default function Options({
           ? "Select the correct answer"
           : "select all aplicable answers"}
       </FormControl.Label>
-      {type === "confirm_osm_change" && loading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        getOptions()
-      )}
+      {getOptions()}
     </VStack>
   );
 }
