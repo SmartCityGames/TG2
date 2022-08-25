@@ -1,5 +1,6 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { formatDistanceToNow } from "date-fns";
 import {
   Center,
   Divider,
@@ -19,7 +20,6 @@ import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-label
 import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
-import { formatTimeLeft } from "./utils/format-expiration-time";
 
 export default function MissionsScreen() {
   const initialFocusRef = useRef(null);
@@ -140,7 +140,9 @@ export default function MissionsScreen() {
                   <FontAwesome name="hourglass" />
                   <Text p={3} fontWeight="bold" color="danger.500">
                     {item.expires_at
-                      ? formatTimeLeft(item.expires_at)
+                      ? formatDistanceToNow(item.expires_at, {
+                          addSuffix: true,
+                        })
                       : "take your time"}
                   </Text>
                 </HStack>

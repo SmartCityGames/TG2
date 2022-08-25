@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { addDays, isBefore } from "date-fns";
 import {
   Button,
   Heading,
@@ -10,7 +11,9 @@ import {
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getAllChangesOfUser } from "../../services/overpass-turbo";
 import { useQuests } from "../../store/quests/provider";
+import { useUserProfile } from "../../store/user-profile/provider";
 import { isArrayEquals } from "./utils/array-equality";
 import Options from "./utils/options";
 
@@ -30,6 +33,10 @@ export default function Quest({ route }) {
     actions: { completeQuest },
   } = useQuests();
 
+  const {
+    state: { username },
+  } = useUserProfile();
+
   const toast = useToast();
 
   const quest = availableQuests.find((q) => q.id === id);
@@ -40,6 +47,10 @@ export default function Quest({ route }) {
       goBack();
     }
   }, [quest]);
+
+  if (!quest) {
+    return <ActivityIndicator />;
+  }
 
   async function handleAnswer() {
     let correct = false;
@@ -52,6 +63,14 @@ export default function Quest({ route }) {
           selectedOptions.includes(ans)
         );
         break;
+      case "confirm_osm_change": {
+        let changes = await getAllChangesOfUser({ user: username });
+        changes = changes.filter((change) =>
+          isBefore(new Date(change.timestamp), addDays(new Date(), -30))
+        );
+
+        correct = changes.length > 0;
+      }
     }
     if (correct) {
       const updated = {
@@ -86,10 +105,6 @@ export default function Quest({ route }) {
     }
   }
 
-  if (!quest) {
-    return <ActivityIndicator />;
-  }
-
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <ScrollView px={4} mt={5}>
@@ -109,9 +124,9 @@ export default function Quest({ route }) {
         </VStack>
         <Button
           isDisabled={
-            actualStep.type === "one_choice"
-              ? selectedOptions[0] < 0
-              : selectedOptions.length < 2
+            actualStep.type === "multiple_choice"
+              ? selectedOptions.length < 2
+              : selectedOptions[0] < 0
           }
           my="6"
           onPress={handleAnswer}
