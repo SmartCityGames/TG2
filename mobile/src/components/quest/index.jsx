@@ -51,7 +51,7 @@ export default function Quest({ route }) {
     }
 
     setLoading(true);
-    getAllChangesOfUser({ user: username }).then((response) => {
+    getAllChangesOfUser({ user: "ericserka" }).then((response) => {
       setChanges(response.length > 3 ? response.slice(0, 3) : response);
       setLoading(false);
     });

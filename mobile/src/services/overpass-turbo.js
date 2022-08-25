@@ -2,7 +2,7 @@ import { isBefore } from "date-fns";
 import { logger } from "../utils/logger";
 
 export async function getAllChangesOfUser({ user }) {
-  logger.info("[OSM] action of type LOAD_CHANGES_USER fired");
+  logger.info("[OSM] action of type LOAD_USER_CHANGES fired");
 
   const { elements } = await fetch("https://overpass-api.de/api/interpreter", {
     method: "POST",

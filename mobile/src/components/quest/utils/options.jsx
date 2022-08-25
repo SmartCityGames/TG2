@@ -1,13 +1,16 @@
 import { formatDistanceToNow, parseISO } from "date-fns";
 import pt from "date-fns/locale/pt";
 import {
+  Center,
   Checkbox,
   Flex,
   FormControl,
+  Heading,
   Link,
   Radio,
   Text,
   VStack,
+  WarningOutlineIcon,
 } from "native-base";
 import { useEffect, useState } from "react";
 import { Linking } from "react-native";
@@ -30,7 +33,7 @@ export default function Options({
   changes,
 }) {
   const {
-    actions: { getPolygonWhichGeometryLies },
+    actions: { getPolygonWhichGeometryLies, getUserPosition },
   } = useUserLocation();
 
   const [shuffled, setShuffled] = useState(changes);
@@ -75,8 +78,8 @@ export default function Options({
             </ChoicesWrapper>
           </Checkbox.Group>
         );
-      case "confirm_osm_change": {
-        return (
+      case "confirm_osm_change":
+        return shuffled.length > 0 ? (
           <Radio.Group
             value={selectedOptions?.[0]}
             onChange={(next) => setSelectedOptions([next])}
@@ -136,8 +139,31 @@ export default function Options({
               ))}
             </ChoicesWrapper>
           </Radio.Group>
+        ) : (
+          <ChoicesWrapper>
+            <Heading textAlign="center">
+              Não há alterações para confirmar 🥸
+            </Heading>
+            <Text>
+              Vá para o{" "}
+              <Link
+                onPress={async () => {
+                  const user = await getUserPosition();
+                  Linking.openURL(
+                    `https://www.openstreetmap.org/edit#map=17/${user.latitude}/${user.longitude}`
+                  );
+                }}
+              >
+                Editor
+              </Link>{" "}
+              no OpenStreetMap
+            </Text>
+            <Text>
+              <WarningOutlineIcon /> Suas mudanças podem demorar um pouco para
+              serem refletidas no mapa
+            </Text>
+          </ChoicesWrapper>
         );
-      }
     }
   }
 
