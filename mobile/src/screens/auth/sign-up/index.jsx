@@ -120,7 +120,7 @@ export default function SignUpScreen() {
             isRequired
             isInvalid={!password.length || password.length < 6}
           >
-            <FormControl.Label>Email</FormControl.Label>
+            <FormControl.Label>Senha</FormControl.Label>
             <Input
               ref={pwdRef}
               h="12"
