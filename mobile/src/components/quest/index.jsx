@@ -44,16 +44,18 @@ export default function Quest({ route }) {
   const actualStep = quest?.steps?.find((step) => !step.completed);
 
   useEffect(() => {
-    if (!quest) {
+    if (!quest || !actualStep) {
       goBack();
       return;
     }
 
-    setLoading(true);
-    getAllChangesOfUser({ user: username }).then((response) => {
-      setChanges(response.length > 3 ? response.slice(0, 3) : response);
-      setLoading(false);
-    });
+    if (actualStep.type === "confirm_osm_change") {
+      setLoading(true);
+      getAllChangesOfUser({ user: username }).then((response) => {
+        setChanges(response.length > 3 ? response.slice(0, 3) : response);
+        setLoading(false);
+      });
+    }
   }, [quest]);
 
   if (!quest || loading) {
