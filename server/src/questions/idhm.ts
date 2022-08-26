@@ -37,11 +37,11 @@ export const idhmQuestions: Quest[] = [
   },
   {
     remote: true,
-    category: 'trash',
+    category: 'education',
     description:
       'A pirâmide de formato triangular da década de 1970 foi dando lugar a uma pirâmide mais retangular de base mais estreita e topo mais largo. Em 1991, a população de 0 a 14 anos correspondia a 34,7% da população brasileira, tendo passado para 24,1% em 2010. A população em idade ativa, entre 15 e 59 anos, por sua vez, passou de 58,0% a 65,1% no mesmo período. As alterações no perfil demográfico brasileiro, descritas no texto, trouxeram como consequência socioeconômica o(a):',
     expires_at: 'ONE_DAY',
-    name: '',
+    name: 'A respeito da pirâmide geogeográfica do Brasil',
     steps: [
       {
         type: 'one_choice',
@@ -72,6 +72,6 @@ export const idhmQuestions: Quest[] = [
         },
       ],
     },
-    source: 'https://www.todamateria.com.br/poluicao-do-ar/',
+    source: 'https://www.qconcursos.com/questoes-do-enem/questoes/67e9dcb4-7c',
   },
 ];
