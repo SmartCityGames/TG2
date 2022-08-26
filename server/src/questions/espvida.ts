@@ -46,7 +46,7 @@ export const espvidaQuestions: Quest[] = [
       {
         type: 'multiple_choice',
         choices: ['Cólera', 'Gripe', 'Leptospirose', 'Dengue', 'Raiva'],
-        answer: [0, 2, 3],
+        answer: [0, 2],
       },
     ],
     rewards: {

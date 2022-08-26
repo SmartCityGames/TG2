@@ -81,7 +81,6 @@ export default function MissionsScreen() {
                 direction="row"
                 justify="space-between"
                 align={"center"}
-                my={2}
               >
                 <Flex direction="row">
                   {!!!item.isUserInside && (
@@ -129,18 +128,18 @@ export default function MissionsScreen() {
                     </Popover>
                   ))}
                 </Flex>
-                <HStack alignItems="center">
-                  <FontAwesome name="hourglass" />
-                  <Text p={3} fontWeight="bold" color="danger.500">
-                    {item.expires_at
-                      ? formatDistanceToNow(item.expires_at, {
-                          addSuffix: true,
-                          locale: pt,
-                        })
-                      : "take your time"}
-                  </Text>
-                </HStack>
               </Flex>
+              <HStack alignSelf="flex-end" alignItems="center">
+                <FontAwesome name="hourglass" />
+                <Text p={3} fontWeight="bold" color="danger.500">
+                  {item.expires_at
+                    ? formatDistanceToNow(new Date(item.expires_at), {
+                        addSuffix: true,
+                        locale: pt,
+                      })
+                    : "take your time"}
+                </Text>
+              </HStack>
             </Pressable>
           )}
         />

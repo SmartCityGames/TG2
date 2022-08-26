@@ -39,10 +39,18 @@
         "googleMaps": {
           "apiKey": "AIzaSyDtbPnRIXbOOpsvEQ-a6nrLnZSjofObpXc"
         }
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "22d6e751-66ea-441d-b602-5d7a46e06385"
+      }
     }
   }
 }
