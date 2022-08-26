@@ -66,41 +66,7 @@ export default function QuestsProvider({ children }) {
 
     dispatch({
       type: "RETRIEVE_QUESTS",
-      payload: [
-        {
-          id: 2,
-          remote: true,
-          description:
-            "Insira uma informação no OpenStreetMap para completar a missão.",
-          source: "",
-          name: "Familiarizando-se com o OpenStreetMap",
-          expires_at: new Date().getTime() + 12083800,
-          category: "education",
-          steps: [
-            {
-              type: "confirm_osm_change",
-            },
-          ],
-          rewards: {
-            indicators: [
-              {
-                indicator: "idhm",
-                amount: 0.0001,
-              },
-            ],
-            experience: 95,
-          },
-          shape: {
-            shapeType: "circle",
-            id: "1",
-            center: {
-              lat: -15.7093 + Math.random() * 0.013,
-              lng: -47.8757 - Math.random() * 0.01,
-            },
-            radius: 100,
-          },
-        },
-      ],
+      payload: data,
     });
   }
 

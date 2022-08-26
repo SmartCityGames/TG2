@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   Button,
-  Center,
   Heading,
   ScrollView,
   Text,
@@ -9,11 +8,11 @@ import {
   VStack,
 } from "native-base";
 import { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllChangesOfUser } from "../../services/overpass-turbo";
 import { useQuests } from "../../store/quests/provider";
 import { useUserProfile } from "../../store/user-profile/provider";
+import { CenterLoading } from "../loading/center-loading";
 import { isArrayEquals } from "./utils/array-equality";
 import Options from "./utils/options";
 
@@ -58,11 +57,7 @@ export default function Quest({ route }) {
   }, [quest]);
 
   if (!quest || loading) {
-    return (
-      <Center mt="1/2">
-        <ActivityIndicator size="large" />
-      </Center>
-    );
+    return <CenterLoading />;
   }
 
   async function handleAnswer() {

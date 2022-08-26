@@ -3,6 +3,7 @@ import { Quest } from '../types';
 import { espvidaQuestions } from './espvida';
 import { idhmQuestions } from './idhm';
 import { ivsQuestions } from './ivs';
+import { osmQuestions } from './osm';
 import { prospSocQuestions } from './prosp_soc';
 import { rendaPerCapitaQuestions } from './renda_per_capita';
 import { tSemAguaEsgotoQuestions } from './t_sem_agua_esgoto';
@@ -18,4 +19,5 @@ export const questions: Quest[] = [
   ...espvidaQuestions,
   ...prospSocQuestions,
   ...rendaPerCapitaQuestions,
+  ...osmQuestions,
 ];

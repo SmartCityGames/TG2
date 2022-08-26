@@ -1,6 +1,5 @@
-import { Center } from "native-base";
-import { ActivityIndicator } from "react-native";
 import { useUserAuth } from "../../store/auth/provider";
+import { CenterLoading } from "../loading/center-loading";
 import AuthStack from "./auth-stack";
 import LoggedTabs from "./logged-tabs";
 
@@ -10,11 +9,7 @@ export default function Navigator() {
   } = useUserAuth();
 
   if (loading) {
-    return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" />
-      </Center>
-    );
+    return <CenterLoading />;
   }
 
   return session ? <LoggedTabs /> : <AuthStack />;
