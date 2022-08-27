@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "deploy:supabase": "yarn hardhat compile && node ./scripts/deploy-supabase.js"
+  },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
     "@ethersproject/providers": "^5.4.7",
@@ -20,5 +23,9 @@
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.7.21",
     "typechain": "^8.1.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^1.35.6",
+    "dotenv-safe": "^8.2.0"
   }
 }
