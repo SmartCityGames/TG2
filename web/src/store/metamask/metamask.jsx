@@ -8,6 +8,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { config } from "../../config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
@@ -49,10 +50,33 @@ export default function MetamaskProvider({ children }) {
       return;
     }
 
-    dispatch({
-      type: "LOAD_PROVIDER",
-      payload: new ethers.providers.Web3Provider(ethereum, "any"),
-    });
+    async function getContracts() {
+      const { signedURL } = await supabase.storage
+        .from("assets")
+        .createSignedUrl("contract_abi.json", 60);
+
+      const smartCityGames = await fetch(signedURL).then((response) =>
+        response.json()
+      );
+
+      const provider = new ethers.providers.Web3Provider(ethereum, "any");
+
+      dispatch({
+        type: "LOAD_PROVIDER",
+        payload: {
+          provider,
+          contracts: {
+            smartCityGames: new ethers.Contract(
+              config.CONTRACT_HEX,
+              smartCityGames.abi,
+              provider
+            ),
+          },
+        },
+      });
+    }
+
+    getContracts();
   }, []);
 
   useEffect(() => {
@@ -173,9 +197,13 @@ export default function MetamaskProvider({ children }) {
 
   async function mint() {
     try {
-      const contentId = 'QmWoAd19aCmkax45YsaH1exYKHk5erv81fMRdMPxgGKmpz';
+      const contentId = "QmWoAd19aCmkax45YsaH1exYKHk5erv81fMRdMPxgGKmpz";
       const tokenId = `https://gateway.pinata.cloud/ipfs/${contentId}/samambaia01.png`;
-      await state.contracts.smartCityGames.connect(state.signer).payToMint(state.account, tokenId, { value: ethers.utils.parseEther('0.5') });
+      await state.contracts.smartCityGames
+        .connect(state.signer)
+        .payToMint(state.account, tokenId, {
+          value: ethers.utils.parseEther("0.5"),
+        });
     } catch (error) {
       console.log({ error });
       showBlockchainError({
@@ -187,7 +215,12 @@ export default function MetamaskProvider({ children }) {
 
   async function getMintedToken() {
     try {
-      const instance = await state.contracts.smartCityGames.connect(state.signer);
+      const instance = await state.contracts.smartCityGames.connect(
+        state.signer
+      );
+
+      console.log({ instance });
+
       const balanceOf = await instance.balanceOf(state.account);
       console.log({ balanceOf });
       const prevEarnedTokens = [];

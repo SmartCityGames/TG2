@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import MetamaskProvider from "../store/metamask/metamask";
 import Profile from "../pages/Profile";
 import Layout from "./Layout";
+import UserProfileProvider from "../store/profile/provider";
 
 export default function Router() {
   const {
@@ -12,26 +13,28 @@ export default function Router() {
   } = useUserAuth();
 
   return session ? (
-    <MetamaskProvider>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Home />
-            </Layout>
-          }
-        />
-        <Route
-          path="/me"
-          element={
-            <Layout>
-              <Profile />
-            </Layout>
-          }
-        />
-      </Routes>
-    </MetamaskProvider>
+    <UserProfileProvider>
+      <MetamaskProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Layout>
+                <Home />
+              </Layout>
+            }
+          />
+          <Route
+            path="/me"
+            element={
+              <Layout>
+                <Profile />
+              </Layout>
+            }
+          />
+        </Routes>
+      </MetamaskProvider>
+    </UserProfileProvider>
   ) : (
     <Routes>
       <Route path="/" element={<SignIn />} />
