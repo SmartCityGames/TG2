@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+const config = require("./config");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -8,8 +9,8 @@ module.exports = {
   },
   networks: {
     goerli: {
-      url: proccess.env.GOERLI_ALCHEMY_URL,
-      accounts: [proccess.env.env.GOERLI_WALLET_PRIVATE_KEY]
+      url: config.GOERLI_ALCHEMY_URL,
+      accounts: [config.GOERLI_WALLET_PRIVATE_KEY]
     },
   }
 };
