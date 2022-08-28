@@ -8,8 +8,8 @@ module.exports = {
   },
   networks: {
     goerli: {
-      url: import.meta.env.GOERLI_ALCHEMY_URL,
-      accounts: [import.meta.env.GOERLI_WALLET_PRIVATE_KEY]
+      url: proccess.env.GOERLI_ALCHEMY_URL,
+      accounts: [proccess.env.env.GOERLI_WALLET_PRIVATE_KEY]
     },
   }
 };
