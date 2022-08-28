@@ -67,7 +67,7 @@ def chooseRandomMaps() -> list:
     return choices(possible_maps, k=4)
 
 
-def load_imgs(path: str, maps: list) -> tuple:
+def loadImgs(path: str, maps: list) -> tuple:
     maps_choosed = ()
     imgs = []
 
@@ -85,7 +85,7 @@ def load_imgs(path: str, maps: list) -> tuple:
     return ()
 
 
-def concat_vh(list_2d):
+def vhconcat(list_2d):
     return cv2.vconcat([cv2.hconcat(list_h) for list_h in list_2d])
 
 
@@ -106,9 +106,9 @@ def writeMetaData(idx, desc):
 
 name_idx = 0
 while (idx > 0):
-    imgs, desc = load_imgs('./mapas', chooseRandomMaps())
+    imgs, desc = loadImgs('./mapas', chooseRandomMaps())
     if len(imgs) > 0:
-        img = concat_vh(imgs)
+        img = vhconcat(imgs)
         cv2.imwrite('./nft-images/' + str(name_idx) + '.png', img)
         writeMetaData(name_idx, desc)
         name_idx += 1
