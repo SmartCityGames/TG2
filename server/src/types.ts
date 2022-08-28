@@ -1,3 +1,19 @@
+interface OneChoiceStep {
+  type: 'one_choice';
+  choices: string[];
+  answer: [number];
+}
+
+interface MultipleChoiceStep {
+  type: 'multiple_choice';
+  choices: string[];
+  answer: number[];
+}
+
+interface ConfirmOsmChangeStep {
+  type: 'confirm_osm_change';
+}
+
 export interface Quest {
   remote: boolean;
   description: string;
@@ -5,17 +21,14 @@ export interface Quest {
   name: string;
   expires_at: 'NEVER' | 'ONE_DAY' | 'ONE_HOUR';
   category: 'trash' | 'fire' | 'water' | 'sewer' | 'electricity' | string;
-  steps: {
-    type: 'multiple_choice' | 'one_choice' | string;
-    answer: number[];
-    choices: string[];
-  }[];
+  steps: (OneChoiceStep | MultipleChoiceStep | ConfirmOsmChangeStep)[];
   rewards: {
     experience: number;
-    indicators: {
+    indicators?: {
       indicator: string;
       amount: number;
     }[];
+    nft?: boolean;
   };
 }
 

@@ -1,10 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Flex, IconButton } from "native-base";
 import { useEffect, useReducer } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { Alert } from "react-native";
 import { LeafletView } from "react-native-leaflet-view";
 import { useUserLocation } from "../../store/location/provider";
 import { logger } from "../../utils/logger";
+import { CenterLoading } from "../loading/center-loading";
 import { mapConfig } from "./utils/config";
 import { mapInitialState, mapReducer } from "./utils/reducer";
 
@@ -79,7 +80,7 @@ export default function LeafletWebviewMap({ polygons, quests }) {
           mapShapes={state.combined}
           mapLayers={mapConfig.mapLayers}
           mapMarkers={markers}
-          renderLoading={() => <ActivityIndicator />}
+          renderLoading={() => <CenterLoading />}
           mapCenterPosition={position}
           zoom={zoom}
           onMessageReceived={processLeafletMessage}

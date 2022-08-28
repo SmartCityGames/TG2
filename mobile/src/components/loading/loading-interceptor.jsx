@@ -1,9 +1,8 @@
-import { Center } from "native-base";
-import { ActivityIndicator } from "react-native";
 import { useIndicators } from "../../store/indicators/provider";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { useUserProfile } from "../../store/user-profile/provider";
+import { CenterLoading } from "./center-loading";
 
 export default function LoadingInterceptor({ children, extra }) {
   const {
@@ -30,13 +29,5 @@ export default function LoadingInterceptor({ children, extra }) {
     ...(extra ?? []),
   ].some((l) => l);
 
-  if (loading) {
-    return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" />
-      </Center>
-    );
-  }
-
-  return children;
+  return loading ? <CenterLoading /> : children;
 }

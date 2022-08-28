@@ -24,8 +24,8 @@ export default function NoLocationPermissions() {
                 <FontAwesome name="check" size={16} color="green" />
                 <Text>
                   Allow
-                  <Text fontWeight={"bold"}>Always</Text> or{" "}
-                  <Text fontWeight={"bold"}>During app use</Text>
+                  <Text bold>Always</Text> or{" "}
+                  <Text bold>During app use</Text>
                 </Text>
               </HStack>
             </VStack>
