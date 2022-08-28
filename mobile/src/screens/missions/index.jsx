@@ -49,7 +49,7 @@ export default function MissionsScreen() {
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
         <FlatList
-          mt={5}
+          mt="10"
           data={availableQuests}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
@@ -77,11 +77,7 @@ export default function MissionsScreen() {
                   })?.properties?.NM_SUBDIST ?? "outside Federal District"}
                 </Text>
               </Center>
-              <Flex
-                direction="row"
-                justify="space-between"
-                align={"center"}
-              >
+              <Flex direction="row" justify="space-between" align={"center"}>
                 <Flex direction="row">
                   {!!!item.isUserInside && (
                     <IconButton
