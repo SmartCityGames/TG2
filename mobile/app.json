@@ -25,14 +25,14 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yuriserka.tg2-mobile"
+      "bundleIdentifier": "com.yuriserka.tg2_mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yuriserka.tg2-mobile",
+      "package": "com.yuriserka.tg2_mobile",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDtbPnRIXbOOpsvEQ-a6nrLnZSjofObpXc"
