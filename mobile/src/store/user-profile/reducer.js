@@ -8,9 +8,7 @@ export function userProfileReducer(state, action) {
       return {
         ...state,
         ...action.payload,
-        avatar_url: !action.payload.avatar_url
-          ? "https://icon-library.com/images/avatar-icon-png/avatar-icon-png-26.jpg"
-          : action.payload.avatar_url,
+        avatar_url: action.payload.avatar_url,
       };
     default:
       return state;

@@ -1,5 +1,7 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { formatDistanceToNow } from "date-fns";
+import pt from "date-fns/locale/pt";
 import {
   Center,
   Divider,
@@ -19,7 +21,6 @@ import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-label
 import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
-import { formatTimeLeft } from "./utils/format-expiration-time";
 
 export default function MissionsScreen() {
   const initialFocusRef = useRef(null);
@@ -70,25 +71,16 @@ export default function MissionsScreen() {
                   {item.name}
                 </Text>
                 <Text fontSize={20} fontWeight="semibold">
-                  {
-                    getPolygonWhichGeometryLies({
-                      coordinates: [
-                        item.shape.center.lng,
-                        item.shape.center.lat,
-                      ],
-                      type: "Point",
-                    }).properties.NM_SUBDIST
-                  }
+                  {getPolygonWhichGeometryLies({
+                    coordinates: [item.shape.center.lng, item.shape.center.lat],
+                    type: "Point",
+                  })?.properties?.NM_SUBDIST ?? "outside Federal District"}
                 </Text>
               </Center>
-              {/* <Text px={3} textAlign="justify" color="gray.600">
-                {item.description}
-              </Text> */}
               <Flex
                 direction="row"
                 justify="space-between"
                 align={"center"}
-                my={2}
               >
                 <Flex direction="row">
                   {!!!item.isUserInside && (
@@ -136,15 +128,18 @@ export default function MissionsScreen() {
                     </Popover>
                   ))}
                 </Flex>
-                <HStack alignItems="center">
-                  <FontAwesome name="hourglass" />
-                  <Text p={3} fontWeight="bold" color="danger.500">
-                    {item.expires_at
-                      ? formatTimeLeft(item.expires_at)
-                      : "take your time"}
-                  </Text>
-                </HStack>
               </Flex>
+              <HStack alignSelf="flex-end" alignItems="center">
+                <FontAwesome name="hourglass" />
+                <Text p={3} fontWeight="bold" color="danger.500">
+                  {item.expires_at
+                    ? formatDistanceToNow(new Date(item.expires_at), {
+                        addSuffix: true,
+                        locale: pt,
+                      })
+                    : "take your time"}
+                </Text>
+              </HStack>
             </Pressable>
           )}
         />

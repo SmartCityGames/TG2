@@ -1,3 +1,3 @@
-import { Quest } from "src/types";
+import { Quest } from 'src/types';
 
 export const prospSocQuestions: Quest[] = [];

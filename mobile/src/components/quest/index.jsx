@@ -8,9 +8,11 @@ import {
   VStack,
 } from "native-base";
 import { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getAllChangesOfUser } from "../../services/overpass-turbo";
 import { useQuests } from "../../store/quests/provider";
+import { useUserProfile } from "../../store/user-profile/provider";
+import { CenterLoading } from "../loading/center-loading";
 import { isArrayEquals } from "./utils/array-equality";
 import Options from "./utils/options";
 
@@ -20,6 +22,8 @@ const NOTHING_SELECTED = [-1];
 
 export default function Quest({ route }) {
   const [selectedOptions, setSelectedOptions] = useState(NOTHING_SELECTED);
+  const [loading, setLoading] = useState(false);
+  const [changes, setChanges] = useState([]);
 
   const { goBack } = useNavigation();
 
@@ -30,16 +34,33 @@ export default function Quest({ route }) {
     actions: { completeQuest },
   } = useQuests();
 
+  const {
+    state: { username },
+  } = useUserProfile();
+
   const toast = useToast();
 
   const quest = availableQuests.find((q) => q.id === id);
   const actualStep = quest?.steps?.find((step) => !step.completed);
 
   useEffect(() => {
-    if (!quest) {
+    if (!quest || !actualStep) {
       goBack();
+      return;
+    }
+
+    if (actualStep.type === "confirm_osm_change") {
+      setLoading(true);
+      getAllChangesOfUser({ user: username }).then((response) => {
+        setChanges(response.length > 3 ? response.slice(0, 3) : response);
+        setLoading(false);
+      });
     }
   }, [quest]);
+
+  if (!quest || loading) {
+    return <CenterLoading />;
+  }
 
   async function handleAnswer() {
     let correct = false;
@@ -52,7 +73,12 @@ export default function Quest({ route }) {
           selectedOptions.includes(ans)
         );
         break;
+      case "confirm_osm_change": {
+        const [selected] = selectedOptions;
+        correct = changes.findIndex((change) => change.id === selected) === 0;
+      }
     }
+
     if (correct) {
       const updated = {
         ...quest,
@@ -86,10 +112,6 @@ export default function Quest({ route }) {
     }
   }
 
-  if (!quest) {
-    return <ActivityIndicator />;
-  }
-
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <ScrollView px={4} mt={5}>
@@ -105,13 +127,14 @@ export default function Quest({ route }) {
             setSelectedOptions={setSelectedOptions}
             type={actualStep.type}
             choices={actualStep.choices}
+            changes={changes}
           />
         </VStack>
         <Button
           isDisabled={
-            actualStep.type === "one_choice"
-              ? selectedOptions[0] < 0
-              : selectedOptions.length < 2
+            actualStep.type === "multiple_choice"
+              ? selectedOptions.length < 2
+              : selectedOptions[0] < 0
           }
           my="6"
           onPress={handleAnswer}
