@@ -1,0 +1,17 @@
+{
+  "name": "nft-scg-generator",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ipfs": "^0.63.5",
+    "sharp": "^0.29.3"
+  }
+}

@@ -18,7 +18,7 @@ contract SmartCityGames is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     constructor() ERC721("SmartCityGames", "SCG") {}
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://";
+        return "";
     }
 
     function safeMint(address to, string memory uri) public onlyOwner {
