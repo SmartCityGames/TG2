@@ -6,11 +6,11 @@ import UserProfileProvider from "../user-profile/provider";
 export default function LoggedProviders({ children }) {
   return (
     <UserProfileProvider>
-      <IndicatorsProvider>
-        <QuestsProvider>
-          <UserLocationProvider>{children}</UserLocationProvider>
-        </QuestsProvider>
-      </IndicatorsProvider>
+      <UserLocationProvider>
+        <IndicatorsProvider>
+          <QuestsProvider>{children}</QuestsProvider>
+        </IndicatorsProvider>
+      </UserLocationProvider>
     </UserProfileProvider>
   );
 }

@@ -1,5 +1,5 @@
 export function generateQuestCircleColor(quest) {
-  switch (quest.type) {
+  switch (quest.category) {
     case "trash":
       return "#654321";
     case "fire":
@@ -10,5 +10,7 @@ export function generateQuestCircleColor(quest) {
       return "#ADD8E6";
     case "electricity":
       return "#FFD700";
+    case "education":
+      return "#8c34eb";
   }
 }

@@ -1,3 +1,4 @@
+import { isBefore } from "date-fns";
 import { useToast } from "native-base";
 import {
   createContext,
@@ -8,6 +9,9 @@ import {
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useIndicators } from "../indicators/provider";
+import { useUserLocation } from "../location/provider";
+import { haversine } from "../location/utils/haversine";
+import { useSupabase } from "../supabase/provider";
 import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
 
@@ -27,13 +31,20 @@ export default function QuestsProvider({ children }) {
   const [state, dispatch] = useReducer(questsReducer, questsInitialState);
   const toast = useToast();
 
+  const supabase = useSupabase();
+
   const {
+    state: { completed_quests },
     actions: { updateExperience },
   } = useUserProfile();
 
   const {
     actions: { incrementIndicator },
   } = useIndicators();
+
+  const {
+    actions: { getPolygonWhichGeometryLies, getUserPosition },
+  } = useUserLocation();
 
   useEffect(() => {
     retrieveQuests();
@@ -42,76 +53,97 @@ export default function QuestsProvider({ children }) {
   async function retrieveQuests() {
     toggleLoading(dispatch);
 
-    const quests = await Promise.resolve(
-      Array(3)
-        .fill({
-          name: "complete me",
-          description: "click to earn exp",
-          expires_at: Date.now() - 9812300,
-          rewards: {
-            indicators: [
-              {
-                indicator: "ivs",
-                target: "c1cbb652-141a-42aa-a2a2-12ca9cf7dcb3",
-                amount: 1,
-              },
-            ],
-            experience: 100,
-          },
-        })
-        .map((v, i) => ({
-          ...v,
-          id: i,
-          name: `${v.name} ${i}`,
-          expires_at: v.expires_at + 10000000 * i,
-          type: ["trash", "fire", "water", "sewer", "electricity"][
-            Math.floor(Math.random() * 13) % 5
-          ],
-          shape: {
-            shapeType: "Circle",
-            id: i,
-            center: {
-              lat: -15.7093 + Math.random() * 0.013,
-              lng: -47.8757 - Math.random() * 0.01,
-            },
-            radius: 75,
-          },
-        }))
+    let { data } = await supabase.from("quests").select("*");
+
+    if (completed_quests.length > 0) {
+      data = data.filter((quest) => !completed_quests.includes(quest.id));
+    }
+
+    data = data.filter(
+      (quest) =>
+        !quest.expires_at || isBefore(new Date(), new Date(quest.expires_at))
     );
 
     dispatch({
       type: "RETRIEVE_QUESTS",
-      payload: quests,
+      payload: data,
     });
   }
 
   function completeQuest(quest) {
     const { id, rewards } = quest;
 
-    dispatch({
-      type: "COMPLETE_QUEST",
-      payload: id,
-    });
+    if (quest.steps.every((step) => step.completed)) {
+      dispatch({
+        type: "COMPLETE_QUEST",
+        payload: id,
+      });
 
-    updateExperience(rewards.experience);
-    incrementIndicator(rewards.indicators);
+      updateExperience({ amount: rewards.experience, questId: id });
 
-    if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
-      toast.show({
-        id: TOAST_QUEST_COMPLETED_ID,
-        title: "congrats! 😊",
-        description: "Continue to gain more EXP and rewards",
-        collapsable: true,
-        duration: 2000,
+      const subdistrictId = getPolygonWhichGeometryLies({
+        coordinates: [quest.shape.center.lng, quest.shape.center.lat],
+        type: "Point",
+      }).properties.ID_SUPABASE;
+
+      incrementIndicator(
+        rewards.indicators.map((i) => ({ ...i, target: subdistrictId }))
+      );
+
+      if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
+        toast.show({
+          id: TOAST_QUEST_COMPLETED_ID,
+          title: "congrats! 😊",
+          description: "Continue to gain more EXP and rewards",
+          collapsable: true,
+          duration: 2000,
+        });
+      }
+    } else {
+      dispatch({
+        type: "UPDATE_QUEST",
+        payload: {
+          id,
+          quest,
+        },
       });
     }
   }
 
-  const actions = useMemo(() => ({ retrieveQuests }), []);
+  function updateUsersNearbyQuests(userLoc) {
+    const { latitude: ulat, longitude: ulng } = userLoc;
+
+    const quests = state.availableQuests.map((q) => {
+      const { lat: qlat, lng: qlng } = q.shape.center;
+      return q.remote
+        ? {
+            ...q,
+            isUserInside: haversine(ulat, ulng, qlat, qlng) <= q.shape.radius,
+          }
+        : q;
+    });
+
+    if (quests.length) {
+      dispatch({
+        type: "RETRIEVE_QUESTS",
+        payload: quests,
+      });
+    }
+  }
+
+  const actions = useMemo(
+    () => ({ updateUsersNearbyQuests }),
+    [state.availableQuests]
+  );
 
   const dependentActions = useMemo(
-    () => ({ completeQuest }),
-    [updateExperience, incrementIndicator]
+    () => ({ completeQuest, retrieveQuests }),
+    [
+      updateExperience,
+      incrementIndicator,
+      getPolygonWhichGeometryLies,
+      getUserPosition,
+    ]
   );
 
   return (

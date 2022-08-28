@@ -28,7 +28,7 @@ export default function SignIn() {
             login({ email });
           }}
         >
-          {({ handleSubmit, errors, touched }) => (
+          {({ handleSubmit, errors, touched, values }) => (
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
                 <FormControl isInvalid={!!errors.email && touched.email}>
@@ -39,15 +39,15 @@ export default function SignIn() {
                     name="email"
                     type="email"
                     variant="filled"
-                    autoComplete="username"
+                    autoComplete="email"
                   />
-                  <FormErrorMessage>{errors.password}</FormErrorMessage>
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
                 <Button
                   type="submit"
                   colorScheme="purple"
                   width="full"
-                  disabled={loading}
+                  isDisabled={loading || !values.email}
                 >
                   Send Link
                 </Button>

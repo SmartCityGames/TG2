@@ -1,84 +1,59 @@
-import { Button, Center, Flex, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useUserAuth } from "../store/auth/provider";
+import {
+  Button,
+  Center,
+  Flex,
+  Image,
+  List,
+  ListItem,
+  Text,
+} from "@chakra-ui/react";
+import { useEffect } from "react";
 import { useMetamask } from "../store/metamask/metamask";
-import { useSupabase } from "../store/supabase/provider";
-import { shortenAccount } from "../utils/shorten-account";
 
 export default function Home() {
   const {
-    state: { contracts, account, loading },
-    actions: {
-      checkDbWalletWithMetamask,
-      setMessageBlockchain,
-      getMessageBlockchain,
-      getMintedNFT,
-      mint,
-      getMintedToken
-    },
+    state: { account, values },
+    actions: { getMintedTokens, getTotalNftMinted, mint },
   } = useMetamask();
-  const {
-    state: { session },
-  } = useUserAuth();
-  const supabase = useSupabase();
-  const [message, setMessage] = useState("default message");
-  const [dbWallet, setDbWallet] = useState(null);
 
   useEffect(() => {
-    async function getUserWallet() {
-      const response = await supabase
-        .from("profiles")
-        .select("wallet")
-        .eq("id", session.user.id);
+    if (!account) return;
 
-      if (!response.data.length) return;
-
-      setDbWallet(response.data[0].wallet);
-    }
-    getUserWallet();
-  }, []);
-
-  useEffect(() => {
-    if (!contracts.smartCityGames || !account) return;
-    (async () => setMessage(await getMintedNFT()))();
-    (async () => setMessage(await getMintedToken()))();
-  }, [contracts.smartCityGames, account]);
+    getMintedTokens();
+    getTotalNftMinted();
+  }, [account]);
 
   if (!account) {
     return (
-      <Center>
-        <Button
-          p={3}
-          bg="orange.400"
-          rounded="lg"
-          onClick={() => checkDbWalletWithMetamask(dbWallet)}
-        >
-          login with Metamask
-        </Button>
+      <Center flex={1} color="white">
+        <Text>Login with metamask first to see your NFTs</Text>
       </Center>
     );
   }
 
   return (
-    <Center>
-      <Flex gap={4} direction="column" align="center" justify="center">
-        <Text size="xl" color="teal.600">
-          Account: {shortenAccount(account)}
-        </Text>
-        <Text size="2xl" color="skyblue">
-          Contract Message: {JSON.stringify(message)}
-        </Text>
-
-        <Button
-          p={3}
-          bg="pink.400"
-          rounded="lg"
-          onClick={() => mint()}
-          disabled={loading}
-        >
-          Change stored message
-        </Button>
-      </Flex>
-    </Center>
+    <Flex gap={4} direction="column" justify="center" align="center">
+      <Text color="red.300">
+        There are {values.total} NFTs minted in total{" "}
+      </Text>
+      <Button
+        onClick={() => {
+          mint("01");
+        }}
+      >
+        earn an nft
+      </Button>
+      {values.userNftMinted?.length ? (
+        <List>
+          {values.userNftMinted?.map((token) => (
+            <ListItem>
+              <Image src={token} />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Text color={"white"}>You dont have owned any token yet</Text>
+      )}
+    </Flex>
   );
 }

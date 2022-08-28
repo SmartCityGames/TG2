@@ -1,5 +1,5 @@
 export function generateQuestEmoji(quest) {
-  switch (quest.type) {
+  switch (quest.category) {
     case "trash":
       return require("../../../../assets/garbage.jpg");
     case "fire":

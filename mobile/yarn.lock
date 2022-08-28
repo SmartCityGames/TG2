@@ -2671,6 +2671,60 @@
     "@supabase/realtime-js" "^1.7.2"
     "@supabase/storage-js" "^1.7.0"
 
+"@turf/bbox@^6.0.1", "@turf/bbox@^6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/bbox/-/bbox-6.5.0.tgz#bec30a744019eae420dac9ea46fb75caa44d8dc5"
+  integrity sha512-RBbLaao5hXTYyyg577iuMtDB8ehxMlUqHEJiMs8jT1GHkFhr6sYre3lmLsPeYEi/ZKj5TP5tt7fkzNdJ4GIVyw==
+  dependencies:
+    "@turf/helpers" "^6.5.0"
+    "@turf/meta" "^6.5.0"
+
+"@turf/boolean-contains@^6.0.1":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/boolean-contains/-/boolean-contains-6.5.0.tgz#f802e7432fb53109242d5bf57393ef2f53849bbf"
+  integrity sha512-4m8cJpbw+YQcKVGi8y0cHhBUnYT+QRfx6wzM4GI1IdtYH3p4oh/DOBJKrepQyiDzFDaNIjxuWXBh0ai1zVwOQQ==
+  dependencies:
+    "@turf/bbox" "^6.5.0"
+    "@turf/boolean-point-in-polygon" "^6.5.0"
+    "@turf/boolean-point-on-line" "^6.5.0"
+    "@turf/helpers" "^6.5.0"
+    "@turf/invariant" "^6.5.0"
+
+"@turf/boolean-point-in-polygon@^6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/boolean-point-in-polygon/-/boolean-point-in-polygon-6.5.0.tgz#6d2e9c89de4cd2e4365004c1e51490b7795a63cf"
+  integrity sha512-DtSuVFB26SI+hj0SjrvXowGTUCHlgevPAIsukssW6BG5MlNSBQAo70wpICBNJL6RjukXg8d2eXaAWuD/CqL00A==
+  dependencies:
+    "@turf/helpers" "^6.5.0"
+    "@turf/invariant" "^6.5.0"
+
+"@turf/boolean-point-on-line@^6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/boolean-point-on-line/-/boolean-point-on-line-6.5.0.tgz#a8efa7bad88760676f395afb9980746bc5b376e9"
+  integrity sha512-A1BbuQ0LceLHvq7F/P7w3QvfpmZqbmViIUPHdNLvZimFNLo4e6IQunmzbe+8aSStH9QRZm3VOflyvNeXvvpZEQ==
+  dependencies:
+    "@turf/helpers" "^6.5.0"
+    "@turf/invariant" "^6.5.0"
+
+"@turf/helpers@^6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/helpers/-/helpers-6.5.0.tgz#f79af094bd6b8ce7ed2bd3e089a8493ee6cae82e"
+  integrity sha512-VbI1dV5bLFzohYYdgqwikdMVpe7pJ9X3E+dlr425wa2/sMJqYDhTO++ec38/pcPvPE6oD9WEEeU3Xu3gza+VPw==
+
+"@turf/invariant@^6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/invariant/-/invariant-6.5.0.tgz#970afc988023e39c7ccab2341bd06979ddc7463f"
+  integrity sha512-Wv8PRNCtPD31UVbdJE/KVAWKe7l6US+lJItRR/HOEW3eh+U/JwRCSUl/KZ7bmjM/C+zLNoreM2TU6OoLACs4eg==
+  dependencies:
+    "@turf/helpers" "^6.5.0"
+
+"@turf/meta@^6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@turf/meta/-/meta-6.5.0.tgz#b725c3653c9f432133eaa04d3421f7e51e0418ca"
+  integrity sha512-RrArvtsV0vdsCBegoBtOalgdSOfkBrTJ07VkpiCnq/491W67hnMWmDu7e6Ztw0C3WldRYTXkg3SumfdzZxLBHA==
+  dependencies:
+    "@turf/helpers" "^6.5.0"
+
 "@types/geojson@^7946.0.7":
   version "7946.0.10"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
@@ -4230,6 +4284,11 @@ expo-leaflet@^1.0.3:
     lodash.isequal "^4.5.0"
     react-leaflet "^3.2.0"
 
+expo-linear-gradient@~11.3.0:
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-11.3.0.tgz#855f470c9684f5b979c3c1be0ed1fe1943d57158"
+  integrity sha512-gm0cULqE5cTP39HZHi+eCGgQ2qMcwym92DwSzRpA5nA4Ah5oKksV+PwD7zzo6YJt3X3lgqrTYEqts9VQISCTgw==
+
 expo-location@~14.2.2:
   version "14.2.2"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-14.2.2.tgz#5797f52be4e990b25e00bf6341be0c573c1393c1"
@@ -4646,6 +4705,26 @@ gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
+
+geojson-geometries-lookup@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/geojson-geometries-lookup/-/geojson-geometries-lookup-0.5.0.tgz#bd3033a91ff274551a480efd5daf819957ffa043"
+  integrity sha512-AfadxaBda6VTwwX4USLiVofFaz0HIjubC7ZC15hGTvc8K0di3pmCNWGFotKJeURSxYPbJLFoet34X3JrIKFX4A==
+  dependencies:
+    "@turf/bbox" "^6.0.1"
+    "@turf/boolean-contains" "^6.0.1"
+    geojson-geometries "^2.0.0"
+    rbush "^3.0.1"
+
+geojson-geometries@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/geojson-geometries/-/geojson-geometries-2.0.0.tgz#faac47174b0c96a448cba8ba4febbfc224339f82"
+  integrity sha512-HKljxKnbJrdkr7ijg5/nvcr1b81HP+C/rS48cJwRb3xEqiEynlGkRVkQ/msopw+EE3gf7DjEKdZyEGMck0bOpw==
+
+geojson-random@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/geojson-random/-/geojson-random-0.2.2.tgz#ab4838f126adc5e16f8f94e655def820f9119dbc"
+  integrity sha512-/vZQ14mjKPG3LJ7bpyXsJ0aoz8NzvwpwwP//uBgbzIu2BCFd4uRagp1QvY3RAzRQsHOHyVh33dbYUYws7vOCkg==
 
 get-caller-file@^2.0.1:
   version "2.0.5"
@@ -6081,7 +6160,7 @@ minimatch@^5.0.1:
   dependencies:
     brace-expansion "^2.0.1"
 
-minimist@^1.2.0, minimist@^1.2.6:
+minimist@^1.1.0, minimist@^1.2.0, minimist@^1.2.6:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
@@ -6857,6 +6936,21 @@ quick-format-unescaped@^4.0.3:
   resolved "https://registry.yarnpkg.com/quick-format-unescaped/-/quick-format-unescaped-4.0.4.tgz#93ef6dd8d3453cbc7970dd614fad4c5954d6b5a7"
   integrity sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==
 
+quickselect@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/quickselect/-/quickselect-2.0.0.tgz#f19680a486a5eefb581303e023e98faaf25dd018"
+  integrity sha512-RKJ22hX8mHe3Y6wH/N3wCM6BWtjaxIyyUIkpHOvfFnxdI4yD4tBXEBKSbriGujF6jnSVkJrffuo6vxACiSSxIw==
+
+random-points-on-polygon@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/random-points-on-polygon/-/random-points-on-polygon-0.0.4.tgz#eaf3192253359f32a518a5c876d6e8e668f00acf"
+  integrity sha512-Us8GruHcfEkDbHW6H6JHhCQ3RPtMY91PWq0oWgTh6hNXVCYfrwkr3MfejES+FVp1hS+z/2GAWPLbMYg2NjGYBw==
+  dependencies:
+    turf-extent "^1.0.4"
+    turf-featurecollection "^1.0.1"
+    turf-inside "^1.1.4"
+    turf-random "^1.0.2"
+
 range-parser@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
@@ -6871,6 +6965,13 @@ raw-body@2.4.0:
     http-errors "1.7.2"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+rbush@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/rbush/-/rbush-3.0.1.tgz#5fafa8a79b3b9afdfe5008403a720cc1de882ecf"
+  integrity sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w==
+  dependencies:
+    quickselect "^2.0.0"
 
 rc@~1.2.7:
   version "1.2.8"
@@ -6987,7 +7088,7 @@ react-native-screens@~3.11.1:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-svg@^12.3.0:
+react-native-svg@12.3.0:
   version "12.3.0"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.3.0.tgz#40f657c5d1ee366df23f3ec8dae76fd276b86248"
   integrity sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg==
@@ -8054,6 +8155,37 @@ tslib@^2.0.1, tslib@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
+turf-extent@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/turf-extent/-/turf-extent-1.0.4.tgz#9f28ce11af916ada88862a062074658ba3fe0f01"
+  integrity sha512-JPQtCq6Q5YwwkzQzSU8LYe1KbFnzEVbh21s/o8kYtgs6AeON47t0Gd2q+qLuQOr6usMiJoXylMvgk5qagOzYTQ==
+  dependencies:
+    turf-meta "^1.0.2"
+
+turf-featurecollection@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/turf-featurecollection/-/turf-featurecollection-1.0.1.tgz#eccd1cf9124176bfc6db197cbb45d6de55f724c5"
+  integrity sha512-VLoAXhEVd/KavMrs98x/bQccDd2R9gSPWkNLiwHwC8Cl/0S5Mid6AkCqGpc556V9DAz+6wcQvW6h+oZZQ+Sitg==
+
+turf-inside@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/turf-inside/-/turf-inside-1.1.4.tgz#9a980bd113595c04826459ca6adffdaa79553fb1"
+  integrity sha512-c1zcT/FzK9Ik+7/VWTofnXObUiQuxPsHGffmPzBzFdvlB7QOkkv1tznxvd68cRtdTic+Op+hRg3BSHzuqLFrCg==
+  dependencies:
+    minimist "^1.1.0"
+
+turf-meta@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/turf-meta/-/turf-meta-1.0.2.tgz#74d4c495938eb24772a70b31a157ee3d4fd6ba1b"
+  integrity sha512-oR+OxR++Wlie4fr2cMLbmdVAA9rfHxnuX/H5bphCaDTc14JDmd/ixWer08vhoawnvjE98Eq6o4UOGY8AMRbexw==
+
+turf-random@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/turf-random/-/turf-random-1.0.2.tgz#398632082086eb62b56f78e66777675f5720c263"
+  integrity sha512-ySeOun0wPg5E1+CSJC3/T9T85sLYILM+Jg1Hllmm0zaVbOcjwIh4yEr6SxKq/P3KRdfZFV5MDFBFZddNnHS4vg==
+  dependencies:
+    geojson-random "^0.2.2"
 
 type-fest@^0.12.0:
   version "0.12.0"

@@ -4,7 +4,7 @@ import DebounceInput from "react-native-debounce-input";
 import { useIndicators } from "../../../store/indicators/provider";
 import { sanitizeText } from "../../../utils/sanitize-text";
 
-export default function IndicatorForm() {
+export default function IndicatorForm({ dispatch }) {
   const {
     state: { indicators, selectedIndicator },
     actions: { changeSelectedIndicator },
@@ -17,7 +17,7 @@ export default function IndicatorForm() {
 
   const indicatorsIndicators =
     Object.keys(indicators?.[0] ?? {})?.filter(
-      (i) => !["id", "udhs", "udh"].includes(i)
+      (i) => !["id", "udhs", "udh"].includes(i) && !i.includes("_normal")
     ) ?? [];
 
   const filteredIndicators = [
@@ -34,11 +34,15 @@ export default function IndicatorForm() {
     <Box
       position="absolute"
       right="12"
+      mr={2}
       top="40"
-      w={"3/6"}
+      w={"4/6"}
       maxH={"md"}
       mt={5}
       px={2}
+      bg={"white"}
+      p={3}
+      rounded="lg"
     >
       <DebounceInput
         value={search}
@@ -65,7 +69,12 @@ export default function IndicatorForm() {
         name="radio-group"
         value={selectedIndicator}
         accessibilityLabel="selected indicator"
-        onChange={(nextValue) => changeSelectedIndicator(nextValue)}
+        onChange={(nextValue) => {
+          dispatch({
+            type: "TOGGLE_INDICATOR_FORM",
+          });
+          changeSelectedIndicator(nextValue);
+        }}
       >
         <FlatList
           data={filteredIndicators}

@@ -1,7 +1,8 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
+import { LinearGradient } from "expo-linear-gradient";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { NativeBaseProvider, View } from "native-base";
@@ -13,6 +14,12 @@ import UserAuthProvider from "./src/store/auth/provider";
 
 SplashScreen.preventAutoHideAsync();
 
+const config = {
+  dependencies: {
+    "linear-gradient": LinearGradient,
+  },
+};
+
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -23,7 +30,11 @@ export default function App() {
           Asset.fromModule(image).downloadAsync()
         );
 
-        await Promise.all([Font.loadAsync(FontAwesome.font), ...cacheImages]);
+        await Promise.all([
+          Font.loadAsync(FontAwesome.font),
+          Font.loadAsync(FontAwesome5.font),
+          ...cacheImages,
+        ]);
       } catch (error) {
         console.warn({ error });
       } finally {
@@ -45,7 +56,7 @@ export default function App() {
   }
 
   return (
-    <NativeBaseProvider>
+    <NativeBaseProvider config={config}>
       <SafeAreaProvider>
         <View onLayout={onLayoutRootView} flex={1}>
           <NavigationContainer>

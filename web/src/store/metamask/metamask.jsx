@@ -1,5 +1,4 @@
 import { useToast } from "@chakra-ui/react";
-import { faker } from "@faker-js/faker";
 import { ethers } from "ethers";
 import {
   createContext,
@@ -8,6 +7,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { config } from "../../config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
@@ -15,15 +15,21 @@ import { metamaskReducer } from "./reducer";
 
 const { ethereum } = window;
 
+const CONTENT_ID = "QmWoAd19aCmkax45YsaH1exYKHk5erv81fMRdMPxgGKmpz";
+
 export const metamaskInitialState = {
   account: "",
   provider: undefined,
   signer: undefined,
   contracts: {
-    hello: undefined,
+    smartCityGames: undefined,
   },
   error: undefined,
   loading: false,
+  values: {
+    total: 0,
+    userNftMinted: [],
+  },
 };
 
 const MetamaskContext = createContext({ state: metamaskInitialState });
@@ -40,20 +46,36 @@ export default function MetamaskProvider({ children }) {
   } = useUserAuth();
 
   useEffect(() => {
-    if (!ethereum) {
-      showBlockchainError({
-        code: "Failed to load metamask",
-        description: "please install metamask in your browser",
-      });
+    if (!checkMetamask()) return;
 
-      return;
+    async function getContracts() {
+      const { signedURL } = await supabase.storage
+        .from("assets")
+        .createSignedUrl("contract_abi.json", 60);
+
+      const smartCityGames = await fetch(signedURL).then((response) =>
+        response.json()
+      );
+
+      const provider = new ethers.providers.Web3Provider(ethereum, "any");
+
+      dispatch({
+        type: "LOAD_PROVIDER",
+        payload: {
+          provider,
+          contracts: {
+            smartCityGames: new ethers.Contract(
+              `${config.CONTRACT_HEX}`,
+              smartCityGames.abi,
+              provider
+            ),
+          },
+        },
+      });
     }
 
-    dispatch({
-      type: "LOAD_PROVIDER",
-      payload: new ethers.providers.Web3Provider(ethereum, "any"),
-    });
-  }, []);
+    getContracts();
+  }, [window.ethereum]);
 
   useEffect(() => {
     if (!state.provider) return;
@@ -91,6 +113,17 @@ export default function MetamaskProvider({ children }) {
       eth.removeAllListeners("accountsChanged");
     };
   }, [state.provider]);
+
+  function checkMetamask() {
+    if (!ethereum) {
+      showBlockchainError({
+        code: "NO_METAMASK",
+        description: "please install metamask in your browser",
+      });
+    }
+
+    return !!ethereum;
+  }
 
   async function checkDbWalletWithMetamask(dbWallet) {
     toggleLoading(dispatch);
@@ -147,93 +180,90 @@ export default function MetamaskProvider({ children }) {
     });
   }
 
-  async function getMessageBlockchain() {
+  async function getTotalNftMinted() {
     try {
-      return state.contracts.hello.getMessage();
+      const total = await state.contracts.smartCityGames.count();
+
+      dispatch({
+        type: "UPDATE_CONTRACT_VALUES",
+        payload: {
+          total: total.toNumber(),
+        },
+      });
     } catch (error) {
-      console.log({ error });
       showBlockchainError({
         ...error,
-        description: "failed to get contract message",
+        description: "failed to get total nfts minted",
       });
     }
   }
 
-  async function getMintedNFT() {
+  async function mint(nft) {
     try {
-      return state.contracts.smartCityGames.count();
+      const tokenId = `https://gateway.pinata.cloud/ipfs/${CONTENT_ID}/varjao${nft}.png`;
+      await state.contracts.smartCityGames
+        .connect(state.signer)
+        .payToMint(state.account, tokenId, {
+          value: ethers.utils.parseEther("0.05"),
+        });
     } catch (error) {
-      console.log({ error });
       showBlockchainError({
         ...error,
-        description: "failed to get contract message",
+        description: `failed to mint nft ${nft}`,
       });
     }
   }
 
-  async function mint() {
+  async function getMintedTokens() {
     try {
-      const contentId = 'QmWoAd19aCmkax45YsaH1exYKHk5erv81fMRdMPxgGKmpz';
-      const tokenId = `https://gateway.pinata.cloud/ipfs/${contentId}/samambaia01.png`;
-      await state.contracts.smartCityGames.connect(state.signer).payToMint(state.account, tokenId, { value: ethers.utils.parseEther('0.5') });
-    } catch (error) {
-      console.log({ error });
-      showBlockchainError({
-        ...error,
-        description: "failed to get contract message",
-      });
-    }
-  }
+      const instance = await state.contracts.smartCityGames.connect(
+        state.signer
+      );
 
-  async function getMintedToken() {
-    try {
-      const instance = await state.contracts.smartCityGames.connect(state.signer);
       const balanceOf = await instance.balanceOf(state.account);
-      console.log({ balanceOf });
       const prevEarnedTokens = [];
       for (let i = 0; i < balanceOf; i++) {
         const id = await instance.tokenOfOwnerByIndex(state.account, i);
         prevEarnedTokens.push(await instance.tokenURI(id));
       }
-      return prevEarnedTokens;
+
+      dispatch({
+        type: "UPDATE_CONTRACT_VALUES",
+        payload: {
+          userNftMinted: prevEarnedTokens,
+        },
+      });
     } catch (error) {
       console.log({ error });
       showBlockchainError({
         ...error,
-        description: "failed to get contract message",
+        description: "failed to get previous minted tokens",
       });
     }
   }
 
-  async function setMessageBlockchain() {
-    toggleLoading(dispatch);
-    await state.contracts.hello
-      .connect(state.signer)
-      .setMessage(faker.random.words(5));
-    toggleLoading(dispatch);
-  }
+  function showBlockchainError(error) {
+    const { code, description, message } = error;
 
-  function showBlockchainError({ error }) {
     toast({
-      title: `ERROR: ${error.code}`,
-      description: error.description ?? error.message,
+      title: `ERROR: ${code ?? "unknown"}`,
+      description: description ?? message,
       status: "error",
-      duration: 5000,
+      duration: 3000,
       isClosable: true,
       position: "top",
     });
-    console.log({ error });
+    console.error({ error });
     dispatch({ type: "ERROR", payload: error });
   }
 
   const actions = useMemo(
     () => ({
       checkDbWalletWithMetamask,
-      setMessageBlockchain,
-      getMessageBlockchain,
-      getMintedNFT,
+      getTotalNftMinted,
       mint,
-      getMintedToken,
+      getMintedTokens,
+      checkMetamask,
     }),
     [state.provider, state.account]
   );

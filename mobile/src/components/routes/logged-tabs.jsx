@@ -2,14 +2,14 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState } from "react-native";
 import HomeScreen from "../../screens/home";
 import IndicatorsScreen from "../../screens/indicators";
-import MissionsScreen from "../../screens/missions";
 import LoggedProviders from "../../store/combined/logged";
 import Left from "../navbar/left";
 import Middle from "../navbar/middle";
 import Right from "../navbar/right";
+import MissionStack from "./mission-stack";
 import NoLocationPermissions from "./no-location-permissions";
 
 const Tab = createBottomTabNavigator();
@@ -55,8 +55,9 @@ export default function LoggedTabs() {
           headerLeft: (props) => <Left {...props} />,
           headerRight: (props) => <Right {...props} />,
           headerTitle: (props) => <Middle {...props} />,
+          headerShadowVisible: true,
           headerBackgroundContainerStyle: {
-            height: Platform.OS === "ios" ? 105 : 100,
+            height: 120,
           },
         }}
       >
@@ -73,7 +74,7 @@ export default function LoggedTabs() {
           options={{
             tabBarIcon: (props) => <FontAwesome name="gamepad" {...props} />,
           }}
-          component={MissionsScreen}
+          component={MissionStack}
         />
         <Tab.Screen
           name="Indicators"

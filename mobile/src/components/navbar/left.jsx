@@ -1,5 +1,5 @@
 import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
-import { Avatar, Box, Pressable } from "native-base";
+import { Avatar, Flex, Pressable } from "native-base";
 import { useUserProfile } from "../../store/user-profile/provider";
 
 export default function Left(props) {
@@ -23,7 +23,7 @@ export default function Left(props) {
   }
 
   return (
-    <Box {...props} ml="3" mt="5">
+    <Flex ml="3" align="center" justify="center" direction="column" {...props}>
       <Pressable onPress={() => pickImage()}>
         <Avatar
           source={{ uri: avatar_url }}
@@ -33,6 +33,6 @@ export default function Left(props) {
           <Avatar.Badge bg="green.500" />
         </Avatar>
       </Pressable>
-    </Box>
+    </Flex>
   );
 }
