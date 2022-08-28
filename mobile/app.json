@@ -8,8 +8,8 @@
         }
       ]
     ],
-    "name": "tg2",
-    "slug": "tg2",
+    "name": "tg2mobile",
+    "slug": "tg2mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,14 +25,14 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yuriserka.tg2_mobile"
+      "bundleIdentifier": "com.yuriserka.tg2mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yuriserka.tg2_mobile",
+      "package": "com.yuriserka.tg2mobile",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDtbPnRIXbOOpsvEQ-a6nrLnZSjofObpXc"
