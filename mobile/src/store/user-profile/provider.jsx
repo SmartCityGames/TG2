@@ -109,6 +109,23 @@ export default function UserProfileProvider({ children }) {
     updateProfile(data[0]);
   }
 
+  async function updateOwnedNfts({ nft }) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(
+        { collected_nfts: [...state.collected_nfts, nft] },
+        { returning: "representation" }
+      )
+      .eq("id", session.user.id);
+
+    if (error) {
+      showUserProfileError({ error });
+      return;
+    }
+
+    updateProfile(data[0]);
+  }
+
   function updateProfile(data) {
     if (data) {
       dispatch({
@@ -131,6 +148,7 @@ export default function UserProfileProvider({ children }) {
       getUserProfile,
       updateProfile,
       updateProfilePicture,
+      updateOwnedNfts,
     }),
     [session]
   );
@@ -139,7 +157,7 @@ export default function UserProfileProvider({ children }) {
     () => ({
       updateExperience,
     }),
-    [state.experience, state.completed_quests]
+    [session.user.id, state.experience, state.completed_quests]
   );
 
   return (
