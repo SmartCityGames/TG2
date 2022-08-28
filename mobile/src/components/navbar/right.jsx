@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Box, IconButton } from "native-base";
+import { Flex, IconButton } from "native-base";
 import { useUserAuth } from "../../store/auth/provider";
 
 export default function Right(props) {
@@ -8,12 +8,12 @@ export default function Right(props) {
   } = useUserAuth();
 
   return (
-    <Box {...props} mr="3" mt="3" height="10">
+    <Flex mr="3" align="center" justify="center" direction="column" {...props}>
       <IconButton
-        icon={<FontAwesome name="sign-out" size={23} color="#ff5500" />}
+        icon={<FontAwesome name="sign-out" size={25} color="#ff5500" />}
         rounded="full"
         onPress={() => logout()}
       />
-    </Box>
+    </Flex>
   );
 }

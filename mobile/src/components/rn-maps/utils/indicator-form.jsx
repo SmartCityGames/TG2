@@ -34,6 +34,7 @@ export default function IndicatorForm({ dispatch }) {
     <Box
       position="absolute"
       right="12"
+      mr={2}
       top="40"
       w={"4/6"}
       maxH={"md"}

@@ -50,7 +50,7 @@ export default function IndicatorsScreen({ route }) {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
-        <Center mt={3}>
+        <Center mt={7}>
           <DebounceInput
             value={search}
             defaultValue=""
