@@ -6,6 +6,18 @@ export function profileReducer(state, action) {
       return {
         ...state,
         ...action.payload,
+        loading: false,
+        error: undefined,
+      };
+    case "LOADING":
+      return {
+        ...state,
+        loading: !state.loading,
+      };
+    case "ERROR":
+      return {
+        ...state,
+        error: action.payload.error,
       };
     default:
       return state;

@@ -1,11 +1,9 @@
 import { Route, Routes } from "react-router-dom";
-import { useUserAuth } from "../store/auth/provider";
 import SignIn from "../pages/SignIn";
-import Home from "../pages/Home";
+import { useUserAuth } from "../store/auth/provider";
 import MetamaskProvider from "../store/metamask/metamask";
-import Profile from "../pages/Profile";
-import Layout from "./Layout";
 import UserProfileProvider from "../store/profile/provider";
+import LoggedRoutes from "./routes/LoggedRoutes";
 
 export default function Router() {
   const {
@@ -15,24 +13,7 @@ export default function Router() {
   return session ? (
     <UserProfileProvider>
       <MetamaskProvider>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <Home />
-              </Layout>
-            }
-          />
-          <Route
-            path="/me"
-            element={
-              <Layout>
-                <Profile />
-              </Layout>
-            }
-          />
-        </Routes>
+        <LoggedRoutes />
       </MetamaskProvider>
     </UserProfileProvider>
   ) : (

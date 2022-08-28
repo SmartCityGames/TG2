@@ -1,15 +1,19 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
 import { profileReducer } from "./reducer";
 
 const userProfilesInitialState = {
-  wallet: "",
-  avatar_url: "",
+  avatar_url: undefined,
+  username: undefined,
+  wallet: undefined,
+  level: 1,
+  experience: 0,
   completed_quests: [],
-  username: "",
-  error: undefined,
   loading: false,
+  error: undefined,
+  collected_nfts: [],
 };
 
 const UserProfileContext = createContext({
@@ -33,9 +37,9 @@ export default function UserProfileProvider({ children }) {
   useEffect(() => {
     if (!session) return;
 
-    console.log({ session });
-
     async function getProfile() {
+      toggleLoading(dispatch);
+
       const { data } = await supabase
         .from("profiles")
         .select()

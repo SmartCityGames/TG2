@@ -14,6 +14,13 @@ export function metamaskReducer(state, action) {
         error: undefined,
       };
     }
+    case "UPDATE_CONTRACT_VALUES":
+      return {
+        ...state,
+        values: {
+          ...action.payload,
+        },
+      };
     case "LOGIN": {
       return state.account === action.payload
         ? state

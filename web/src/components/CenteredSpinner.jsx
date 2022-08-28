@@ -1,9 +1,9 @@
 import { Center, Spinner } from "@chakra-ui/react";
 
-export default function CenteredSpinner({ size, h }) {
+export default function CenteredSpinner({ size }) {
   return (
     <Center flex={1}>
-      <Spinner size={size ?? "xl"} />
+      <Spinner color="white" size={size ?? "xl"} />
     </Center>
   );
 }
