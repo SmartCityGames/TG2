@@ -2,6 +2,7 @@ export function profileReducer(state, action) {
   console.log(`[PROFILE] action of type ${action.type} fired`);
 
   switch (action.type) {
+    case "UPDATE_PROFILE":
     case "GET_PROFILE":
       return {
         ...state,
