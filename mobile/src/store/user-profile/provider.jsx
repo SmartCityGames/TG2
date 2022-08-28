@@ -17,6 +17,7 @@ const userProfileinitialState = {
   level: 1,
   experience: 0,
   completed_quests: [],
+  collected_nfts: [],
 };
 
 const UserProfileContext = createContext({
