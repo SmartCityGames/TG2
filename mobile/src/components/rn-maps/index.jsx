@@ -180,7 +180,7 @@ export default function RnMaps({ polygons, quests }) {
           }
           position="absolute"
           right="3"
-          top="24"
+          mt="32"
           rounded="full"
           icon={
             <FontAwesome
@@ -201,7 +201,7 @@ export default function RnMaps({ polygons, quests }) {
           }
           position="absolute"
           right="3"
-          top="32"
+          top="40"
           mt={3}
           rounded="full"
           icon={
@@ -222,7 +222,7 @@ export default function RnMaps({ polygons, quests }) {
           }
           position="absolute"
           right="3"
-          top="40"
+          top="48"
           mt={5}
           rounded="full"
           icon={
@@ -234,7 +234,9 @@ export default function RnMaps({ polygons, quests }) {
           }
         />
       )}
-      {state.showIndicatorForm && <IndicatorForm dispatch={dispatch} />}
+      {state.showDistricts && state.showIndicatorForm && (
+        <IndicatorForm dispatch={dispatch} />
+      )}
       <IconButton
         onPress={() => center()}
         position="absolute"
