@@ -10,15 +10,26 @@ import {
   Show,
   Text,
 } from "@chakra-ui/react";
-import { FaBars, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaBars, FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../store/auth/provider";
+import { useMetamask } from "../store/metamask/metamask";
+import { useUserProfile } from "../store/profile/provider";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const {
     actions: { logout },
   } = useUserAuth();
+
+  const {
+    state: { account },
+    actions: { checkDbWalletWithMetamask },
+  } = useMetamask();
+
+  const {
+    state: { wallet },
+  } = useUserProfile();
 
   return (
     <Flex h="64px" p="6" align="center" justify="space-between" direction="row">
@@ -35,7 +46,7 @@ export default function Navbar() {
       >
         Smarty City Games
       </Text>
-      <Show below="md">
+      <Show below={!account ? "lg" : "md"}>
         <Menu>
           <MenuButton
             as={IconButton}
@@ -44,6 +55,15 @@ export default function Navbar() {
             variant="outline"
           />
           <MenuList>
+            {!account && (
+              <MenuItem
+                color="orange.500"
+                icon={<FaWallet />}
+                onClick={() => checkDbWalletWithMetamask(wallet)}
+              >
+                Login Metamask
+              </MenuItem>
+            )}
             <MenuItem
               color="blue.500"
               icon={<FaUser />}
@@ -61,13 +81,23 @@ export default function Navbar() {
           </MenuList>
         </Menu>
       </Show>
-      <Hide below="md">
+      <Hide below={!account ? "lg" : "md"}>
         <Flex
           align="center"
           justify="space-between"
           direction="row"
           gap={[3, 12]}
         >
+          {!account && (
+            <Button
+              leftIcon={<FaWallet />}
+              onClick={() => checkDbWalletWithMetamask(wallet)}
+              colorScheme="orange"
+              variant="outline"
+            >
+              Login Metamask
+            </Button>
+          )}
           <Button
             leftIcon={<FaUser />}
             onClick={() => navigate("/me")}

@@ -30,7 +30,7 @@ Módulo responsável pela execução de tarefas agendadas, como inserção de mi
 
 ### **Web**
 
-Módulo responsável pela criação de um PWA para mostrar informações acerca do projeto e linkar a carteira virtual do usuário.
+Módulo responsável pela criação de um PWA para mostrar informações acerca do projeto, linkar a carteira virtual do usuário e atualizar as informações de seu perfil.
 
 ### Alunos
 
