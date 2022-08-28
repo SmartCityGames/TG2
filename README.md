@@ -20,9 +20,9 @@ Módulo responsável pela extração e manipulação dos dados de indicadores pr
 
 Módulo responsável pela criação da aplicação para dispositivos móveis e deploy do aplicativo.
 
-### **NFT-Art-Generator**
+### **NFT-SCG-Generator**
 
-Módulo responsável pela criação de imagens únicas que servirão de recompensa para missões.
+Módulo responsável pela criação de imagens (NFTs) únicas que servirão de recompensa para missões.
 
 ### **Server**
 
