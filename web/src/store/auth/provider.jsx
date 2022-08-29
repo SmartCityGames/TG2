@@ -6,6 +6,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useSupabase } from "../supabase/provider";
 import { authReducer } from "./reducer";
@@ -22,8 +23,12 @@ export const useUserAuth = () => useContext(UserAuthContext);
 
 export default function UserAuthProvider({ children }) {
   const toast = useToast();
+
   const [state, dispatch] = useReducer(authReducer, authInitialState);
+
   const supabase = useSupabase();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const session = supabase.auth.session();
@@ -56,10 +61,10 @@ export default function UserAuthProvider({ children }) {
     };
   }, []);
 
-  async function login({ email }) {
+  async function login({ email, password }) {
     toggleLoading(dispatch);
     const { error } = await supabase.auth.signIn(
-      { email },
+      { email, password },
       { redirectTo: "/" }
     );
     toggleLoading(dispatch);
@@ -67,15 +72,6 @@ export default function UserAuthProvider({ children }) {
     if (error) {
       showAuthError({ error });
     }
-
-    toast({
-      title: "Email sent!",
-      description: "Check your email account",
-      status: "info",
-      duration: 8000,
-      isClosable: false,
-      position: "top",
-    });
   }
 
   async function logout() {
@@ -84,6 +80,10 @@ export default function UserAuthProvider({ children }) {
     if (error) {
       showAuthError({ error });
     }
+
+    navigate("/", {
+      replace: true,
+    });
   }
 
   function showAuthError({ error }) {

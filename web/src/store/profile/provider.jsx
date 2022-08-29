@@ -10,6 +10,7 @@ import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
 import { profileReducer } from "./reducer";
+import { shortenAccount } from "../../utils/shorten-account";
 
 const userProfilesInitialState = {
   avatar_url: undefined,
@@ -112,6 +113,31 @@ export default function UserProfileProvider({ children }) {
     });
   }
 
+  async function bindWallet(wallet) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({ wallet }, { returning: "representation" })
+      .eq("id", session.user.id);
+
+    if (error) {
+      showProfileError({ error });
+      return;
+    }
+
+    dispatch({ type: "UPDATE_PROFILE", payload: data[0] });
+
+    toast({
+      title: "wallet binded",
+      description: `your account is now linked with the wallet ${shortenAccount(
+        wallet
+      )}`,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+      position: "top",
+    });
+  }
+
   function showProfileError(error) {
     const { code, description, message } = error;
 
@@ -131,6 +157,7 @@ export default function UserProfileProvider({ children }) {
     () => ({
       updateProfile,
       updateCollectedNfts,
+      bindWallet,
     }),
     [session.user.id]
   );
