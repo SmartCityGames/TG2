@@ -185,10 +185,8 @@ export default function MetamaskProvider({ children }) {
       const total = await state.contracts.smartCityGames.count();
 
       dispatch({
-        type: "UPDATE_CONTRACT_VALUES",
-        payload: {
-          total: total.toNumber(),
-        },
+        type: "UPDATE_CONTRACT_VALUES_TOTAL",
+        payload: total.toNumber(),
       });
     } catch (error) {
       showBlockchainError({
@@ -198,23 +196,41 @@ export default function MetamaskProvider({ children }) {
     }
   }
 
-  async function mint(nft) {
+  async function mint(png, supressToast = false) {
     try {
-      const tokenId = `https://gateway.pinata.cloud/ipfs/${CONTENT_ID}/varjao${nft}.png`;
       await state.contracts.smartCityGames
         .connect(state.signer)
-        .payToMint(state.account, tokenId, {
+        .payToMint(state.account, png, {
           value: ethers.utils.parseEther("0.05"),
         });
+      return true;
     } catch (error) {
-      showBlockchainError({
-        ...error,
-        description: `failed to mint nft ${nft}`,
-      });
+      showBlockchainError(
+        {
+          ...error,
+          description: `failed to mint nft with CID: ${png}`,
+        },
+        supressToast
+      );
     }
+    return false;
+  }
+
+  async function mintBatch(nfts) {
+    let earned = [];
+    for (let nft of nfts) {
+      try {
+        const ok = await mint(nft.png, true);
+        if (ok) earned.push(nft.name);
+      } catch (err) {
+        console.log({ err });
+      }
+    }
+    return earned;
   }
 
   async function getMintedTokens() {
+    toggleLoading(dispatch);
     try {
       const instance = await state.contracts.smartCityGames.connect(
         state.signer
@@ -228,10 +244,8 @@ export default function MetamaskProvider({ children }) {
       }
 
       dispatch({
-        type: "UPDATE_CONTRACT_VALUES",
-        payload: {
-          userNftMinted: prevEarnedTokens,
-        },
+        type: "UPDATE_CONTRACT_VALUES_NFTS",
+        payload: prevEarnedTokens,
       });
     } catch (error) {
       console.log({ error });
@@ -242,17 +256,19 @@ export default function MetamaskProvider({ children }) {
     }
   }
 
-  function showBlockchainError(error) {
+  function showBlockchainError(error, supressToast = false) {
     const { code, description, message } = error;
 
-    toast({
-      title: `ERROR: ${code ?? "unknown"}`,
-      description: description ?? message,
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-      position: "top",
-    });
+    if (!supressToast) {
+      toast({
+        title: `ERROR: ${code ?? "unknown"}`,
+        description: description ?? message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
     console.error({ error });
     dispatch({ type: "ERROR", payload: error });
   }
@@ -264,6 +280,7 @@ export default function MetamaskProvider({ children }) {
       mint,
       getMintedTokens,
       checkMetamask,
+      mintBatch,
     }),
     [state.provider, state.account]
   );

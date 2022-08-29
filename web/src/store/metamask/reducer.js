@@ -14,11 +14,21 @@ export function metamaskReducer(state, action) {
         error: undefined,
       };
     }
-    case "UPDATE_CONTRACT_VALUES":
+    case "UPDATE_CONTRACT_VALUES_TOTAL":
       return {
         ...state,
         values: {
-          ...action.payload,
+          ...state.values,
+          total: action.payload,
+        },
+      };
+    case "UPDATE_CONTRACT_VALUES_NFTS":
+      return {
+        ...state,
+        loading: false,
+        values: {
+          ...state.values,
+          userNftMinted: action.payload,
         },
       };
     case "LOGIN": {

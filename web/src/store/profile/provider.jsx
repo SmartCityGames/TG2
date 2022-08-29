@@ -83,6 +83,35 @@ export default function UserProfileProvider({ children }) {
     });
   }
 
+  async function updateCollectedNfts(nfts) {
+    if (!nfts.length) return;
+
+    const newNfts = state.collected_nfts.map((a) =>
+      nfts.find((b) => a.name === b) ? { ...a, taken: true } : a
+    );
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({ collected_nfts: newNfts }, { returning: "representation" })
+      .eq("id", session.user.id);
+
+    if (error) {
+      showProfileError({ error });
+      return;
+    }
+
+    dispatch({ type: "UPDATE_PROFILE", payload: data[0] });
+
+    toast({
+      title: `nfts added to your accunt!`,
+      description: "reload the page to see them",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+      position: "top",
+    });
+  }
+
   function showProfileError(error) {
     const { code, description, message } = error;
 
@@ -101,6 +130,7 @@ export default function UserProfileProvider({ children }) {
   const actions = useMemo(
     () => ({
       updateProfile,
+      updateCollectedNfts,
     }),
     [session.user.id]
   );
