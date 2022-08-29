@@ -113,8 +113,8 @@ export default function Quest({ route }) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
-      <ScrollView px={4} mt={5}>
+    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]} mt={5}>
+      <ScrollView px={4}>
         <VStack space={3}>
           <Heading fontSize={28} fontWeight="bold" textAlign="center">
             {quest.name}

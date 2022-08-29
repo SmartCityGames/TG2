@@ -6,7 +6,7 @@ export async function getAllChangesOfUser({ user }) {
 
   const { elements } = await fetch("https://overpass-api.de/api/interpreter", {
     method: "POST",
-    body: `[out:json];node(user: "${user}");out meta;`,
+    body: `[out:json](node(user:"${user}");way(user:"${user}");relation(user:"${user}"););out meta;`,
   }).then((response) => response.json());
 
   const result = [];
