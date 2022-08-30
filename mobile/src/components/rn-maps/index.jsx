@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { getCurrentPositionAsync } from "expo-location";
+import { Accuracy, getCurrentPositionAsync } from "expo-location";
 import { Flex, IconButton, Text } from "native-base";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import MapView from "react-native-map-clustering";
@@ -40,7 +40,7 @@ export default function RnMaps({ polygons, quests }) {
 
   useEffect(() => {
     getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Highest,
+      accuracy: Accuracy.Highest,
       maximumAge: 50,
     }).then((location) => {
       const { latitude, longitude } = location.coords;
