@@ -2,6 +2,7 @@ import {
   Button,
   Center,
   Flex,
+  Heading,
   Image,
   SimpleGrid,
   Text,
@@ -40,33 +41,49 @@ export default function Home() {
   }
 
   return (
-    <Flex gap={4} direction="column" justify="center" align="center" my={5}>
-      <Text color="red.300">{values.total} NFTs got minted in total </Text>
+    <Flex
+      gap={4}
+      direction="column"
+      justify="center"
+      align="center"
+      my={5}
+      color="white"
+    >
+      <Text color="red.300" bold>
+        {values.total} NFTs got minted in total
+      </Text>
 
-      <Text color="blueviolet">You have {nftsToGet.length} NFTs to get</Text>
+      <Text color="green.300" bold>
+        You have {nftsToGet.length} NFTs to try to get
+      </Text>
 
       <Button
         onClick={async () => {
           const taken = await mintBatch(nftsToGet);
           updateCollectedNfts(taken);
         }}
+        colorScheme="purple"
       >
-        try to mint
+        try to mint them
       </Button>
       {loading ? (
         <CenteredSpinner />
       ) : !values.userNftMinted?.length ? (
         <Text color={"white"}>You dont have owned any token yet</Text>
       ) : (
-        <SimpleGrid columns={2} spacing={10}>
-          {values.userNftMinted?.map((token) => (
-            <Image
-              boxSize="300px"
-              key={token}
-              src={`https://ipfs-gateway.cloud/ipfs/${token}`}
-            />
-          ))}
-        </SimpleGrid>
+        <>
+          <Heading>Your collected NFTs</Heading>
+          <SimpleGrid columns={[1, 2]} spacing={10}>
+            {values.userNftMinted?.map((token) => (
+              <Image
+                boxSize="300px"
+                key={token}
+                src={`https://ipfs-gateway.cloud/ipfs/${token}`}
+                rounded="lg"
+              />
+            ))}
+          </SimpleGrid>
+        </>
       )}
     </Flex>
   );
