@@ -2,7 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import HomeScreen from "../../screens/home";
 import IndicatorsScreen from "../../screens/indicators";
 import LoggedProviders from "../../store/combined/logged";
@@ -57,7 +57,7 @@ export default function LoggedTabs() {
           headerTitle: (props) => <Middle {...props} />,
           headerShadowVisible: true,
           headerBackgroundContainerStyle: {
-            height: 120,
+            height: Platform.OS === "ios" ? 105 : 100,
           },
         }}
       >

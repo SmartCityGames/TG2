@@ -1,24 +1,26 @@
-import { isBefore } from "date-fns";
 import { logger } from "../utils/logger";
 
-export async function getAllChangesOfUser({ user }) {
+export async function getAllChangesOfUser({
+  user,
+  quest_created_at,
+  quest_expiration,
+}) {
   logger.info("[OSM] action of type LOAD_USER_CHANGES fired");
 
-  const { elements } = await fetch("https://overpass-api.de/api/interpreter", {
-    method: "POST",
-    body: `[out:json];(node(user:"${user}");way(user:"${user}");relation(user:"${user}"););out meta;`,
-  }).then((response) => response.json());
+  const { changesets } = await fetch(
+    `https://api.openstreetmap.org/api/0.6/changesets.json?display_name=${user}${
+      quest_expiration ? `&time=${quest_created_at},${quest_expiration}` : ""
+    }`
+  ).then((response) => response.json());
 
   const result = [];
   const map = new Map();
-  for (const item of elements) {
-    if (!map.has(item.changeset)) {
-      map.set(item.changeset, true);
+  for (const item of changesets) {
+    if (!map.has(item.id)) {
+      map.set(item.id, true);
       result.push(item);
     }
   }
 
-  return result.sort((a, b) =>
-    isBefore(new Date(a.timestamp), new Date(b.timestamp))
-  );
+  return result;
 }

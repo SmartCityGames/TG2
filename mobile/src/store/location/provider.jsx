@@ -1,9 +1,5 @@
-import {
-  getForegroundPermissionsAsync,
-  getLastKnownPositionAsync,
-  LocationAccuracy,
-  watchPositionAsync,
-} from "expo-location";
+import { getLastKnownPositionAsync } from "expo-location";
+import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
 import {
   createContext,
   useContext,
@@ -18,7 +14,6 @@ import { sanitizeText } from "../../utils/sanitize-text";
 import { useSupabase } from "../supabase/provider";
 import { userLocationReducer } from "./reducer";
 import { locationObjectToLiteral } from "./utils/loc-obj-to-literal";
-import GeoJsonGeometriesLookup from "geojson-geometries-lookup";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -70,17 +65,6 @@ export default function UserLocationProvider({ children }) {
     [state.geojson]
   );
 
-  //* users already have an icon
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "UPDATE_USER_MARKER_INFO",
-  //     payload: {
-  //       id: session.user.email,
-  //       icon: generateEmojiMarker(),
-  //     },
-  //   });
-  // }, [session.user]);
-
   useEffect(() => {
     async function getGeojson() {
       toggleLoading(dispatch);
@@ -124,29 +108,6 @@ export default function UserLocationProvider({ children }) {
     getGeojson();
   }, []);
 
-  useEffect(() => {
-    let subscription;
-
-    async function getSubscription() {
-      const { granted: ok } = await getForegroundPermissionsAsync();
-      if (!ok) return;
-
-      subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.BestForNavigation, timeInterval: 3000 },
-        (_loc) => {
-          dispatch({ type: "FAKE_UPDATE_NEARBY_QUESTS" });
-          // updateUsersNearbyQuests(loc);
-        }
-      );
-    }
-
-    getSubscription();
-
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
-
   async function getUserPosition() {
     const loc = await getLastKnownPositionAsync();
 
@@ -157,17 +118,6 @@ export default function UserLocationProvider({ children }) {
       latitudeDelta: 0.003,
       longitudeDelta: 0.002,
     };
-
-    //* theres no need to manipulate the region
-    // dispatch({
-    //   type: "UPDATE_POS_ZOOM",
-    //   payload: {
-    //     region,
-    //     zoom: Math.round(Math.log(360 / region.longitudeDelta) / Math.LN2),
-    //   },
-    // });
-
-    // return region;
   }
 
   function getPolygonWhichGeometryLies(geometry) {
