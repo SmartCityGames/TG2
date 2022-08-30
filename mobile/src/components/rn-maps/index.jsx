@@ -1,7 +1,8 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import { getCurrentPositionAsync } from "expo-location";
 import { Flex, IconButton, Text } from "native-base";
-import { useEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import MapView from "react-native-map-clustering";
 import {
   Circle,
@@ -16,15 +17,14 @@ import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { renderSelectedIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
 import { initialRegion, useUserLocation } from "../../store/location/provider";
+import { CenterLoading } from "../loading/center-loading";
 import { hsl2rgb } from "./utils/hsl-2-rgb";
 import IndicatorForm from "./utils/indicator-form";
 import { mapInitialState, mapReducer } from "./utils/reducer";
 
 export default function RnMaps({ polygons, quests }) {
   const mapRef = useRef(null);
-  const renders = useRef(0);
-
-  renders.current++;
+  const [location, setLocation] = useState(undefined);
 
   const [state, dispatch] = useReducer(mapReducer, mapInitialState);
 
@@ -39,7 +39,13 @@ export default function RnMaps({ polygons, quests }) {
   } = useIndicators();
 
   useEffect(() => {
-    center();
+    getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+      maximumAge: 50,
+    }).then((location) => {
+      const { latitude, longitude } = location.coords;
+      setLocation({ latitude, longitude });
+    });
   }, []);
 
   useEffect(() => {
@@ -143,11 +149,18 @@ export default function RnMaps({ polygons, quests }) {
     mapRef.current.animateToRegion(loc, 1500);
   }
 
+  if (!location) return <CenterLoading />;
+
   return (
     <>
       <MapView
         ref={mapRef}
-        initialRegion={initialRegion}
+        initialRegion={{
+          ...initialRegion,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        }}
+        onMapReady={center}
         userLocationPriority="high"
         style={{ flex: 1 }}
         provider={PROVIDER_DEFAULT}
@@ -197,9 +210,6 @@ export default function RnMaps({ polygons, quests }) {
           }
         />
       )}
-      <Text position="absolute" right="63" mt="24">
-        {renders.current}
-      </Text>
       {!!quests?.shapes?.length && !!quests?.markers?.length && (
         <IconButton
           onPress={() =>
