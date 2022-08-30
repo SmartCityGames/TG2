@@ -22,7 +22,6 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^2.1.0",
-    "@nestjs/serve-static": "^3.0.0",
     "@supabase/supabase-js": "^1.35.6",
     "date-fns": "^2.29.2",
     "random-points-on-polygon": "^0.0.4",
