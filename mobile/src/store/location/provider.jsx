@@ -20,20 +20,14 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGTITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+export const initialRegion = {
+  latitude: 0,
+  longitude: 0,
+  latitudeDelta: LATITUDE_DELTA,
+  longitudeDelta: LONGTITUDE_DELTA,
+};
+
 const userLocationInitialState = {
-  ownMarker: {
-    icon: undefined,
-    id: undefined,
-    position: undefined,
-    size: [32, 32],
-  },
-  region: {
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGTITUDE_DELTA,
-  },
-  zoom: mapConfig.maxZoom,
   markers: [],
   geojson: undefined,
   error: null,
@@ -137,19 +131,11 @@ export default function UserLocationProvider({ children }) {
     });
   }
 
-  function updateRegion(region) {
-    dispatch({
-      type: "UPDATE_POS",
-      payload: region,
-    });
-  }
-
   const actions = useMemo(
     () => ({
       getUserPosition,
       addQuestsMarkers,
       removeQuestsMarkers,
-      updateRegion,
     }),
     []
   );

@@ -2,7 +2,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, IconButton, Text } from "native-base";
 import { useEffect, useMemo, useReducer, useRef } from "react";
-import MapView, {
+import MapView from "react-native-map-clustering";
+import {
   Circle,
   Geojson,
   MAP_TYPES,
@@ -10,16 +11,20 @@ import MapView, {
   PROVIDER_DEFAULT,
   UrlTile,
 } from "react-native-maps";
+
 import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { renderSelectedIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
-import { useUserLocation } from "../../store/location/provider";
+import { initialRegion, useUserLocation } from "../../store/location/provider";
 import { hsl2rgb } from "./utils/hsl-2-rgb";
 import IndicatorForm from "./utils/indicator-form";
 import { mapInitialState, mapReducer } from "./utils/reducer";
 
 export default function RnMaps({ polygons, quests }) {
   const mapRef = useRef(null);
+  const renders = useRef(0);
+
+  renders.current++;
 
   const [state, dispatch] = useReducer(mapReducer, mapInitialState);
 
@@ -142,6 +147,7 @@ export default function RnMaps({ polygons, quests }) {
     <>
       <MapView
         ref={mapRef}
+        initialRegion={initialRegion}
         userLocationPriority="high"
         style={{ flex: 1 }}
         provider={PROVIDER_DEFAULT}
@@ -191,6 +197,9 @@ export default function RnMaps({ polygons, quests }) {
           }
         />
       )}
+      <Text position="absolute" right="63" mt="24">
+        {renders.current}
+      </Text>
       {!!quests?.shapes?.length && !!quests?.markers?.length && (
         <IconButton
           onPress={() =>
