@@ -94,7 +94,7 @@ export default function IndicatorsScreen({ route }) {
             <Center my={1} mx={3}>
               <Heading
                 fontSize={24}
-                fontWeight="bold"
+                bold
                 alignSelf="center"
                 textTransform={"capitalize"}
               >

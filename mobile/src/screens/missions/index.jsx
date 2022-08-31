@@ -67,7 +67,7 @@ export default function MissionsScreen() {
           renderItem={({ item }) => (
             <Pressable onPress={() => navigate("Details", { id: item.id })}>
               <Center px={3}>
-                <Text fontSize={28} fontWeight="bold" textAlign="center">
+                <Text fontSize={28} bold textAlign="center">
                   {item.name}
                 </Text>
                 <Text fontSize={20} fontWeight="semibold">
@@ -126,8 +126,25 @@ export default function MissionsScreen() {
                 </Flex>
               </Flex>
               <HStack alignSelf="flex-end" alignItems="center">
-                <FontAwesome name="hourglass" />
-                <Text p={3} fontWeight="bold" color="danger.500">
+                <Popover
+                  key={`popover-${item.id}-expiration`}
+                  initialFocusRef={initialFocusRef}
+                  trigger={(triggerProps) => (
+                    <IconButton
+                      {...triggerProps}
+                      rounded="full"
+                      icon={<FontAwesome color="black" name="hourglass" />}
+                    />
+                  )}
+                >
+                  <Popover.Content w={"2xs"}>
+                    <Popover.Arrow />
+                    <Popover.CloseButton />
+                    <Popover.Body>Estimated time to quest expire</Popover.Body>
+                  </Popover.Content>
+                </Popover>
+
+                <Text p={3} bold color="danger.500">
                   {item.expires_at
                     ? formatDistanceToNow(new Date(item.expires_at), {
                         addSuffix: true,

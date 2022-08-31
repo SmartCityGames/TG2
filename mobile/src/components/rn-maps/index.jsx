@@ -10,9 +10,8 @@ import {
   MAP_TYPES,
   Marker,
   PROVIDER_DEFAULT,
-  UrlTile,
+  UrlTile
 } from "react-native-maps";
-
 import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { renderSelectedIndicatorValue } from "../../store/indicators/utils/render-indicator-value";
@@ -272,7 +271,7 @@ export default function RnMaps({ polygons, quests }) {
             alignSelf="center"
             bottom="12"
             mb={1}
-            fontWeight="bold"
+            bold
             fontSize={15}
             textTransform="capitalize"
           >

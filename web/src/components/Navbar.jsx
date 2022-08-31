@@ -34,7 +34,7 @@ export default function Navbar() {
   return (
     <Flex h="64px" p="6" align="center" justify="space-between" direction="row">
       <Text
-        fontWeight="bold"
+        bold
         fontSize={["lg", "4xl"]}
         bgGradient="linear(to-l, #7928CA, #FF0080)"
         bgClip="text"

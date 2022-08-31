@@ -131,7 +131,7 @@ export default function Quest({ route }) {
         }
       >
         <VStack space={3}>
-          <Heading fontSize={28} fontWeight="bold" textAlign="center">
+          <Heading fontSize={28} bold textAlign="center">
             {quest.name}
           </Heading>
           <Text fontSize={14} textAlign="justify">

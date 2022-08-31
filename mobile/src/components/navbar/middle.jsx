@@ -12,7 +12,7 @@ export default function Middle({ children, ...rest }) {
 
   return (
     <Flex align="center" justify="center" direction="column" {...rest}>
-      <Text fontWeight="bold" fontSize="16">
+      <Text color="black" bold fontSize="16">
         {children}
       </Text>
       <Box w={"5/6"}>
@@ -24,10 +24,10 @@ export default function Middle({ children, ...rest }) {
         />
       </Box>
       <Flex align="center" justify="space-between" direction="row" w="90%">
-        <Text fontWeight="bold" alignSelf="flex-start">
+        <Text color="black" bold alignSelf="flex-start">
           level {level}
         </Text>
-        <Text fontWeight="bold" alignSelf="flex-end" textAlign="left">
+        <Text color="black" bold alignSelf="flex-end" textAlign="left">
           {level * MAX_XP_PER_LEVEL} xp
         </Text>
       </Flex>
