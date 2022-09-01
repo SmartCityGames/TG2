@@ -47,7 +47,7 @@ export default function NftProvider({ children }) {
     };
   }
 
-  const actions = useMemo(() => ({ getRandomNft }), []);
+  const actions = useMemo(() => ({ getRandomNft }), [state.nfts]);
 
   return (
     <NftContext.Provider value={{ state, actions }}>
