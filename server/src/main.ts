@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   app
     .get(AppService)
-    .handleCron()
+    .saveQuests()
     .finally(() => app.close());
 }
 bootstrap();

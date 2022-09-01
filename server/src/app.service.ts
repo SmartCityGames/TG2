@@ -1,6 +1,5 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { addDays, addHours } from 'date-fns';
 import * as randomPointsInPolygons from 'random-points-on-polygon';
 import { firstValueFrom, map } from 'rxjs';
@@ -19,22 +18,19 @@ export class AppService {
     private readonly httpService: HttpService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_11AM)
-  async handleCron() {
+  async saveQuests() {
     const quests = await this.generateRandomQuests();
 
-    this.logger.debug({ quests });
-
-    const { error } = await this.supabase
-      .getClient()
+    const { error } = await (await this.supabase.auth())
       .from('quests')
       .insert(quests, {
-        returning: 'representation',
+        returning: 'minimal',
       });
 
     if (error) {
       this.logger.error(`fail to insert with cause: ${error.message}`);
     } else {
+      this.logger.debug({ quests });
       this.logger.debug(`quests database updated`);
     }
   }
