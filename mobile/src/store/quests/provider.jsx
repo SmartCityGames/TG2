@@ -11,6 +11,7 @@ import { toggleLoading } from "../../utils/actions/start-loading";
 import { useIndicators } from "../indicators/provider";
 import { useUserLocation } from "../location/provider";
 import { haversine } from "../location/utils/haversine";
+import { useNft } from "../nft/provider";
 import { useSupabase } from "../supabase/provider";
 import { useUserProfile } from "../user-profile/provider";
 import { questsReducer } from "./reducer";
@@ -35,7 +36,7 @@ export default function QuestsProvider({ children }) {
 
   const {
     state: { completed_quests },
-    actions: { updateExperience },
+    actions: { updateExperience, updateOwnedNfts },
   } = useUserProfile();
 
   const {
@@ -45,6 +46,10 @@ export default function QuestsProvider({ children }) {
   const {
     actions: { getPolygonWhichGeometryLies, getUserPosition },
   } = useUserLocation();
+
+  const {
+    actions: { getRandomNft },
+  } = useNft();
 
   useEffect(() => {
     retrieveQuests();
@@ -89,6 +94,12 @@ export default function QuestsProvider({ children }) {
       incrementIndicator(
         rewards.indicators.map((i) => ({ ...i, target: subdistrictId }))
       );
+
+      if (quest.rewards.nft) {
+        updateOwnedNfts({
+          nft: getRandomNft(),
+        });
+      }
 
       if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
         toast.show({
@@ -143,6 +154,8 @@ export default function QuestsProvider({ children }) {
       incrementIndicator,
       getPolygonWhichGeometryLies,
       getUserPosition,
+      updateOwnedNfts,
+      getRandomNft,
     ]
   );
 
