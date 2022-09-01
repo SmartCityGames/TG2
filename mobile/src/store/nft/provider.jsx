@@ -39,7 +39,7 @@ export default function NftProvider({ children }) {
     getAllNfts();
   }, []);
 
-  async function getRandomNft() {
+  function getRandomNft() {
     const n = `${getRandomInt(0, 998)}`;
     return {
       ...state.nfts[n],
