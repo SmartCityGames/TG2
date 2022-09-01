@@ -21,11 +21,11 @@ export class AppService {
   async saveQuests() {
     const quests = await this.generateRandomQuests();
 
-    const { error } = await (await this.supabase.auth())
-      .from('quests')
-      .insert(quests, {
-        returning: 'minimal',
-      });
+    const client = await this.supabase.getClient();
+
+    const { error } = await client.from('quests').insert(quests, {
+      returning: 'minimal',
+    });
 
     if (error) {
       this.logger.error(`fail to insert with cause: ${error.message}`);
@@ -36,9 +36,10 @@ export class AppService {
   }
 
   private async getGeojson() {
-    const { signedURL } = await this.supabase
-      .getClient()
-      .storage.from('assets')
+    const client = await this.supabase.getClient();
+
+    const { signedURL } = await client.storage
+      .from('assets')
       .createSignedUrl('geojson/polygon-subdistrict-2017.geojson', 60);
 
     return firstValueFrom(
