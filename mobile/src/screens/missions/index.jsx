@@ -49,7 +49,7 @@ export default function MissionsScreen() {
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
         <FlatList
-          mt="10"
+          pt="10"
           data={availableQuests}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}

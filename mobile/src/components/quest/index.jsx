@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { Platform, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getAllChangesOfUser } from "../../services/overpass-turbo";
+import { getAllChangesOfUser } from "../../services/osm/changesets";
 import { useQuests } from "../../store/quests/provider";
 import { useUserProfile } from "../../store/user-profile/provider";
 import { CenterLoading } from "../loading/center-loading";

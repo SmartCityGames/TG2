@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useSupabase } from "../supabase/provider";
 import { nftReducer } from "./reducer";
+import { getRandomInt } from "./utils/random-int";
 
 const nftInitialState = {
   nfts: {},
@@ -38,8 +39,8 @@ export default function NftProvider({ children }) {
     getAllNfts();
   }, []);
 
-  function getRandomNft() {
-    const n = String(0);
+  async function getRandomNft() {
+    const n = `${getRandomInt(0, 998)}`;
     return {
       ...state.nfts[n],
       name: n,

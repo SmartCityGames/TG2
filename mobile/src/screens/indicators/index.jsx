@@ -50,7 +50,7 @@ export default function IndicatorsScreen({ route }) {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
-        <Center mt={7}>
+        <Center pt="5">
           <DebounceInput
             value={search}
             defaultValue=""
@@ -73,6 +73,7 @@ export default function IndicatorsScreen({ route }) {
           />
         </Center>
         <FlatList
+          pt="3"
           data={filteredIvs}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
