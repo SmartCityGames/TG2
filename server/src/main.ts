@@ -1,12 +1,12 @@
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { AppService } from './app.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT') || 3000;
-  await app.listen(port);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  const app = await NestFactory.createApplicationContext(AppModule);
+  app
+    .get(AppService)
+    .handleCron()
+    .finally(() => app.close());
 }
 bootstrap();
