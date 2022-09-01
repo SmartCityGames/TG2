@@ -8,8 +8,9 @@ import {
   VStack,
 } from "native-base";
 import { useEffect, useState } from "react";
+import { Platform, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getAllChangesOfUser } from "../../services/overpass-turbo";
+import { getAllChangesOfUser } from "../../services/osm/changesets";
 import { useQuests } from "../../store/quests/provider";
 import { useUserProfile } from "../../store/user-profile/provider";
 import { CenterLoading } from "../loading/center-loading";
@@ -49,17 +50,25 @@ export default function Quest({ route }) {
       return;
     }
 
-    if (actualStep.type === "confirm_osm_change") {
-      setLoading(true);
-      getAllChangesOfUser({ user: username }).then((response) => {
-        setChanges(response.length > 3 ? response.slice(0, 3) : response);
-        setLoading(false);
-      });
-    }
+    getUserChanges();
   }, [quest]);
 
   if (!quest || loading) {
     return <CenterLoading />;
+  }
+
+  async function getUserChanges() {
+    if (actualStep.type === "confirm_osm_change") {
+      setLoading(true);
+      getAllChangesOfUser({
+        user: username,
+        quest_created_at: quest.created_at,
+        quest_expiration: quest.expires_at,
+      }).then((response) => {
+        setChanges(response.length > 3 ? response.slice(0, 3) : response);
+        setLoading(false);
+      });
+    }
   }
 
   async function handleAnswer() {
@@ -114,9 +123,15 @@ export default function Quest({ route }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
-      <ScrollView px={4} mt={5}>
+      <ScrollView
+        px={4}
+        mt={Platform.OS === "ios" ? 7 : 9}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={getUserChanges} />
+        }
+      >
         <VStack space={3}>
-          <Heading fontSize={28} fontWeight="bold" textAlign="center">
+          <Heading fontSize={28} bold textAlign="center">
             {quest.name}
           </Heading>
           <Text fontSize={14} textAlign="justify">

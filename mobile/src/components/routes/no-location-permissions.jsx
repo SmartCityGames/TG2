@@ -9,7 +9,7 @@ export default function NoLocationPermissions() {
       <Center flex={1} bg="purple.200">
         <VStack space={5}>
           <VStack space={3}>
-            <Text fontWeight="bold" fontSize="xl" color="gray.900">
+            <Text bold fontSize="xl" color="gray.900">
               This application needs your exact location!
             </Text>
             <Text fontSize="md" color="gray.600">
@@ -31,7 +31,7 @@ export default function NoLocationPermissions() {
             </VStack>
           </VStack>
           <Button p="3" bg="red.500" onPress={() => Linking.openSettings()}>
-            <Text fontSize="lg" fontWeight="bold" color="white">
+            <Text fontSize="lg" bold color="white">
               Configurations
             </Text>
           </Button>

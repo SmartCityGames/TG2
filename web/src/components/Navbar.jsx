@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const {
     state: { account },
-    actions: { checkDbWalletWithMetamask },
+    actions: { checkWallet },
   } = useMetamask();
 
   const {
@@ -34,7 +34,7 @@ export default function Navbar() {
   return (
     <Flex h="64px" p="6" align="center" justify="space-between" direction="row">
       <Text
-        fontWeight="bold"
+        bold
         fontSize={["lg", "4xl"]}
         bgGradient="linear(to-l, #7928CA, #FF0080)"
         bgClip="text"
@@ -59,7 +59,7 @@ export default function Navbar() {
               <MenuItem
                 color="orange.500"
                 icon={<FaWallet />}
-                onClick={() => checkDbWalletWithMetamask(wallet)}
+                onClick={() => checkWallet(wallet)}
               >
                 Login Metamask
               </MenuItem>
@@ -91,7 +91,7 @@ export default function Navbar() {
           {!account && (
             <Button
               leftIcon={<FaWallet />}
-              onClick={() => checkDbWalletWithMetamask(wallet)}
+              onClick={() => checkWallet(wallet)}
               colorScheme="orange"
               variant="outline"
             >

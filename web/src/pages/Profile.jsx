@@ -9,6 +9,7 @@ import {
 import { Field, Formik } from "formik";
 import CenteredSpinner from "../components/CenteredSpinner";
 import { useUserAuth } from "../store/auth/provider";
+import { useMetamask } from "../store/metamask/metamask";
 import { useUserProfile } from "../store/profile/provider";
 import { shortenAccount } from "../utils/shorten-account";
 
@@ -21,6 +22,10 @@ export default function Profile() {
     state: { username, wallet, loading },
     actions: { updateProfile },
   } = useUserProfile();
+
+  const {
+    state: { account },
+  } = useMetamask();
 
   if (loading || !wallet) {
     return <CenteredSpinner />;
@@ -45,9 +50,12 @@ export default function Profile() {
             justify="center"
             color="white"
           >
-            <FormControl isDisabled>
+            <FormControl isDisabled isInvalid={wallet !== account}>
               <FormLabel>Wallet:</FormLabel>
               <Input value={shortenAccount(wallet)} />
+              <FormErrorMessage>
+                Your binded wallet isn't the same you're logged in
+              </FormErrorMessage>
             </FormControl>
             <FormControl isDisabled>
               <FormLabel>Email address:</FormLabel>

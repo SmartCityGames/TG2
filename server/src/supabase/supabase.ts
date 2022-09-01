@@ -9,7 +9,7 @@ export class Supabase {
 
   constructor(private readonly configService: ConfigService) {}
 
-  getClient() {
+  async getClient() {
     this.logger.log('getting supabase client...');
 
     if (this.clientInstance) {
@@ -26,6 +26,11 @@ export class Supabase {
         detectSessionInUrl: false,
       },
     );
+
+    await this.clientInstance.auth.signIn({
+      email: this.configService.get('SUPABASE_ADMIN_EMAIL'),
+      password: this.configService.get('SUPABASE_ADMIN_PASSWORD'),
+    });
 
     return this.clientInstance;
   }

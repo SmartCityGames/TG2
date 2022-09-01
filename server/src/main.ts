@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  app.get(AppService).handleCron();
+  app
+    .get(AppService)
+    .saveQuests()
+    .finally(() => app.close());
 }
 bootstrap();

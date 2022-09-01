@@ -33,9 +33,9 @@ async function main() {
 
   if (error) {
     console.error({ error });
+  } else {
+    console.log("uploaded", { data });
   }
-
-  console.log("uploaded", { data });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

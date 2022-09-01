@@ -10,12 +10,11 @@ import {
 import { config } from "../../config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { useUserAuth } from "../auth/provider";
+import { useUserProfile } from "../profile/provider";
 import { useSupabase } from "../supabase/provider";
 import { metamaskReducer } from "./reducer";
 
 const { ethereum } = window;
-
-const CONTENT_ID = "QmWoAd19aCmkax45YsaH1exYKHk5erv81fMRdMPxgGKmpz";
 
 export const metamaskInitialState = {
   account: "",
@@ -38,12 +37,19 @@ export const useMetamask = () => useContext(MetamaskContext);
 
 export default function MetamaskProvider({ children }) {
   const [state, dispatch] = useReducer(metamaskReducer, metamaskInitialState);
+
   const toast = useToast();
+
   const supabase = useSupabase();
+
   const {
-    state: { session },
     actions: { logout },
   } = useUserAuth();
+
+  const {
+    state: { wallet },
+    actions: { bindWallet },
+  } = useUserProfile();
 
   useEffect(() => {
     if (!checkMetamask()) return;
@@ -80,22 +86,44 @@ export default function MetamaskProvider({ children }) {
   useEffect(() => {
     if (!state.provider) return;
 
-    console.log("initializing event listeners");
+    console.log("[METAMASK] initializing event listeners");
 
     // https://ethereum.stackexchange.com/questions/102078/detecting-accountschanged-and-chainchanged-with-ethersjs
     const { provider: eth } = state.provider;
 
     function subscribeNetworkChanges() {
-      state.provider.on("network", (_newNetwork, oldNetwork) => {
-        if (oldNetwork) {
-          window.location.reload();
+      state.provider.on("network", async (newNetwork, oldNetwork) => {
+        console.log(
+          `[METAMASK] changed from ${oldNetwork?.name ?? null} to ${
+            newNetwork?.name
+          }`
+        );
+
+        if (newNetwork.chainId !== 5) {
+          toast({
+            title: "wrong network",
+            description: "please switch to the goerli network",
+            status: "info",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+
+          await state.provider.send("wallet_switchEthereumChain", [
+            {
+              chainId: "0x5",
+            },
+          ]);
         }
       });
     }
 
     function subscribeAccountChanges() {
       eth.on("accountsChanged", ([account]) => {
-        console.log(`changing to account: ${account}`);
+        console.log(`[METAMASK] changing to account: ${account}`);
+
+        if (logoutWrongWallet({ wallet, account })) return;
+
         dispatch({
           type: "LOGIN",
           payload: account,
@@ -107,12 +135,12 @@ export default function MetamaskProvider({ children }) {
     subscribeAccountChanges();
 
     return () => {
-      console.log("removing event listeners");
+      console.log("[METAMASK] removing event listeners");
 
       state.provider.removeAllListeners("network");
       eth.removeAllListeners("accountsChanged");
     };
-  }, [state.provider]);
+  }, [state.provider, wallet]);
 
   function checkMetamask() {
     if (!ethereum) {
@@ -125,54 +153,22 @@ export default function MetamaskProvider({ children }) {
     return !!ethereum;
   }
 
-  async function checkDbWalletWithMetamask(dbWallet) {
+  async function checkWallet(wallet) {
     toggleLoading(dispatch);
 
     const [account] = await state.provider.send("eth_requestAccounts", []);
 
-    if (!dbWallet) {
+    if (!wallet) {
       dispatch({
         type: "LOGIN",
         payload: account,
       });
 
-      const { error } = await supabase.from("profiles").upsert(
-        {
-          id: session.user.id,
-          wallet: account,
-          updated_at: new Date(),
-        },
-        { returning: "minimal" }
-      );
-
-      if (error) {
-        showBlockchainError({ error });
-      }
-
-      toast({
-        title: "wallet binded",
-        description: "your account is now linked with this wallet",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-
+      await bindWallet(account);
       return;
     }
 
-    // if (dbWallet !== account) {
-    //   logout();
-    //   toast({
-    //     title: "wrong metamask account",
-    //     description: "please select your binded wallet",
-    //     status: "info",
-    //     duration: 5000,
-    //     isClosable: true,
-    //     position: "top",
-    //   });
-    // return;
-    // }
+    if (logoutWrongWallet({ wallet, account })) return;
 
     dispatch({
       type: "LOGIN",
@@ -185,10 +181,8 @@ export default function MetamaskProvider({ children }) {
       const total = await state.contracts.smartCityGames.count();
 
       dispatch({
-        type: "UPDATE_CONTRACT_VALUES",
-        payload: {
-          total: total.toNumber(),
-        },
+        type: "UPDATE_CONTRACT_VALUES_TOTAL",
+        payload: total.toNumber(),
       });
     } catch (error) {
       showBlockchainError({
@@ -198,23 +192,58 @@ export default function MetamaskProvider({ children }) {
     }
   }
 
-  async function mint(nft) {
+  function logoutWrongWallet({ wallet, account }) {
+    if (wallet !== account) {
+      logout();
+      toast({
+        title: "wrong metamask account",
+        description: "please select your binded wallet",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  async function mint(png, supressToast = false) {
     try {
-      const tokenId = `https://gateway.pinata.cloud/ipfs/${CONTENT_ID}/varjao${nft}.png`;
       await state.contracts.smartCityGames
         .connect(state.signer)
-        .payToMint(state.account, tokenId, {
+        .payToMint(state.account, png, {
           value: ethers.utils.parseEther("0.05"),
         });
+      return true;
     } catch (error) {
-      showBlockchainError({
-        ...error,
-        description: `failed to mint nft ${nft}`,
-      });
+      showBlockchainError(
+        {
+          ...error,
+          description: `failed to mint nft with CID: ${png}`,
+        },
+        supressToast
+      );
     }
+    return false;
+  }
+
+  async function mintBatch(nfts) {
+    let earned = [];
+    for (let nft of nfts) {
+      try {
+        const ok = await mint(nft.png, true);
+        if (ok) earned.push(nft.name);
+      } catch (err) {
+        console.log({ err });
+      }
+    }
+    return earned;
   }
 
   async function getMintedTokens() {
+    toggleLoading(dispatch);
     try {
       const instance = await state.contracts.smartCityGames.connect(
         state.signer
@@ -228,10 +257,8 @@ export default function MetamaskProvider({ children }) {
       }
 
       dispatch({
-        type: "UPDATE_CONTRACT_VALUES",
-        payload: {
-          userNftMinted: prevEarnedTokens,
-        },
+        type: "UPDATE_CONTRACT_VALUES_NFTS",
+        payload: prevEarnedTokens,
       });
     } catch (error) {
       console.log({ error });
@@ -242,37 +269,45 @@ export default function MetamaskProvider({ children }) {
     }
   }
 
-  function showBlockchainError(error) {
+  function showBlockchainError(error, supressToast = false) {
     const { code, description, message } = error;
 
-    toast({
-      title: `ERROR: ${code ?? "unknown"}`,
-      description: description ?? message,
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-      position: "top",
-    });
+    if (!supressToast) {
+      toast({
+        title: `ERROR: ${code ?? "unknown"}`,
+        description: description ?? message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
     console.error({ error });
     dispatch({ type: "ERROR", payload: error });
   }
 
   const actions = useMemo(
     () => ({
-      checkDbWalletWithMetamask,
+      checkWallet,
       getTotalNftMinted,
       mint,
       getMintedTokens,
       checkMetamask,
+      mintBatch,
     }),
     [state.provider, state.account]
+  );
+
+  const dependentActions = useMemo(
+    () => ({ checkWallet }),
+    [state.provider, state.account, bindWallet]
   );
 
   return (
     <MetamaskContext.Provider
       value={{
         state,
-        actions,
+        actions: { ...actions, ...dependentActions },
       }}
     >
       {children}

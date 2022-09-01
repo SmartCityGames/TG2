@@ -1,7 +1,6 @@
 import { formatDistanceToNow, parseISO } from "date-fns";
 import pt from "date-fns/locale/pt";
 import {
-  Center,
   Checkbox,
   Flex,
   FormControl,
@@ -100,26 +99,23 @@ export default function Options({
                       w="30%"
                       onPress={() =>
                         Linking.openURL(
-                          `https://www.openstreetmap.org/changeset/${v.changeset}`
+                          `https://www.openstreetmap.org/changeset/${v.id}`
                         )
                       }
                     >
-                      #{v.changeset}
+                      #{v.id}
                     </Link>
-                    <Text>
-                      <Text bold>Coordinates: </Text>[{v.lat}, {v.lon}]
-                    </Text>
                     <Text>
                       <Text bold>District: </Text>
                       {getPolygonWhichGeometryLies({
-                        coordinates: [v.lon, v.lat],
-                        type: "Point",
+                        coordinates: [
+                          [
+                            [v.min_lon, v.min_lat],
+                            [v.max_lon, v.max_lat],
+                          ],
+                        ],
+                        type: "Polygon",
                       })?.properties?.NM_SUBDIST ?? "outside Federal District"}
-                    </Text>
-
-                    <Text>
-                      <Text bold>change version: </Text>
-                      {v.version}
                     </Text>
                     <Text bold>Tags:</Text>
                     {Object.entries(v?.tags ?? {}).map(([key, value]) => (
@@ -129,7 +125,7 @@ export default function Options({
                     ))}
                     <Text>
                       <Text bold>Editado </Text>
-                      {formatDistanceToNow(parseISO(v.timestamp), {
+                      {formatDistanceToNow(parseISO(v.created_at), {
                         addSuffix: true,
                         locale: pt,
                       })}

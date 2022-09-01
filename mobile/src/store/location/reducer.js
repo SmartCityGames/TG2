@@ -4,36 +4,6 @@ export function userLocationReducer(state, action) {
   logger.info(`[LOCATION] action of type ${action.type} fired`);
 
   switch (action.type) {
-    case "UPDATE_POS": {
-      return {
-        ...state,
-        region: {
-          ...state.region,
-          ...action.payload,
-        },
-        error: undefined,
-        loading: false,
-      };
-    }
-    case "UPDATE_POS_ZOOM":
-      return {
-        ...state,
-        region: {
-          ...state.region,
-          ...action.payload.region,
-        },
-        zoom: action.payload.zoom,
-        error: undefined,
-        loading: false,
-      };
-    case "UPDATE_USER_MARKER_INFO": {
-      return {
-        ...state,
-        ownMarker: { ...state.ownMarker, ...action.payload },
-        error: undefined,
-        loading: false,
-      };
-    }
     case "LOAD_GEOJSON":
       return {
         ...state,

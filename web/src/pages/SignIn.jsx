@@ -23,9 +23,10 @@ export default function SignIn() {
         <Formik
           initialValues={{
             email: "",
+            password: "",
           }}
-          onSubmit={({ email }) => {
-            login({ email });
+          onSubmit={({ email, password }) => {
+            login({ email, password });
           }}
         >
           {({ handleSubmit, errors, touched, values }) => (
@@ -43,13 +44,25 @@ export default function SignIn() {
                   />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
+                <FormControl isInvalid={!!errors.password && touched.password}>
+                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <Field
+                    as={Input}
+                    id="password"
+                    name="password"
+                    type="password"
+                    variant="filled"
+                    autoComplete="password"
+                  />
+                  <FormErrorMessage>{errors.password}</FormErrorMessage>
+                </FormControl>
                 <Button
                   type="submit"
                   colorScheme="purple"
                   width="full"
-                  isDisabled={loading || !values.email}
+                  isDisabled={loading || !values.email || !values.password}
                 >
-                  Send Link
+                  Login
                 </Button>
               </VStack>
             </form>

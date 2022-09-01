@@ -2,19 +2,28 @@ import {
   Button,
   Center,
   Flex,
+  Heading,
   Image,
-  List,
-  ListItem,
+  SimpleGrid,
   Text,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
+import CenteredSpinner from "../components/CenteredSpinner";
 import { useMetamask } from "../store/metamask/metamask";
+import { useUserProfile } from "../store/profile/provider";
 
 export default function Home() {
   const {
-    state: { account, values },
-    actions: { getMintedTokens, getTotalNftMinted, mint },
+    state: { account, values, loading },
+    actions: { getMintedTokens, getTotalNftMinted, mintBatch },
   } = useMetamask();
+
+  const {
+    state: { collected_nfts },
+    actions: { updateCollectedNfts },
+  } = useUserProfile();
+
+  const nftsToGet = collected_nfts.filter((nft) => !nft?.taken);
 
   useEffect(() => {
     if (!account) return;
@@ -32,27 +41,49 @@ export default function Home() {
   }
 
   return (
-    <Flex gap={4} direction="column" justify="center" align="center">
-      <Text color="red.300">
-        There are {values.total} NFTs minted in total{" "}
+    <Flex
+      gap={4}
+      direction="column"
+      justify="center"
+      align="center"
+      my={5}
+      color="white"
+    >
+      <Text color="red.300" bold>
+        {values.total} NFTs got minted in total
       </Text>
+
+      <Text color="green.300" bold>
+        You have {nftsToGet.length} NFTs to try to get
+      </Text>
+
       <Button
-        onClick={() => {
-          mint("01");
+        onClick={async () => {
+          const taken = await mintBatch(nftsToGet);
+          updateCollectedNfts(taken);
         }}
+        colorScheme="purple"
       >
-        earn an nft
+        try to mint them
       </Button>
-      {values.userNftMinted?.length ? (
-        <List>
-          {values.userNftMinted?.map((token) => (
-            <ListItem>
-              <Image src={token} />
-            </ListItem>
-          ))}
-        </List>
-      ) : (
+      {loading ? (
+        <CenteredSpinner />
+      ) : !values.userNftMinted?.length ? (
         <Text color={"white"}>You dont have owned any token yet</Text>
+      ) : (
+        <>
+          <Heading>Your collected NFTs</Heading>
+          <SimpleGrid columns={[1, 2]} spacing={10}>
+            {values.userNftMinted?.map((token) => (
+              <Image
+                boxSize="300px"
+                key={token}
+                src={`https://ipfs-gateway.cloud/ipfs/${token}`}
+                rounded="lg"
+              />
+            ))}
+          </SimpleGrid>
+        </>
       )}
     </Flex>
   );
