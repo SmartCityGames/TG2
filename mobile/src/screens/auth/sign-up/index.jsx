@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
   Button,
@@ -57,7 +57,7 @@ export default function SignUpScreen() {
               autoComplete="off"
               InputLeftElement={
                 <Center ml="3">
-                  <FontAwesome name="user-circle" size={15} />
+                  <FontAwesome5 name="user-circle" size={15} />
                 </Center>
               }
               onSubmitEditing={() => emailRef.current.focus()}
@@ -104,7 +104,7 @@ export default function SignUpScreen() {
               autoComplete="email"
               InputLeftElement={
                 <Center ml="3">
-                  <FontAwesome name="envelope" size={15} />
+                  <FontAwesome5 name="envelope" size={15} />
                 </Center>
               }
               onSubmitEditing={() => pwdRef.current.focus()}
@@ -131,7 +131,7 @@ export default function SignUpScreen() {
               autoCapitalize="none"
               InputLeftElement={
                 <Center ml="3.5">
-                  <FontAwesome name="lock" size={20} />
+                  <FontAwesome5 name="lock" size={20} />
                 </Center>
               }
               InputRightElement={
@@ -140,7 +140,7 @@ export default function SignUpScreen() {
                     rounded="full"
                     onPress={() => setShow((v) => !v)}
                     icon={
-                      <FontAwesome
+                      <FontAwesome5
                         size={20}
                         name={show ? "eye-slash" : "eye"}
                         color="black"

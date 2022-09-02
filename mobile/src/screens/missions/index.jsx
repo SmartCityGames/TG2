@@ -1,4 +1,4 @@
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { formatDistanceToNow } from "date-fns";
 import pt from "date-fns/locale/pt";
@@ -133,7 +133,13 @@ export default function MissionsScreen() {
                     <IconButton
                       {...triggerProps}
                       rounded="full"
-                      icon={<FontAwesome color="black" name="hourglass" />}
+                      icon={
+                        <FontAwesome5
+                          size={15}
+                          color="black"
+                          name="hourglass-half"
+                        />
+                      }
                     />
                   )}
                 >
@@ -143,8 +149,7 @@ export default function MissionsScreen() {
                     <Popover.Body>Estimated time to quest expire</Popover.Body>
                   </Popover.Content>
                 </Popover>
-
-                <Text p={3} bold color="danger.500">
+                <Text p={2} bold color="danger.500">
                   {item.expires_at
                     ? formatDistanceToNow(new Date(item.expires_at), {
                         addSuffix: true,

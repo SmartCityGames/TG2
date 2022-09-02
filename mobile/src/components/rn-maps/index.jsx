@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Accuracy, getCurrentPositionAsync } from "expo-location";
 import { Flex, IconButton, Text } from "native-base";
@@ -10,7 +10,7 @@ import {
   MAP_TYPES,
   Marker,
   PROVIDER_DEFAULT,
-  UrlTile
+  UrlTile,
 } from "react-native-maps";
 import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
@@ -201,8 +201,8 @@ export default function RnMaps({ polygons, quests }) {
           mt="32"
           rounded="full"
           icon={
-            <FontAwesome
-              name="map"
+            <FontAwesome5
+              name="draw-polygon"
               size={25}
               color={state.showDistricts ? "#0047AB" : "#8c92ac"}
             />
@@ -223,8 +223,8 @@ export default function RnMaps({ polygons, quests }) {
           mt={3}
           rounded="full"
           icon={
-            <FontAwesome
-              name="file"
+            <FontAwesome5
+              name="map-marker"
               size={25}
               color={state.showQuests ? "#0047AB" : "#8c92ac"}
             />
@@ -244,7 +244,7 @@ export default function RnMaps({ polygons, quests }) {
           mt={5}
           rounded="full"
           icon={
-            <FontAwesome
+            <FontAwesome5
               name="calculator"
               size={25}
               color={state.showIndicatorForm ? "#0047AB" : "#8c92ac"}
@@ -259,9 +259,9 @@ export default function RnMaps({ polygons, quests }) {
         onPress={() => center()}
         position="absolute"
         right="3"
-        bottom="3"
+        bottom="5"
         rounded="full"
-        icon={<FontAwesome name="compass" size={35} color="#0047AB" />}
+        icon={<FontAwesome5 name="compass" size={30} color="#0047AB" />}
       />
 
       {!!state.showDistricts && (

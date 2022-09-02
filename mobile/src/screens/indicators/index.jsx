@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import {
   Box,
   Center,
@@ -122,7 +122,7 @@ export default function IndicatorsScreen({ route }) {
                               {...triggerProps}
                               rounded="full"
                               icon={
-                                <FontAwesome
+                                <FontAwesome5
                                   name="info-circle"
                                   color="#446677"
                                   size={15}
