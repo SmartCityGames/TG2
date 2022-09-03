@@ -26,7 +26,7 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
-        const cacheImages = [require("./assets/map_marker.png")].map((image) =>
+        const cacheImages = [require("./assets/logo-scyg.png")].map((image) =>
           Asset.fromModule(image).downloadAsync()
         );
 

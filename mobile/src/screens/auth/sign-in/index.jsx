@@ -41,7 +41,7 @@ export default function SignInScreen() {
             <Image
               mt="10"
               size="2xl"
-              source={require("../../../../assets/map_marker.png")}
+              source={require("../../../../assets/logo-scyg.png")}
               alt="logo"
             />
           </Center>

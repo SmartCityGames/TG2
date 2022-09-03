@@ -10,7 +10,6 @@ import { useQuests } from "../../store/quests/provider";
 import { sanitizeText } from "../../utils/sanitize-text";
 import { generateGreenRedGradientColors } from "./util/generate-districts-colors";
 import { generateQuestCircleColor } from "./util/generate-quest-circle-color";
-import { generateQuestEmoji } from "./util/generate-quest-emoji";
 
 export default function HomeScreen() {
   const [polygons, setPolygons] = useState(null);
@@ -66,7 +65,6 @@ export default function HomeScreen() {
     setQuestMarkers(
       availableQuests?.map((q) => ({
         id: `quest-${q.id}`,
-        icon: generateQuestEmoji(q),
         position: q.shape.center,
         size: [15, 15],
       })) ?? []
