@@ -99,8 +99,8 @@ export default function Quest({ route }) {
       if (someNotCompleted && !toast.isActive(TOAST_STEP_ANSWER_ID)) {
         toast.show({
           id: TOAST_STEP_ANSWER_ID,
-          title: "good job! 😊",
-          description: "moving to the next step",
+          title: "Parabéns! 😊",
+          description: "Você acertou a questão!",
           collapsable: true,
           duration: 2000,
           bg: "green.500",
@@ -112,8 +112,8 @@ export default function Quest({ route }) {
     } else {
       toast.show({
         id: TOAST_STEP_ANSWER_ID,
-        title: "ops... something is wrong! 😔",
-        description: "please try again",
+        title: "ops... algo não está certo! 😔",
+        description: "Por favor, tente novamente!",
         collapsable: true,
         duration: 3000,
         bg: "danger.500",
@@ -154,7 +154,7 @@ export default function Quest({ route }) {
           my="6"
           onPress={handleAnswer}
         >
-          Submit your choices
+          Enviar suas escolhas
         </Button>
       </ScrollView>
     </SafeAreaView>

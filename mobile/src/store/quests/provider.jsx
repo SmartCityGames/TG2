@@ -104,8 +104,9 @@ export default function QuestsProvider({ children }) {
       if (!toast.isActive(TOAST_QUEST_COMPLETED_ID)) {
         toast.show({
           id: TOAST_QUEST_COMPLETED_ID,
-          title: "congrats! 😊",
-          description: "Continue to gain more EXP and rewards",
+          title: "Muito bom! 😊",
+          description:
+            "Continue completando missões para ganhar mais XP e outras recompensas!",
           collapsable: true,
           duration: 2000,
         });

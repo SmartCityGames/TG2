@@ -97,7 +97,7 @@ export default function SignInScreen() {
                 _text={{
                   color: "blue.600",
                 }}
-                onPress={() => navigate("SignUp")}
+                onPress={() => navigate("Cadastrar")}
               >
                 Cadastre-se agora
               </Link>

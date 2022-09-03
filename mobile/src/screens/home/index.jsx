@@ -80,10 +80,6 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
-      {/* <LeafletWebviewMap
-        polygons={polygons}
-        quests={{ markers: questMarkers, shapes: questShapes }}
-      /> */}
       <LoadingInterceptor
         extra={[!polygons?.length, !questMarkers, !questShapes]}
       >

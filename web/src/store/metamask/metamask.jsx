@@ -196,8 +196,8 @@ export default function MetamaskProvider({ children }) {
     if (wallet !== account) {
       logout();
       toast({
-        title: "wrong metamask account",
-        description: "please select your binded wallet",
+        title: "Conta errada do metamask",
+        description: "Selecione sua conta vinculada",
         status: "info",
         duration: 5000,
         isClosable: true,
@@ -264,7 +264,7 @@ export default function MetamaskProvider({ children }) {
       console.log({ error });
       showBlockchainError({
         ...error,
-        description: "failed to get previous minted tokens",
+        description: "falha ao obter tokens adquiridos anteriores",
       });
     }
   }

@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import {
   createContext,
   useContext,
@@ -24,6 +25,7 @@ export const useUserAuth = () => useContext(UserAuthContext);
 export default function UserAuthProvider({ children }) {
   const [state, dispatch] = useReducer(userAuthReducer, userAuthInitialState);
   const supabase = useSupabase();
+  const { navigate } = useNavigation();
 
   useEffect(() => {
     const session = supabase.auth.session();
@@ -95,7 +97,10 @@ export default function UserAuthProvider({ children }) {
       return;
     }
 
-    await AsyncAlert("Email confirmation sent", "Please check your email!");
+    await AsyncAlert(
+      "Email de confirmação enviado",
+      "Por favor cheque seu email!"
+    );
     toggleLoading(dispatch);
   }
 
@@ -107,8 +112,8 @@ export default function UserAuthProvider({ children }) {
       return;
     }
 
-    dispatch({
-      type: "LOGOUT",
+    navigate("Entrar", {
+      replace: true,
     });
   }
 

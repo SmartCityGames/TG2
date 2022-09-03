@@ -56,7 +56,7 @@ export default function MissionsScreen() {
           ListEmptyComponent={() => (
             <Center flex={1}>
               <Text fontSize={20} fontWeight="semibold">
-                No missions available 🚀
+                Nenhuma missão disponível 🚀
               </Text>
             </Center>
           )}
@@ -65,7 +65,9 @@ export default function MissionsScreen() {
           }
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Pressable onPress={() => navigate("Details", { id: item.id })}>
+            <Pressable
+              onPress={() => navigate("DetalhesMissao", { id: item.id })}
+            >
               <Center px={3}>
                 <Text fontSize={28} bold textAlign="center">
                   {item.name}
@@ -74,7 +76,7 @@ export default function MissionsScreen() {
                   {getPolygonWhichGeometryLies({
                     coordinates: [item.shape.center.lng, item.shape.center.lat],
                     type: "Point",
-                  })?.properties?.NM_SUBDIST ?? "outside Federal District"}
+                  })?.properties?.NM_SUBDIST ?? "fora do Distrito Federal"}
                 </Text>
               </Center>
               <Flex direction="row" justify="space-between" align={"center"}>
@@ -146,7 +148,9 @@ export default function MissionsScreen() {
                   <Popover.Content w={"2xs"}>
                     <Popover.Arrow />
                     <Popover.CloseButton />
-                    <Popover.Body>Estimated time to quest expire</Popover.Body>
+                    <Popover.Body>
+                      Tempo estimado para a missão expirar
+                    </Popover.Body>
                   </Popover.Content>
                 </Popover>
                 <Text p={2} bold color="danger.500">
@@ -155,7 +159,7 @@ export default function MissionsScreen() {
                         addSuffix: true,
                         locale: pt,
                       })
-                    : "take your time"}
+                    : "leve o tempo que precisar"}
                 </Text>
               </HStack>
             </Pressable>

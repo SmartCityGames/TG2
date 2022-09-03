@@ -51,18 +51,18 @@ export default function Profile() {
             color="white"
           >
             <FormControl isDisabled isInvalid={wallet !== account}>
-              <FormLabel>Wallet:</FormLabel>
+              <FormLabel>Carteira:</FormLabel>
               <Input value={shortenAccount(wallet)} />
               <FormErrorMessage>
-                Your binded wallet isn't the same you're logged in
+                Sua carteira vinculada não é a mesma que você está logado
               </FormErrorMessage>
             </FormControl>
             <FormControl isDisabled>
-              <FormLabel>Email address:</FormLabel>
+              <FormLabel>Email:</FormLabel>
               <Input value={session.user.email} />
             </FormControl>
             <FormControl isInvalid={!!errors.username && touched.username}>
-              <FormLabel htmlFor="username">OpenStreetMap username:</FormLabel>
+              <FormLabel htmlFor="username">usuário do OpenStreetMap:</FormLabel>
               <Field
                 as={Input}
                 id="username"
@@ -79,7 +79,7 @@ export default function Profile() {
               width="full"
               isDisabled={loading || values.username === username}
             >
-              Save Changes
+              Salvar alterações
             </Button>
           </Flex>
         </form>

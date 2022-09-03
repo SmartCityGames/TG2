@@ -112,7 +112,7 @@ export default function RnMaps({ polygons, quests }) {
               ? dispatch({
                   type: "TOGGLE_INDICATOR_FORM",
                 })
-              : navigate("Indicators", {
+              : navigate("Indicadores", {
                   district: p.features[0].properties.NM_SUBDIST,
                 });
           }}

@@ -28,7 +28,7 @@ export default function InstallMetamask() {
           }}
         >
           <Link href="https://metamask.io/download/" isExternal>
-            Please install Metamask
+            Por favor, instale o Metamask
           </Link>
           <LinkBox></LinkBox>
         </Button>

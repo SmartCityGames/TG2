@@ -62,7 +62,7 @@ export default function LoggedTabs() {
         }}
       >
         <Tab.Screen
-          name="Map"
+          name="Mapa"
           options={{
             headerTransparent: true,
             tabBarIcon: (props) => (
@@ -72,14 +72,14 @@ export default function LoggedTabs() {
           component={HomeScreen}
         />
         <Tab.Screen
-          name="Missions"
+          name="Missões"
           options={{
             tabBarIcon: (props) => <FontAwesome5 name="gamepad" {...props} />,
           }}
           component={MissionStack}
         />
         <Tab.Screen
-          name="Indicators"
+          name="Indicadores"
           options={{
             tabBarIcon: (props) => <FontAwesome5 name="flask" {...props} />,
           }}

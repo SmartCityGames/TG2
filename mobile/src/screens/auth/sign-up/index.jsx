@@ -36,7 +36,7 @@ export default function SignUpScreen() {
   async function tryToRegister() {
     if (!email || !password || !user) return;
     await signup({ email, password, username: user });
-    navigate("SignIn");
+    navigate("Entrar");
   }
 
   return (
@@ -174,7 +174,7 @@ export default function SignUpScreen() {
                 _text={{
                   color: "blue.600",
                 }}
-                onPress={() => navigate("SignIn")}
+                onPress={() => navigate("Entrar")}
               >
                 Entrar
               </Link>

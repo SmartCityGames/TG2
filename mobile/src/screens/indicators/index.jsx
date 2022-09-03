@@ -57,7 +57,9 @@ export default function IndicatorsScreen({ route }) {
             returnKeyType="search"
             keyboardType="default"
             minLength={1}
-            placeholder={search.length > 0 ? search : "search your district"}
+            placeholder={
+              search.length > 0 ? search : "Busque pelo seu subdistrito"
+            }
             delayTimeout={500}
             clearButtonMode="while-editing"
             onChangeText={(v) => setSearch(sanitizeText(v))}
@@ -80,7 +82,7 @@ export default function IndicatorsScreen({ route }) {
           ListEmptyComponent={() => (
             <Center flex={1}>
               <Text fontSize={20} fontWeight="semibold">
-                Failed to load indicators
+                Houve uma falha ao carregar os indicatores 😢
               </Text>
             </Center>
           )}

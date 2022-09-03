@@ -75,8 +75,8 @@ export default function UserProfileProvider({ children }) {
     dispatch({ type: "UPDATE_PROFILE", payload: data[0] });
 
     toast({
-      title: `profile updated`,
-      description: "your informations has been saved",
+      title: "Perfil Atualizado",
+      description: "Suas informações foram atualizadas com sucesso!",
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -104,8 +104,8 @@ export default function UserProfileProvider({ children }) {
     dispatch({ type: "UPDATE_PROFILE", payload: data[0] });
 
     toast({
-      title: `nfts added to your accunt!`,
-      description: "reload the page to see them",
+      title: `NFTs adicionados à sua conta!`,
+      description: "recarregue a página para vê-los",
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -127,8 +127,8 @@ export default function UserProfileProvider({ children }) {
     dispatch({ type: "UPDATE_PROFILE", payload: data[0] });
 
     toast({
-      title: "wallet binded",
-      description: `your account is now linked with the wallet ${shortenAccount(
+      title: "Carteira virtual adicionada",
+      description: `sua conta está agora associada à carteira ${shortenAccount(
         wallet
       )}`,
       status: "success",
