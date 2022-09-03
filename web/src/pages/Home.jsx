@@ -49,11 +49,11 @@ export default function Home() {
       my={5}
       color="white"
     >
-      <Text color="red.300" bold>
+      <Text color="red.300" fontWeight="bold">
         {values.total} NFTs got minted in total
       </Text>
 
-      <Text color="green.300" bold>
+      <Text color="green.300" fontWeight="bold">
         You have {nftsToGet.length} NFTs to try to get
       </Text>
 
