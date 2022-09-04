@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { useUserLocation } from "../../../store/location/provider";
-import { shuffleArray } from "./shuffle-array";
+import { shuffleArray } from "../../../utils/shuffle-array";
 
 const Choice = ({ v }) => (
   <Text w={"xs"} textAlign="justify" textBreakStrategy="highQuality">

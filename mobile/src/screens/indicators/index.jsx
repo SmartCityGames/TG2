@@ -76,6 +76,7 @@ export default function IndicatorsScreen({ route }) {
         </Center>
         <FlatList
           pt="3"
+          mx="3"
           data={filteredIvs}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
@@ -94,7 +95,7 @@ export default function IndicatorsScreen({ route }) {
           }
           keyExtractor={(item) => item.udh}
           renderItem={({ item }) => (
-            <Center my={1} mx={3}>
+            <Center my={1}>
               <Heading
                 fontSize={24}
                 bold
@@ -113,7 +114,7 @@ export default function IndicatorsScreen({ route }) {
                             color: "#44aa77",
                             size: 14,
                           })}
-                          <Text fontSize={14} fontWeight="semibold">
+                          <Text maxW="2xs" fontSize={14} fontWeight="semibold">
                             {INDICATORS_LABELS[value].description_short}:
                           </Text>
                         </HStack>

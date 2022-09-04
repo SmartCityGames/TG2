@@ -8,6 +8,7 @@ import {
   useReducer,
 } from "react";
 import { toggleLoading } from "../../utils/actions/start-loading";
+import { shuffleArray } from "../../utils/shuffle-array";
 import { useIndicators } from "../indicators/provider";
 import { useUserLocation } from "../location/provider";
 import { haversine } from "../location/utils/haversine";
@@ -138,7 +139,7 @@ export default function QuestsProvider({ children }) {
     if (quests.length) {
       dispatch({
         type: "RETRIEVE_QUESTS",
-        payload: quests,
+        payload: shuffleArray(quests),
       });
     }
   }

@@ -269,18 +269,19 @@ export default function RnMaps({ polygons, quests }) {
           <Text
             position="absolute"
             alignSelf="center"
-            bottom="12"
+            bottom="16"
             mb={1}
             bold
             fontSize={15}
             textTransform="capitalize"
+            textAlign="center"
           >
             {INDICATORS_LABELS[selectedIndicator].description_short}
           </Text>
           <Flex
             position="absolute"
             alignSelf="center"
-            bottom="3"
+            bottom="5"
             rounded="full"
             direction="row"
             justify="space-between"
