@@ -30,6 +30,7 @@ export default function Options({
   selectedOptions,
   choices,
   changes,
+  questShape,
 }) {
   const {
     actions: { getPolygonWhichGeometryLies, getUserPosition },
@@ -42,6 +43,11 @@ export default function Options({
       setShuffled(shuffleArray(changes));
     }
   }, [type]);
+
+  const subdistrict = getPolygonWhichGeometryLies({
+    coordinates: [questShape.lng, questShape.lat],
+    type: "Point",
+  })?.properties?.NM_SUBDIST;
 
   function getOptions() {
     switch (type) {
@@ -174,7 +180,7 @@ export default function Options({
         }}
       >
         {type === "confirm_osm_change"
-          ? "Selecione sua última alteração"
+          ? `Selecione sua última alteração em ${subdistrict}`
           : type === "one_choice"
           ? "Selecione a resposta correta"
           : "Selecione todas as respostas aplicáveis"}

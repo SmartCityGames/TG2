@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Platform, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllChangesOfUser } from "../../services/osm/changesets";
+import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
 import { useUserProfile } from "../../store/user-profile/provider";
 import { CenterLoading } from "../loading/center-loading";
@@ -34,6 +35,10 @@ export default function Quest({ route }) {
     state: { availableQuests },
     actions: { completeQuest },
   } = useQuests();
+
+  const {
+    actions: { getPolygonWhichGeometryLies },
+  } = useUserLocation();
 
   const {
     state: { username },
@@ -84,7 +89,27 @@ export default function Quest({ route }) {
         break;
       case "confirm_osm_change": {
         const [selected] = selectedOptions;
-        correct = changes.findIndex((change) => change.id === selected) === 0;
+
+        const targetSubdistrict = getPolygonWhichGeometryLies({
+          coordinates: [quest.shape.center.lng, quest.shape.center.lat],
+          type: "Point",
+        })?.properties?.NM_SUBDIST;
+
+        const ansIdx = changes.findIndex(
+          (ch) =>
+            getPolygonWhichGeometryLies({
+              coordinates: [
+                [
+                  [ch.min_lon, ch.min_lat],
+                  [ch.max_lon, ch.max_lat],
+                ],
+              ],
+              type: "Polygon",
+            })?.properties?.NM_SUBDIST === targetSubdistrict
+        );
+
+        correct =
+          changes.findIndex((change) => change.id === selected) === ansIdx;
       }
     }
 
@@ -110,14 +135,16 @@ export default function Quest({ route }) {
       completeQuest(updated);
       setSelectedOptions(NOTHING_SELECTED);
     } else {
-      toast.show({
-        id: TOAST_STEP_ANSWER_ID,
-        title: "ops... algo não está certo! 😔",
-        description: "Por favor, tente novamente!",
-        collapsable: true,
-        duration: 3000,
-        bg: "danger.500",
-      });
+      if (!toast.isActive(TOAST_STEP_ANSWER_ID)) {
+        toast.show({
+          id: TOAST_STEP_ANSWER_ID,
+          title: "ops... algo não está certo! 😔",
+          description: "Por favor, tente novamente!",
+          collapsable: true,
+          duration: 3000,
+          bg: "danger.500",
+        });
+      }
     }
   }
 
@@ -143,6 +170,7 @@ export default function Quest({ route }) {
             type={actualStep.type}
             choices={actualStep.choices}
             changes={changes}
+            questShape={quest.shape.center}
           />
         </VStack>
         <Button
