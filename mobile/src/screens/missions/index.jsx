@@ -73,7 +73,11 @@ export default function MissionsScreen() {
           renderItem={({ item }) => (
             <Pressable
               onPress={() => {
-                if (!item.remote) {
+                if (item.remote) {
+                  return navigate("DetalhesMissao", { id: item.id });
+                }
+
+                if (!item.isUserInside) {
                   if (!toast.isActive(TOAST_QUEST_IS_REMOTE_ID)) {
                     toast.show({
                       id: TOAST_QUEST_IS_REMOTE_ID,
@@ -87,6 +91,7 @@ export default function MissionsScreen() {
                   }
                   return;
                 }
+
                 navigate("DetalhesMissao", { id: item.id });
               }}
               shadow={1}
