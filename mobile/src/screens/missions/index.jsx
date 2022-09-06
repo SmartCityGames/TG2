@@ -14,19 +14,23 @@ import {
   Text,
   useToast,
 } from "native-base";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Linking, RefreshControl } from "react-native";
+import DebounceInput from "react-native-debounce-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingInterceptor from "../../components/loading/loading-interceptor";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
+import { sanitizeText } from "../../utils/sanitize-text";
 
 const TOAST_QUEST_IS_REMOTE_ID = "TOAST_QUEST_IS_REMOTE_ID";
 
 export default function MissionsScreen() {
   const initialFocusRef = useRef(null);
+
+  const [search, setSearch] = useState("");
 
   const {
     state: { availableQuests, loading },
@@ -49,14 +53,46 @@ export default function MissionsScreen() {
     await retrieveQuests();
     const userPosition = await getUserPosition();
     updateUsersNearbyQuests(userPosition);
+    setSearch("");
   }
+
+  const filteredQuests =
+    search.length > 0
+      ? availableQuests?.filter((q) =>
+          sanitizeText(q.name).toLowerCase().includes(search.toLowerCase())
+        )
+      : availableQuests;
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
+        <Center pt="5">
+          <DebounceInput
+            value={search}
+            defaultValue=""
+            returnKeyType="search"
+            keyboardType="default"
+            minLength={1}
+            placeholder={
+              search.length > 0 ? search : "Busque pelo nome da missão"
+            }
+            delayTimeout={500}
+            clearButtonMode="while-editing"
+            onChangeText={(v) => setSearch(sanitizeText(v))}
+            style={{
+              marginTop: 6,
+              padding: 10,
+              backgroundColor: "white",
+              borderRadius: 12,
+              width: "86%",
+              borderWidth: 1,
+              borderColor: "#ccc",
+            }}
+          />
+        </Center>
         <FlatList
-          pt="10"
-          data={availableQuests.map((quest) => ({ ...quest, remote: false }))}
+          pt="3"
+          data={filteredQuests}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
           ListEmptyComponent={() => (
