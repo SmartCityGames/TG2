@@ -12,6 +12,7 @@ import {
   Popover,
   Pressable,
   Text,
+  useToast,
 } from "native-base";
 import { useEffect, useRef } from "react";
 import { Linking, RefreshControl } from "react-native";
@@ -21,6 +22,8 @@ import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-label
 import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
+
+const TOAST_QUEST_IS_REMOTE_ID = "TOAST_QUEST_IS_REMOTE_ID";
 
 export default function MissionsScreen() {
   const initialFocusRef = useRef(null);
@@ -36,21 +39,24 @@ export default function MissionsScreen() {
 
   const { navigate } = useNavigation();
 
-  useEffect(() => {
-    async function updateQuestsInfo() {
-      const userPosition = await getUserPosition();
-      updateUsersNearbyQuests(userPosition);
-    }
+  const toast = useToast();
 
+  useEffect(() => {
     updateQuestsInfo();
   }, []);
+
+  async function updateQuestsInfo() {
+    await retrieveQuests();
+    const userPosition = await getUserPosition();
+    updateUsersNearbyQuests(userPosition);
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
         <FlatList
           pt="10"
-          data={availableQuests}
+          data={availableQuests.map((quest) => ({ ...quest, remote: false }))}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
           ListEmptyComponent={() => (
@@ -61,12 +67,29 @@ export default function MissionsScreen() {
             </Center>
           )}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={retrieveQuests} />
+            <RefreshControl refreshing={loading} onRefresh={updateQuestsInfo} />
           }
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Pressable
-              onPress={() => navigate("DetalhesMissao", { id: item.id })}
+              onPress={() => {
+                if (!item.remote) {
+                  if (!toast.isActive(TOAST_QUEST_IS_REMOTE_ID)) {
+                    toast.show({
+                      id: TOAST_QUEST_IS_REMOTE_ID,
+                      title: "Esta missão não é remota",
+                      description:
+                        "Dirija-se ao local da missão para poder iniciá-la",
+                      collapsable: true,
+                      bg: "red.500",
+                      duration: 5000,
+                    });
+                  }
+                  return;
+                }
+                navigate("DetalhesMissao", { id: item.id });
+              }}
+              shadow={1}
             >
               <Center px={3}>
                 <Text fontSize={28} bold textAlign="center">
@@ -116,7 +139,7 @@ export default function MissionsScreen() {
                         />
                       )}
                     >
-                      <Popover.Content w={"56"}>
+                      <Popover.Content w={"xs"}>
                         <Popover.Arrow />
                         <Popover.CloseButton />
                         <Popover.Body>
