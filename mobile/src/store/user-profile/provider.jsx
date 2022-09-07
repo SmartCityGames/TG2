@@ -37,6 +37,7 @@ export default function UserProfileProvider({ children }) {
   const supabase = useSupabase();
   const {
     state: { session },
+    actions: { logout },
   } = useUserAuth();
 
   useEffect(() => {
@@ -58,12 +59,13 @@ export default function UserProfileProvider({ children }) {
     if (error) {
       return showUserProfileError({ error });
     } else if (data.length === 0) {
-      return showUserProfileError({
+      showUserProfileError({
         error: {
           status: 500,
-          message: "User profile not found",
+          message: "Usuário sem perfil associado",
         },
       });
+      return logout();
     }
 
     return data[0];

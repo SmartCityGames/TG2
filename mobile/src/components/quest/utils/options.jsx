@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { useUserLocation } from "../../../store/location/provider";
-import { shuffleArray } from "./shuffle-array";
+import { shuffleArray } from "../../../utils/shuffle-array";
 
 const Choice = ({ v }) => (
   <Text w={"xs"} textAlign="justify" textBreakStrategy="highQuality">
@@ -30,6 +30,7 @@ export default function Options({
   selectedOptions,
   choices,
   changes,
+  questShape,
 }) {
   const {
     actions: { getPolygonWhichGeometryLies, getUserPosition },
@@ -43,6 +44,11 @@ export default function Options({
     }
   }, [type]);
 
+  const subdistrict = getPolygonWhichGeometryLies({
+    coordinates: [questShape.lng, questShape.lat],
+    type: "Point",
+  })?.properties?.NM_SUBDIST;
+
   function getOptions() {
     switch (type) {
       case "one_choice":
@@ -50,7 +56,7 @@ export default function Options({
           <Radio.Group
             value={selectedOptions?.[0]}
             onChange={(next) => setSelectedOptions([next])}
-            accessibilityLabel="choose the correct answer"
+            accessibilityLabel="selecione a resposta correta"
           >
             <ChoicesWrapper>
               {choices.map((v, i) => (
@@ -66,7 +72,7 @@ export default function Options({
           <Checkbox.Group
             value={selectedOptions}
             onChange={setSelectedOptions}
-            accessibilityLabel="choose the correct answers"
+            accessibilityLabel="selecione as respostas corretas"
           >
             <ChoicesWrapper>
               {choices.map((v, i) => (
@@ -82,7 +88,7 @@ export default function Options({
           <Radio.Group
             value={selectedOptions?.[0]}
             onChange={(next) => setSelectedOptions([next])}
-            accessibilityLabel="choose the correct answer"
+            accessibilityLabel="selecione a resposta correta"
           >
             <ChoicesWrapper>
               {shuffled.map((v) => (
@@ -106,7 +112,7 @@ export default function Options({
                       #{v.id}
                     </Link>
                     <Text>
-                      <Text bold>District: </Text>
+                      <Text bold>Subdistrito: </Text>
                       {getPolygonWhichGeometryLies({
                         coordinates: [
                           [
@@ -115,7 +121,7 @@ export default function Options({
                           ],
                         ],
                         type: "Polygon",
-                      })?.properties?.NM_SUBDIST ?? "outside Federal District"}
+                      })?.properties?.NM_SUBDIST ?? "fora do Distrito Federal"}
                     </Text>
                     <Text bold>Tags:</Text>
                     {Object.entries(v?.tags ?? {}).map(([key, value]) => (
@@ -174,10 +180,10 @@ export default function Options({
         }}
       >
         {type === "confirm_osm_change"
-          ? "Select your last change"
+          ? `Selecione sua última alteração em ${subdistrict}`
           : type === "one_choice"
-          ? "Select the correct answer"
-          : "select all aplicable answers"}
+          ? "Selecione a resposta correta"
+          : "Selecione todas as respostas aplicáveis"}
       </FormControl.Label>
       {getOptions()}
     </VStack>

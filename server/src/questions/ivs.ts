@@ -8,7 +8,7 @@ export const ivsQuestions: Quest[] = [
     source:
       'https://www.estudegratis.com.br/provas/ieses-2016-bahiagas-analista-de-processos-organizacionais-servico-social',
     name: 'Sobre os conceitos de risco e vulnerabilidade social',
-    expires_at: 'NEVER',
+    expires_at: 'THREE_HOURS',
     category: 'education',
     steps: [
       {

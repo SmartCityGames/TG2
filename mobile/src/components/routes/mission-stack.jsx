@@ -12,8 +12,8 @@ export default function MissionStack() {
         header: () => null,
       }}
     >
-      <Stack.Screen name="List" component={MissionsScreen} />
-      <Stack.Screen name="Details" component={Quest} />
+      <Stack.Screen name="ListaMissoes" component={MissionsScreen} />
+      <Stack.Screen name="DetalhesMissao" component={Quest} />
     </Stack.Navigator>
   );
 }

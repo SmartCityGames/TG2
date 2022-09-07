@@ -66,6 +66,8 @@ export class AppService {
                 ? addDays(today, 1)
                 : quest.expires_at === 'ONE_HOUR'
                 ? addHours(today, 1)
+                : quest.expires_at === 'THREE_HOURS'
+                ? addHours(today, 3)
                 : null,
             shape: {
               shapeType: 'Circle',

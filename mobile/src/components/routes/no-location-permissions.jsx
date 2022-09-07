@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { Button, Center, HStack, Text, VStack } from "native-base";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,29 +10,28 @@ export default function NoLocationPermissions() {
         <VStack space={5}>
           <VStack space={3}>
             <Text bold fontSize="xl" color="gray.900">
-              This application needs your exact location!
+              Este aplicativo precisa da sua localização exata!
             </Text>
             <Text fontSize="md" color="gray.600">
-              Go to settings and
+              Vá em configurações e
             </Text>
             <VStack space={2}>
               <HStack space={3}>
-                <FontAwesome name="location-arrow" size={20} color="blue" />
-                <Text>Select location</Text>
+                <FontAwesome5 name="location-arrow" size={20} color="blue" />
+                <Text>Selecione localização</Text>
               </HStack>
               <HStack space={3}>
-                <FontAwesome name="check" size={16} color="green" />
+                <FontAwesome5 name="check" size={16} color="green" />
                 <Text>
-                  Allow
-                  <Text bold>Always</Text> or{" "}
-                  <Text bold>During app use</Text>
+                  Permitir <Text bold>Sempre</Text> ou{" "}
+                  <Text bold>Durante o uso do aplicativo </Text>
                 </Text>
               </HStack>
             </VStack>
           </VStack>
           <Button p="3" bg="red.500" onPress={() => Linking.openSettings()}>
             <Text fontSize="lg" bold color="white">
-              Configurations
+              Configurações
             </Text>
           </Button>
         </VStack>

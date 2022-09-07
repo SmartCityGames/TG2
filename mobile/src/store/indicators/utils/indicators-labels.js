@@ -1,23 +1,23 @@
 export const SOCIAL_PROSPERITY_MAPPER = {
-  1: "Very ow",
-  2: "Low",
-  3: "Medium",
-  4: "High",
-  5: "Very High",
+  1: "Muito Baixo",
+  2: "Baixo",
+  3: "Médio",
+  4: "Alto",
+  5: "Muito Alto",
 };
 
 export const INDICATORS_LABELS = {
   espvida: {
-    description_short: "Life expectancy",
+    description_short: "Esperança de vida ao nascer",
     description_long:
-      "Average number of years people are expected to live from birth",
-    unit: "years",
+      "Número médio de anos que as pessoas deverão viver a partir do nascimento",
+    unit: "anos",
     order: "RG",
   },
   idhm: {
-    description_short: "Municipal Human Development Index",
+    description_short: "Índice de Desenvolvimento Humano Municipal",
     description_long:
-      "Municipal Human Development Indicator. Geometric mean of the Income, Education and Longevity dimensions indices, with equal weights.",
+      "Índice de Desenvolvimento Humano Municipal. Média geométrica dos índices das dimensões Renda, Educação e Longevidade, com pesos iguais.",
     order: "RG",
   },
   // idhm_educ: {
@@ -49,9 +49,9 @@ export const INDICATORS_LABELS = {
   //   order: "RG",
   // },
   ivs: {
-    description_short: "Social Vulnerability Index",
+    description_short: "Índice de Vulnerabilidade Social",
     description_long:
-      "Social Vulnerability Index. Arithmetic mean of the indices of the dimensions: IVS Urban Infrastructure, IVS Human Capital and IVS Income and Work.",
+      "Índice de Vulnerabilidade Social. Média aritmética dos índices das dimensões: IVS Infraestrutura Urbana, IVS Capital Humano e IVS Renda e Trabalho.",
     order: "GR",
   },
   // ivs_capital_humano: {
@@ -70,15 +70,15 @@ export const INDICATORS_LABELS = {
   //   order: "RG",
   // },
   prosp_soc: {
-    description_short: "Social Prosperity Index",
+    description_short: "Prosperidade Social",
     description_long:
-      "Level of social prosperity of territoriality, generated through the crossing between its range of the IDHM and the IVS.",
+      "Nível de prosperidade social da territorialidade, gerada através do cruzamento entre sua faixa do IDHM e do IVS.",
     order: "RG",
   },
   renda_per_capita: {
-    description_short: "Per capita income",
+    description_short: "Renda per capita",
     description_long:
-      "Ratio between the sum of the income of all individuals residing in permanent private households and the total number of these individuals. Values in Reais as of August 1, 2010.",
+      "Razão entre o somatório da renda de todos os indivíduos residentes em domicílios particulares permanentes e o número total desses indivíduos.",
     order: "RG",
     unit: "R$",
   },
@@ -163,24 +163,27 @@ export const INDICATORS_LABELS = {
   //   order: "RG",
   // },
   t_sem_agua_esgoto: {
-    description_short: "without water and sewage index",
+    description_short:
+      "Pessoas com abastecimento de água e esgotamento sanitário inadequados",
     description_long:
-      "Ratio between the number of people living in households whose water supply does not come from the general network and whose sanitary sewage is not carried out by a sewage collection network or septic tank, and the total population residing in permanent private households, multiplied by 100. only permanent private households are considered.",
+      "Razão entre o número de pessoas que vivem em domicílios cujo abastecimento de água não provém de rede geral e cujo esgotamento sanitário não é realizado por rede coletora de esgoto ou fossa séptica, e a população total residente em domicílios particulares permanentes",
     order: "GR",
     unit: "%",
   },
   t_sem_lixo: {
-    description_short: "without garbage index",
+    description_short: "Pessoas urbanas sem o serviço de coleta de lixo",
     description_long:
-      "Ratio between the population living in households without garbage collection and the total population residing in permanent private households, multiplied by 100. This includes situations in which garbage collection is carried out directly by a public or private company, or the garbage is deposited in a bucket, tank or warehouse outside the home, for later collection by the service provider. Only permanent private households located in urban areas are considered.",
+      "Razão entre a população que vive em domicílios sem coleta de lixo e a população total residente em domicílios particulares permanentes. Estão incluídas as situações em que a coleta de lixo é realizada diretamente por empresa pública ou privada, ou o lixo é depositado em caçamba, tanque ou depósito fora do domicílio, para posterior coleta pela prestadora do serviço.",
     order: "GR",
     unit: "%",
   },
   t_vulner: {
-    description_short: "vulnerable index",
+    description_short:
+      "Pessoas com renda domiciliar per capita igual ou inferior a meio salário mínimo (de 2010)",
     description_long:
-      "Proportion of people with a per capita household income equal to or less than half the minimum wage (2010)",
+      "Pessoas com renda domiciliar per capita igual ou inferior a meio salário mínimo (de 2010)",
     order: "GR",
+    unit: "%",
   },
   // t_vulner_depende_idosos: {
   //   description_long:

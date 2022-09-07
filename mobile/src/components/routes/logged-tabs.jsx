@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from "react";
@@ -62,24 +62,26 @@ export default function LoggedTabs() {
         }}
       >
         <Tab.Screen
-          name="Home"
+          name="Mapa"
           options={{
             headerTransparent: true,
-            tabBarIcon: (props) => <FontAwesome name="home" {...props} />,
+            tabBarIcon: (props) => (
+              <FontAwesome5 name="map-marked" {...props} />
+            ),
           }}
           component={HomeScreen}
         />
         <Tab.Screen
-          name="Missions"
+          name="Missões"
           options={{
-            tabBarIcon: (props) => <FontAwesome name="gamepad" {...props} />,
+            tabBarIcon: (props) => <FontAwesome5 name="gamepad" {...props} />,
           }}
           component={MissionStack}
         />
         <Tab.Screen
-          name="Indicators"
+          name="Indicadores"
           options={{
-            tabBarIcon: (props) => <FontAwesome name="flask" {...props} />,
+            tabBarIcon: (props) => <FontAwesome5 name="flask" {...props} />,
           }}
           component={IndicatorsScreen}
         />

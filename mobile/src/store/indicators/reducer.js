@@ -1,4 +1,5 @@
 import { logger } from "../../utils/logger";
+import { INDICATORS_LABELS } from "./utils/indicators-labels";
 
 export function indicatorReducer(state, action) {
   logger.info(`[INDICATOR] action of type ${action.type} fired`);
@@ -15,16 +16,14 @@ export function indicatorReducer(state, action) {
       for (const val of action.payload) {
         const lowerTargetName = val.target.toLowerCase();
         const lowerIndicatorName = val.indicator.toLowerCase();
+        const op = INDICATORS_LABELS[lowerIndicatorName].order === "RG" ? 1 : -1;
 
         let idx = nis.findIndex((i) => i.id === lowerTargetName);
         const indicator = nis[idx];
 
         nis[idx] = {
           ...indicator,
-          [lowerIndicatorName]: Math.min(
-            indicator[lowerIndicatorName] + val.amount,
-            1
-          ),
+          [lowerIndicatorName]: indicator[lowerIndicatorName] + op * val.amount,
         };
       }
 

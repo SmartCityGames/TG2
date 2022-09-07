@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import {
   Box,
   Center,
@@ -57,7 +57,9 @@ export default function IndicatorsScreen({ route }) {
             returnKeyType="search"
             keyboardType="default"
             minLength={1}
-            placeholder={search.length > 0 ? search : "search your district"}
+            placeholder={
+              search.length > 0 ? search : "Busque pelo seu subdistrito"
+            }
             delayTimeout={500}
             clearButtonMode="while-editing"
             onChangeText={(v) => setSearch(sanitizeText(v))}
@@ -74,13 +76,14 @@ export default function IndicatorsScreen({ route }) {
         </Center>
         <FlatList
           pt="3"
+          mx="3"
           data={filteredIvs}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
           ListEmptyComponent={() => (
             <Center flex={1}>
               <Text fontSize={20} fontWeight="semibold">
-                Failed to load indicators
+                Houve uma falha ao carregar os indicatores 😢
               </Text>
             </Center>
           )}
@@ -92,7 +95,7 @@ export default function IndicatorsScreen({ route }) {
           }
           keyExtractor={(item) => item.udh}
           renderItem={({ item }) => (
-            <Center my={1} mx={3}>
+            <Center my={1}>
               <Heading
                 fontSize={24}
                 bold
@@ -111,7 +114,7 @@ export default function IndicatorsScreen({ route }) {
                             color: "#44aa77",
                             size: 14,
                           })}
-                          <Text fontSize={14} fontWeight="semibold">
+                          <Text maxW="2xs" fontSize={14} fontWeight="semibold">
                             {INDICATORS_LABELS[value].description_short}:
                           </Text>
                         </HStack>
@@ -122,7 +125,7 @@ export default function IndicatorsScreen({ route }) {
                               {...triggerProps}
                               rounded="full"
                               icon={
-                                <FontAwesome
+                                <FontAwesome5
                                   name="info-circle"
                                   color="#446677"
                                   size={15}

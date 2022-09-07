@@ -83,10 +83,12 @@ export default function IndicatorsProvider({ children }) {
       values.map((val) => {
         const tgt = state.indicators.find((i) => i.id === val.target);
         const lowerIndicator = val.indicator.toLowerCase();
+        const op = INDICATORS_LABELS[lowerIndicator].order === "RG" ? 1 : -1;
+
         return supabase
           .from("indicators")
           .update({
-            [lowerIndicator]: Math.min(tgt[lowerIndicator] + val.amount, 1),
+            [lowerIndicator]: tgt[lowerIndicator] + op * val.amount,
           })
           .eq("id", val.target);
       })

@@ -1,4 +1,4 @@
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { formatDistanceToNow } from "date-fns";
 import pt from "date-fns/locale/pt";
@@ -12,18 +12,25 @@ import {
   Popover,
   Pressable,
   Text,
+  useToast,
 } from "native-base";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Linking, RefreshControl } from "react-native";
+import DebounceInput from "react-native-debounce-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingInterceptor from "../../components/loading/loading-interceptor";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { renderIndicatorIcon } from "../../store/indicators/utils/render-indicator-icon";
 import { useUserLocation } from "../../store/location/provider";
 import { useQuests } from "../../store/quests/provider";
+import { sanitizeText } from "../../utils/sanitize-text";
+
+const TOAST_QUEST_IS_REMOTE_ID = "TOAST_QUEST_IS_REMOTE_ID";
 
 export default function MissionsScreen() {
   const initialFocusRef = useRef(null);
+
+  const [search, setSearch] = useState("");
 
   const {
     state: { availableQuests, loading },
@@ -36,36 +43,95 @@ export default function MissionsScreen() {
 
   const { navigate } = useNavigation();
 
-  useEffect(() => {
-    async function updateQuestsInfo() {
-      const userPosition = await getUserPosition();
-      updateUsersNearbyQuests(userPosition);
-    }
+  const toast = useToast();
 
+  useEffect(() => {
     updateQuestsInfo();
   }, []);
+
+  async function updateQuestsInfo() {
+    await retrieveQuests();
+    const userPosition = await getUserPosition();
+    updateUsersNearbyQuests(userPosition);
+    setSearch("");
+  }
+
+  const filteredQuests =
+    search.length > 0
+      ? availableQuests?.filter((q) =>
+          sanitizeText(q.name).toLowerCase().includes(search.toLowerCase())
+        )
+      : availableQuests;
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <LoadingInterceptor>
+        <Center pt="5">
+          <DebounceInput
+            value={search}
+            defaultValue=""
+            returnKeyType="search"
+            keyboardType="default"
+            minLength={1}
+            placeholder={
+              search.length > 0 ? search : "Busque pelo nome da missão"
+            }
+            delayTimeout={500}
+            clearButtonMode="while-editing"
+            onChangeText={(v) => setSearch(sanitizeText(v))}
+            style={{
+              marginTop: 6,
+              padding: 10,
+              backgroundColor: "white",
+              borderRadius: 12,
+              width: "86%",
+              borderWidth: 1,
+              borderColor: "#ccc",
+            }}
+          />
+        </Center>
         <FlatList
-          pt="10"
-          data={availableQuests}
+          pt="3"
+          data={filteredQuests}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
           ListEmptyComponent={() => (
             <Center flex={1}>
               <Text fontSize={20} fontWeight="semibold">
-                No missions available 🚀
+                Nenhuma missão disponível 🚀
               </Text>
             </Center>
           )}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={retrieveQuests} />
+            <RefreshControl refreshing={loading} onRefresh={updateQuestsInfo} />
           }
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Pressable onPress={() => navigate("Details", { id: item.id })}>
+            <Pressable
+              onPress={() => {
+                if (item.remote) {
+                  return navigate("DetalhesMissao", { id: item.id });
+                }
+
+                if (!item.isUserInside) {
+                  if (!toast.isActive(TOAST_QUEST_IS_REMOTE_ID)) {
+                    toast.show({
+                      id: TOAST_QUEST_IS_REMOTE_ID,
+                      title: "Esta missão não é remota",
+                      description:
+                        "Dirija-se ao local da missão para poder iniciá-la",
+                      collapsable: true,
+                      bg: "red.500",
+                      duration: 5000,
+                    });
+                  }
+                  return;
+                }
+
+                navigate("DetalhesMissao", { id: item.id });
+              }}
+              shadow={1}
+            >
               <Center px={3}>
                 <Text fontSize={28} bold textAlign="center">
                   {item.name}
@@ -74,7 +140,7 @@ export default function MissionsScreen() {
                   {getPolygonWhichGeometryLies({
                     coordinates: [item.shape.center.lng, item.shape.center.lat],
                     type: "Point",
-                  })?.properties?.NM_SUBDIST ?? "outside Federal District"}
+                  })?.properties?.NM_SUBDIST ?? "fora do Distrito Federal"}
                 </Text>
               </Center>
               <Flex direction="row" justify="space-between" align={"center"}>
@@ -114,7 +180,7 @@ export default function MissionsScreen() {
                         />
                       )}
                     >
-                      <Popover.Content w={"56"}>
+                      <Popover.Content w={"xs"}>
                         <Popover.Arrow />
                         <Popover.CloseButton />
                         <Popover.Body>
@@ -133,24 +199,31 @@ export default function MissionsScreen() {
                     <IconButton
                       {...triggerProps}
                       rounded="full"
-                      icon={<FontAwesome color="black" name="hourglass" />}
+                      icon={
+                        <FontAwesome5
+                          size={15}
+                          color="black"
+                          name="hourglass-half"
+                        />
+                      }
                     />
                   )}
                 >
                   <Popover.Content w={"2xs"}>
                     <Popover.Arrow />
                     <Popover.CloseButton />
-                    <Popover.Body>Estimated time to quest expire</Popover.Body>
+                    <Popover.Body>
+                      Tempo estimado para a missão expirar
+                    </Popover.Body>
                   </Popover.Content>
                 </Popover>
-
-                <Text p={3} bold color="danger.500">
+                <Text p={2} bold color="danger.500">
                   {item.expires_at
                     ? formatDistanceToNow(new Date(item.expires_at), {
                         addSuffix: true,
                         locale: pt,
                       })
-                    : "take your time"}
+                    : "leve o tempo que precisar"}
                 </Text>
               </HStack>
             </Pressable>

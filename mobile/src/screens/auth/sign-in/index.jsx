@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
   Button,
@@ -41,7 +41,7 @@ export default function SignInScreen() {
             <Image
               mt="10"
               size="2xl"
-              source={require("../../../../assets/map_marker.png")}
+              source={require("../../../../assets/logo-scyg.png")}
               alt="logo"
             />
           </Center>
@@ -55,7 +55,7 @@ export default function SignInScreen() {
             autoFocus
             InputLeftElement={
               <Center ml="3">
-                <FontAwesome name="envelope" size={15} />
+                <FontAwesome5 name="envelope" size={15} />
               </Center>
             }
             onSubmitEditing={() => pwdRef.current.focus()}
@@ -71,12 +71,12 @@ export default function SignInScreen() {
             autoCapitalize="none"
             InputLeftElement={
               <Center ml="3.5">
-                <FontAwesome name="lock" size={20} />
+                <FontAwesome5 name="lock" size={20} />
               </Center>
             }
             InputRightElement={
               <Center mr="3">
-                <FontAwesome
+                <FontAwesome5
                   size={20}
                   name={show ? "eye-slash" : "eye"}
                   onPress={() => setShow((v) => !v)}
@@ -97,7 +97,7 @@ export default function SignInScreen() {
                 _text={{
                   color: "blue.600",
                 }}
-                onPress={() => navigate("SignUp")}
+                onPress={() => navigate("Cadastrar")}
               >
                 Cadastre-se agora
               </Link>

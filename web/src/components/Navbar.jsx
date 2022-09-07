@@ -34,7 +34,7 @@ export default function Navbar() {
   return (
     <Flex h="64px" p="6" align="center" justify="space-between" direction="row">
       <Text
-        bold
+        fontWeight="bold"
         fontSize={["lg", "4xl"]}
         bgGradient="linear(to-l, #7928CA, #FF0080)"
         bgClip="text"
@@ -69,14 +69,14 @@ export default function Navbar() {
               icon={<FaUser />}
               onClick={() => navigate("/me")}
             >
-              Account
+              Conta
             </MenuItem>
             <MenuItem
               color="red.500"
               icon={<FaSignOutAlt />}
               onClick={() => logout()}
             >
-              Logout
+              Sair
             </MenuItem>
           </MenuList>
         </Menu>
@@ -104,7 +104,7 @@ export default function Navbar() {
             colorScheme="blue"
             variant="outline"
           >
-            Account
+            Conta
           </Button>
           <Button
             onClick={() => logout()}
@@ -112,7 +112,7 @@ export default function Navbar() {
             colorScheme="red"
             variant="solid"
           >
-            Logout
+            Sair
           </Button>
         </Flex>
       </Hide>

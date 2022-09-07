@@ -35,7 +35,7 @@ export default function Home() {
   if (!account) {
     return (
       <Center flex={1} color="white">
-        <Text>Login with metamask first to see your NFTs</Text>
+        <Text>Faça login com o metamask primeiro para ver seus NFTs</Text>
       </Center>
     );
   }
@@ -49,12 +49,12 @@ export default function Home() {
       my={5}
       color="white"
     >
-      <Text color="red.300" bold>
-        {values.total} NFTs got minted in total
+      <Text color="red.300" fontWeight="bold">
+        {values.total} NFTs foram resgatados no total
       </Text>
 
-      <Text color="green.300" bold>
-        You have {nftsToGet.length} NFTs to try to get
+      <Text color="green.300" fontWeight="bold">
+        Voce tem {nftsToGet.length} NFTs para tentar resgatar
       </Text>
 
       <Button
@@ -64,15 +64,15 @@ export default function Home() {
         }}
         colorScheme="purple"
       >
-        try to mint them
+        tente resgatá-los
       </Button>
       {loading ? (
         <CenteredSpinner />
       ) : !values.userNftMinted?.length ? (
-        <Text color={"white"}>You dont have owned any token yet</Text>
+        <Text color={"white"}> Voce ainda não tem nenhum NFT</Text>
       ) : (
         <>
-          <Heading>Your collected NFTs</Heading>
+          <Heading>Seus NFTs coletados</Heading>
           <SimpleGrid columns={[1, 2]} spacing={10}>
             {values.userNftMinted?.map((token) => (
               <Image

@@ -33,7 +33,7 @@ export default function SignIn() {
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
                 <FormControl isInvalid={!!errors.email && touched.email}>
-                  <FormLabel htmlFor="email">Email Address</FormLabel>
+                  <FormLabel htmlFor="email">Email</FormLabel>
                   <Field
                     as={Input}
                     id="email"
@@ -45,7 +45,7 @@ export default function SignIn() {
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
                 <FormControl isInvalid={!!errors.password && touched.password}>
-                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <FormLabel htmlFor="password">Senha</FormLabel>
                   <Field
                     as={Input}
                     id="password"
@@ -62,7 +62,7 @@ export default function SignIn() {
                   width="full"
                   isDisabled={loading || !values.email || !values.password}
                 >
-                  Login
+                  Entrar
                 </Button>
               </VStack>
             </form>
