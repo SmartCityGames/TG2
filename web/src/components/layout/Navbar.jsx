@@ -15,7 +15,7 @@ import {
 import { FaBars, FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../store/auth/provider";
-import { useMetamask } from "../../store/metamask/metamask";
+import { useMetamask } from "../../store/metamask/provider";
 import { useUserProfile } from "../../store/profile/provider";
 import logo from "../../assets/logo-scyg.png";
 

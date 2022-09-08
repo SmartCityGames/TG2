@@ -12,6 +12,7 @@ export default function Layout({ children }) {
         justifyContent="center"
         minH="calc(100vh - 64px)"
         bg="gray.800"
+        px="3"
       >
         {children}
       </Flex>

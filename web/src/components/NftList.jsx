@@ -1,11 +1,16 @@
-import { Heading, Image, SimpleGrid, Text } from "@chakra-ui/react";
-import { useMetamask } from "../store/metamask/metamask";
+import { Heading, Image, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { useMetamask } from "../store/metamask/provider";
+import { useNft } from "../store/nft/provider";
 import CenteredSpinner from "./CenteredSpinner";
 
 export default function NftList() {
   const {
     state: { values, loading },
   } = useMetamask();
+
+  const {
+    state: { nfts },
+  } = useNft();
 
   if (loading) return <CenteredSpinner />;
 
@@ -16,14 +21,19 @@ export default function NftList() {
     <>
       <Heading>Seus NFTs coletados</Heading>
       <SimpleGrid columns={[1, 1, 2]} spacing={10}>
-        {values.userNftMinted?.map((token) => (
-          <Image
-            boxSize="300px"
-            key={token}
-            src={`https://ipfs-gateway.cloud/ipfs/${token}`}
-            rounded="lg"
-          />
-        ))}
+        {values.userNftMinted?.map((token) => {
+          const id = Object.values(nfts).findIndex((nft) => nft.png === token);
+          return id === -1 ? null : (
+            <VStack key={token} alignItems="start">
+              <Text fontWeight="semibold">#{id}</Text>
+              <Image
+                boxSize="300px"
+                src={`https://ipfs-gateway.cloud/ipfs/${token}`}
+                rounded="lg"
+              />
+            </VStack>
+          );
+        })}
       </SimpleGrid>
     </>
   );
