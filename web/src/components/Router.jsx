@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import SignIn from "../pages/SignIn";
 import { useUserAuth } from "../store/auth/provider";
 import MetamaskProvider from "../store/metamask/metamask";
+import NftProvider from "../store/nft/provider";
 import UserProfileProvider from "../store/profile/provider";
 import LoggedRoutes from "./routes/LoggedRoutes";
 
@@ -12,9 +13,11 @@ export default function Router() {
 
   return session ? (
     <UserProfileProvider>
-      <MetamaskProvider>
-        <LoggedRoutes />
-      </MetamaskProvider>
+      <NftProvider>
+        <MetamaskProvider>
+          <LoggedRoutes />
+        </MetamaskProvider>
+      </NftProvider>
     </UserProfileProvider>
   ) : (
     <Routes>

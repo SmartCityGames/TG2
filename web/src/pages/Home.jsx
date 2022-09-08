@@ -1,20 +1,13 @@
-import {
-  Button,
-  Center,
-  Flex,
-  Heading,
-  Image,
-  SimpleGrid,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Center, Flex, HStack, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
-import CenteredSpinner from "../components/CenteredSpinner";
+import NftList from "../components/NftList";
 import { useMetamask } from "../store/metamask/metamask";
+import { useNft } from "../store/nft/provider";
 import { useUserProfile } from "../store/profile/provider";
 
 export default function Home() {
   const {
-    state: { account, values, loading },
+    state: { account, values },
     actions: { getMintedTokens, getTotalNftMinted, mintBatch },
   } = useMetamask();
 
@@ -22,6 +15,10 @@ export default function Home() {
     state: { collected_nfts },
     actions: { updateCollectedNfts },
   } = useUserProfile();
+
+  const {
+    state: { nfts },
+  } = useNft();
 
   const nftsToGet = collected_nfts.filter((nft) => !nft?.taken);
 
@@ -35,7 +32,9 @@ export default function Home() {
   if (!account) {
     return (
       <Center flex={1} color="white">
-        <Text>Faça login com o metamask primeiro para ver seus NFTs</Text>
+        <Text textAlign="center" fontWeight="bold">
+          Faça login com o metamask primeiro para ver seus NFTs
+        </Text>
       </Center>
     );
   }
@@ -49,13 +48,21 @@ export default function Home() {
       my={5}
       color="white"
     >
-      <Text color="red.300" fontWeight="bold">
-        {values.total} NFTs foram resgatados no total
-      </Text>
+      <HStack fontWeight="bold">
+        <Text color="red.300" textDecor="underline">
+          {values.total}/{Object.keys(nfts).length}
+        </Text>
+        <Text>NFTs foram resgatados no total</Text>
+      </HStack>
 
-      <Text color="green.300" fontWeight="bold">
-        Voce tem {nftsToGet.length} NFTs para tentar resgatar
-      </Text>
+      <HStack fontWeight="bold">
+        <Text>Você tem</Text>
+
+        <Text color="green.300" textDecor="underline">
+          {nftsToGet.length}
+        </Text>
+        <Text>NFTs para tentar resgatar</Text>
+      </HStack>
 
       <Button
         onClick={async () => {
@@ -64,27 +71,9 @@ export default function Home() {
         }}
         colorScheme="purple"
       >
-        tente resgatá-los
+        Tente resgatá-los
       </Button>
-      {loading ? (
-        <CenteredSpinner />
-      ) : !values.userNftMinted?.length ? (
-        <Text color={"white"}> Voce ainda não tem nenhum NFT</Text>
-      ) : (
-        <>
-          <Heading>Seus NFTs coletados</Heading>
-          <SimpleGrid columns={[1, 2]} spacing={10}>
-            {values.userNftMinted?.map((token) => (
-              <Image
-                boxSize="300px"
-                key={token}
-                src={`https://ipfs-gateway.cloud/ipfs/${token}`}
-                rounded="lg"
-              />
-            ))}
-          </SimpleGrid>
-        </>
-      )}
+      <NftList />
     </Flex>
   );
 }

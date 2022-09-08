@@ -3,6 +3,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Input,
 } from "@chakra-ui/react";
@@ -50,19 +51,24 @@ export default function Profile() {
             justify="center"
             color="white"
           >
-            <FormControl isDisabled isInvalid={wallet !== account}>
+            <FormControl maxW="xs" isDisabled isInvalid={wallet !== account}>
               <FormLabel>Carteira:</FormLabel>
               <Input value={shortenAccount(wallet)} />
               <FormErrorMessage>
                 Sua carteira vinculada não é a mesma que você está logado
               </FormErrorMessage>
             </FormControl>
-            <FormControl isDisabled>
+            <FormControl maxW="xs" isDisabled>
               <FormLabel>Email:</FormLabel>
               <Input value={session.user.email} />
             </FormControl>
-            <FormControl isInvalid={!!errors.username && touched.username}>
-              <FormLabel htmlFor="username">usuário do OpenStreetMap:</FormLabel>
+            <FormControl
+              maxW="xs"
+              isInvalid={!!errors.username && touched.username}
+            >
+              <FormLabel htmlFor="username">
+                usuário do OpenStreetMap:
+              </FormLabel>
               <Field
                 as={Input}
                 id="username"
@@ -70,6 +76,9 @@ export default function Profile() {
                 type="text"
                 autoComplete="username"
               />
+              <FormHelperText>
+                Seu usuário será utilizado para buscar suas mudanças no app
+              </FormHelperText>
               <FormErrorMessage>{errors.username}</FormErrorMessage>
             </FormControl>
 

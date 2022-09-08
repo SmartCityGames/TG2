@@ -2,7 +2,9 @@ import {
   Button,
   Flex,
   Hide,
+  HStack,
   IconButton,
+  Image,
   Menu,
   MenuButton,
   MenuItem,
@@ -12,9 +14,10 @@ import {
 } from "@chakra-ui/react";
 import { FaBars, FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useUserAuth } from "../store/auth/provider";
-import { useMetamask } from "../store/metamask/metamask";
-import { useUserProfile } from "../store/profile/provider";
+import { useUserAuth } from "../../store/auth/provider";
+import { useMetamask } from "../../store/metamask/metamask";
+import { useUserProfile } from "../../store/profile/provider";
+import logo from "../../assets/logo-scyg.png";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -33,19 +36,25 @@ export default function Navbar() {
 
   return (
     <Flex h="64px" p="6" align="center" justify="space-between" direction="row">
-      <Text
-        fontWeight="bold"
-        fontSize={["lg", "4xl"]}
-        bgGradient="linear(to-l, #7928CA, #FF0080)"
-        bgClip="text"
+      <HStack
         onClick={() => navigate("/")}
         _hover={{
-          bgGradient: "linear(to-r, #7929EA, #FDAA80)",
           cursor: "pointer",
         }}
       >
-        Smarty City Games
-      </Text>
+        <Image src={logo} alt="scyg-logo" w="12" h="12" />
+        <Text
+          fontWeight="bold"
+          fontSize={["lg", "4xl"]}
+          bgGradient="linear(to-l, #7928CA, #FF0080)"
+          bgClip="text"
+          _hover={{
+            bgGradient: "linear(to-r, #7929EA, #FDAA80)",
+          }}
+        >
+          Smarty City Games
+        </Text>
+      </HStack>
       <Show below={!account ? "lg" : "md"}>
         <Menu>
           <MenuButton
