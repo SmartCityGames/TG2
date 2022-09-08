@@ -1,7 +1,7 @@
 import { Button, Center, Flex, HStack, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
 import NftList from "../components/NftList";
-import { useMetamask } from "../store/metamask/metamask";
+import { useMetamask } from "../store/metamask/provider";
 import { useNft } from "../store/nft/provider";
 import { useUserProfile } from "../store/profile/provider";
 

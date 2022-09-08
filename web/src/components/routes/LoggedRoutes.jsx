@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { useMetamask } from "../../store/metamask/metamask";
+import { useMetamask } from "../../store/metamask/provider";
 import Home from "../../pages/Home";
 import Profile from "../../pages/Profile";
 import Layout from "../layout";

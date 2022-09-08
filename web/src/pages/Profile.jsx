@@ -10,7 +10,7 @@ import {
 import { Field, Formik } from "formik";
 import CenteredSpinner from "../components/CenteredSpinner";
 import { useUserAuth } from "../store/auth/provider";
-import { useMetamask } from "../store/metamask/metamask";
+import { useMetamask } from "../store/metamask/provider";
 import { useUserProfile } from "../store/profile/provider";
 import { shortenAccount } from "../utils/shorten-account";
 

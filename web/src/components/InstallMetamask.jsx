@@ -1,6 +1,6 @@
 import { Button, Center, Flex, Link, LinkBox } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { useMetamask } from "../store/metamask/metamask";
+import { useMetamask } from "../store/metamask/provider";
 import { MetamaskLogo } from "./MetamaskLogo";
 
 export default function InstallMetamask() {
