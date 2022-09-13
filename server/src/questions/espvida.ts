@@ -6,7 +6,6 @@ export const espvidaQuestions: Quest[] = [
     category: 'education',
     description:
       'A expectativa de vida, também chamada de esperança de vida, é um dado matemático responsável por calcular o tempo de vida médio restante a partir do nascimento.',
-    expires_at: 'ONE_HOUR',
     name: 'Sobre expectativa de vida',
     source: 'https://www.preparaenem.com/geografia/expectativa-vida.htm',
     steps: [
@@ -40,7 +39,6 @@ export const espvidaQuestions: Quest[] = [
       'Quase 35 milhões de pessoas no Brasil vivem sem água tratada e cerca de 100 milhões não têm acesso à coleta de esgoto, resultando em doenças que poderiam ser evitadas. Dentre estas doenças podemos citar:',
     source:
       'https://www.teraambiental.com.br/blog-da-tera-ambiental/conheca-as-doencas-causadas-pelo-nao-tratamento-do-esgoto',
-    expires_at: 'ONE_HOUR',
     name: 'Sobre a falta de tratamento de esgoto',
     steps: [
       {

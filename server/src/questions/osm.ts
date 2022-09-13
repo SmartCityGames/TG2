@@ -7,7 +7,6 @@ export const osmQuestions: Quest[] = [
       'Insira uma informação sobre o subdistrito indicado no OpenStreetMap para completar a missão.',
     source: 'https://wiki.openstreetmap.org/wiki/Pt:Beginners%27_guide',
     name: 'Familiarizando-se com o OpenStreetMap',
-    expires_at: 'ONE_DAY',
     category: 'education',
     steps: [
       {

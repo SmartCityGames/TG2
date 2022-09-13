@@ -76,7 +76,7 @@ export default function QuestsProvider({ children }) {
     });
   }
 
-  function completeQuest(quest) {
+  async function completeQuest(quest) {
     const { id, rewards } = quest;
 
     if (quest.steps.every((step) => step.completed)) {
@@ -97,7 +97,7 @@ export default function QuestsProvider({ children }) {
       );
 
       if (quest.rewards.nft) {
-        updateOwnedNfts({
+        await updateOwnedNfts({
           nft: getRandomNft(),
         });
       }

@@ -6,7 +6,6 @@ export const tVulnerQuestions: Quest[] = [
       'A fome não é um problema técnico, pois ela não se deve à falta de alimentos, isso porque a fome convive hoje com as condições materiais para resolvê-la. Assim, o problema alimentar tem uma dimensão política por estar associado ao(à)',
     category: 'education',
     source: "https://descomplica.com.br/gabarito-enem/questoes/2019/primeiro-dia/o-texto-demonstra-que-o-problema-alimentar-apresentado-tem-uma-dimensao-politica-por-estar-associado/",
-    expires_at: 'ONE_DAY',
     name: 'A respeito da fome e suas causas',
     remote: true,
     rewards: {

@@ -6,7 +6,6 @@ export const idhmQuestions: Quest[] = [
     category: 'trash',
     description:
       'Dentre os principais poluentes que causam o desequilíbrio no ar atmosférico temos:',
-    expires_at: 'ONE_HOUR',
     name: 'Principais Poluentes',
     steps: [
       {
@@ -40,7 +39,6 @@ export const idhmQuestions: Quest[] = [
     category: 'education',
     description:
       'A pirâmide de formato triangular da década de 1970 foi dando lugar a uma pirâmide mais retangular de base mais estreita e topo mais largo. Em 1991, a população de 0 a 14 anos correspondia a 34,7% da população brasileira, tendo passado para 24,1% em 2010. A população em idade ativa, entre 15 e 59 anos, por sua vez, passou de 58,0% a 65,1% no mesmo período. As alterações no perfil demográfico brasileiro, descritas no texto, trouxeram como consequência socioeconômica o(a):',
-    expires_at: 'ONE_DAY',
     name: 'A respeito da pirâmide geogeográfica do Brasil',
     steps: [
       {

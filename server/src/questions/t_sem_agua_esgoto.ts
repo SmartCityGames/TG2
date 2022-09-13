@@ -9,7 +9,6 @@ export const tSemAguaEsgotoQuestions: Quest[] = [
     source:
       'https://g1.globo.com/df/distrito-federal/noticia/2020/11/30/df-tem-maior-indice-de-saneamento-basico-do-pais-mas-especialista-indica-desafios.ghtml',
     name: 'A respeito do tratamento de esgoto no Brasil',
-    expires_at: 'ONE_DAY',
     category: 'sewer',
     steps: [
       {

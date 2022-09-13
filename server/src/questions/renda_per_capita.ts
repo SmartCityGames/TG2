@@ -8,7 +8,6 @@ export const rendaPerCapitaQuestions: Quest[] = [
     source:
       'https://brasilescola.uol.com.br/geografia/renda-per-capita.htm',
     name: 'Sobre renda per capita e suas limitações',
-    expires_at: 'ONE_HOUR',
     category: 'education',
     steps: [
       {

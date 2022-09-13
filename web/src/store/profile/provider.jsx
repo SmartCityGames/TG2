@@ -153,6 +153,11 @@ export default function UserProfileProvider({ children }) {
     dispatch({ type: "ERROR", payload: error });
   }
 
+  const dependentActions = useMemo(
+    () => ({ updateCollectedNfts }),
+    [session.user.id, state.collected_nfts]
+  );
+
   const actions = useMemo(
     () => ({
       updateProfile,
@@ -163,7 +168,9 @@ export default function UserProfileProvider({ children }) {
   );
 
   return (
-    <UserProfileContext.Provider value={{ state, actions }}>
+    <UserProfileContext.Provider
+      value={{ state, actions: { ...actions, ...dependentActions } }}
+    >
       {children}
     </UserProfileContext.Provider>
   );

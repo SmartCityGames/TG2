@@ -19,7 +19,6 @@ export interface Quest {
   description: string;
   source?: string;
   name: string;
-  expires_at: 'NEVER' | 'ONE_DAY' | 'ONE_HOUR' | 'THREE_HOURS';
   category: 'trash' | 'fire' | 'water' | 'sewer' | 'electricity' | string;
   steps: (OneChoiceStep | MultipleChoiceStep | ConfirmOsmChangeStep)[];
   rewards: {
@@ -32,8 +31,9 @@ export interface Quest {
   };
 }
 
-export interface QuestModel extends Quest {
+export interface QuestModel extends Quest {  
   id: string;
+  expires_at: 'NEVER' | 'ONE_DAY' | 'HALF_DAY' | 'ONE_HOUR' | 'THREE_HOURS';
   shape: {
     shapeType: 'Circle';
     id: string;
