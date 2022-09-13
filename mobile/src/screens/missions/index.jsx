@@ -91,7 +91,6 @@ export default function MissionsScreen() {
           />
         </Center>
         <FlatList
-          pt="3"
           data={filteredQuests}
           contentContainerStyle={{ flexGrow: 1 }}
           ItemSeparatorComponent={(props) => <Divider {...props} />}
@@ -108,6 +107,7 @@ export default function MissionsScreen() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Pressable
+              shadow={1}
               onPress={() => {
                 if (item.remote) {
                   return navigate("DetalhesMissao", { id: item.id });
@@ -130,7 +130,6 @@ export default function MissionsScreen() {
 
                 navigate("DetalhesMissao", { id: item.id });
               }}
-              shadow={1}
             >
               <Center px={3}>
                 <Text fontSize={28} bold textAlign="center">
@@ -180,11 +179,14 @@ export default function MissionsScreen() {
                         />
                       )}
                     >
-                      <Popover.Content w={"xs"}>
+                      <Popover.Content w="2xs">
                         <Popover.Arrow />
                         <Popover.CloseButton />
+                        <Popover.Header>{i.indicator}</Popover.Header>
                         <Popover.Body>
-                          {INDICATORS_LABELS[i.indicator].description_short}
+                          <Text textAlign="justify">
+                            {INDICATORS_LABELS[i.indicator].description_short}
+                          </Text>
                         </Popover.Body>
                       </Popover.Content>
                     </Popover>

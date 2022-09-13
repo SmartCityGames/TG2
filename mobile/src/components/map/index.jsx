@@ -21,7 +21,7 @@ import { hsl2rgb } from "./utils/hsl-2-rgb";
 import IndicatorForm from "./utils/indicator-form";
 import { mapInitialState, mapReducer } from "./utils/reducer";
 
-export default function RnMaps({ polygons, quests }) {
+export default function Map({ polygons, quests }) {
   const mapRef = useRef(null);
   const [location, setLocation] = useState(undefined);
 

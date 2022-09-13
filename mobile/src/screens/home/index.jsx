@@ -2,7 +2,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingInterceptor from "../../components/loading/loading-interceptor";
-import RnMaps from "../../components/rn-maps";
+import Map from "../../components/map";
 import { useIndicators } from "../../store/indicators/provider";
 import { INDICATORS_LABELS } from "../../store/indicators/utils/indicators-labels";
 import { useUserLocation } from "../../store/location/provider";
@@ -83,7 +83,7 @@ export default function HomeScreen() {
       <LoadingInterceptor
         extra={[!polygons?.length, !questMarkers, !questShapes]}
       >
-        <RnMaps
+        <Map
           polygons={polygons}
           quests={{ markers: questMarkers, shapes: questShapes }}
         />
