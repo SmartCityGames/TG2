@@ -114,30 +114,30 @@ export default function UserProfileProvider({ children }) {
   }
 
   async function updateOwnedNfts({ nft }) {
+    const dapp = "tg2-scyg-front.herokuapp.com/";
+    const url = `metamask://dapp/${dapp}`;
+    const supported = await Linking.canOpenURL(url);
+
     if (!state.wallet) {
       await AsyncAlert(
         "ops... não conseguimos enviar seu NFT! 😢",
-        "",
+        "Você precisa ter uma carteira associada a sua conta para receber NFTs. Por favor, associe uma carteira virtual.",
         (resolve, _) => [
           {
-            text: "OK",
-            onPress: () => {
+            text: "Vá ao site para configurar",
+            onPress: async () => {
+              await Linking.openURL(supported ? url : `https://${dapp}`);
               resolve();
             },
           },
           {
-            text: "Ir ao site e configurar",
-            onPress: async () => {
-              const dapp = "tg2-scyg-front.herokuapp.com/";
-              const url = `metamask://dapp/${dapp}`;
-              const supported = await Linking.canOpenURL(url);
-              await Linking.openURL(supported ? url : `https://${dapp}`);
+            text: "Ignorar",
+            onPress: () => {
               resolve();
             },
           },
         ]
       );
-      return;
     }
 
     const { data, error } = await supabase
@@ -154,6 +154,28 @@ export default function UserProfileProvider({ children }) {
     }
 
     updateProfile(data[0]);
+
+    if (state.wallet) {
+      await AsyncAlert(
+        "Você acabou de ter possibilidade de ganhar um NFT!! 🎉",
+        "NFTs só podem ser resgatados pelo site.",
+        (resolve, _) => [
+          {
+            text: "Vá ao site para resgatar",
+            onPress: async () => {
+              await Linking.openURL(supported ? url : `https://${dapp}`);
+              resolve();
+            },
+          },
+          {
+            text: "Ignorar",
+            onPress: () => {
+              resolve();
+            },
+          },
+        ]
+      );
+    }
   }
 
   function updateProfile(data) {
@@ -178,7 +200,6 @@ export default function UserProfileProvider({ children }) {
       getUserProfile,
       updateProfile,
       updateProfilePicture,
-      updateOwnedNfts,
     }),
     [session]
   );
@@ -186,8 +207,9 @@ export default function UserProfileProvider({ children }) {
   const dependentActions = useMemo(
     () => ({
       updateExperience,
+      updateOwnedNfts,
     }),
-    [session.user.id, state.experience, state.completed_quests]
+    [session.user.id, state.experience, state.completed_quests, state.wallet]
   );
 
   return (
