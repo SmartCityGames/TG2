@@ -8,7 +8,6 @@ import {
   useReducer,
 } from "react";
 import { Dimensions } from "react-native";
-import { mapConfig } from "../../components/map/utils/config";
 import { toggleLoading } from "../../utils/actions/start-loading";
 import { sanitizeText } from "../../utils/sanitize-text";
 import { useSupabase } from "../supabase/provider";

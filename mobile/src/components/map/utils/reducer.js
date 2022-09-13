@@ -3,9 +3,6 @@ import { logger } from "../../../utils/logger";
 export const mapInitialState = {
   showDistricts: false,
   showQuests: false,
-  districts: [],
-  quests: [],
-  combined: [],
 };
 
 export function mapReducer(state, action) {
@@ -16,26 +13,23 @@ export function mapReducer(state, action) {
       const showQuests = action.payload.toggle
         ? !state.showQuests
         : state.showQuests;
-      const quests = showQuests ? action.payload.shapes : [];
 
       return {
         ...state,
         showQuests,
-        quests,
-        combined: [...state.districts, ...quests],
       };
     }
     case "TOGGLE_DISTRICTS": {
-      const showDistricts = !state.showDistricts;
-      const districts = showDistricts ? action.payload : [];
-
       return {
         ...state,
-        showDistricts,
-        districts,
-        combined: [...state.quests, ...districts],
+        showDistricts: !state.showDistricts,
       };
     }
+    case "TOGGLE_INDICATOR_FORM":
+      return {
+        ...state,
+        showIndicatorForm: !state.showIndicatorForm,
+      };
     default:
       return state;
   }
