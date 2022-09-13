@@ -50,8 +50,6 @@ export class AppService {
   private async generateRandomQuests() {
     const geojson = await this.getGeojson();
 
-    const today = new Date();
-
     const randomQuestGenerator = uniqueRandomArray(questions);
 
     return geojson.features
@@ -61,14 +59,7 @@ export class AppService {
           return {
             id: uuidv4(),
             ...quest,
-            expires_at:
-              quest.expires_at === 'ONE_DAY'
-                ? addDays(today, 1)
-                : quest.expires_at === 'ONE_HOUR'
-                ? addHours(today, 1)
-                : quest.expires_at === 'THREE_HOURS'
-                ? addHours(today, 3)
-                : null,
+            expires_at: this.generateExpirationDate(),
             shape: {
               shapeType: 'Circle',
               id: `circle-${point.geometry.coordinates}`,
@@ -82,5 +73,26 @@ export class AppService {
         }),
       )
       .flat();
+  }
+
+  private generateExpirationDate() {
+    const today = new Date();
+
+    const randomExpirationGenerator = uniqueRandomArray([
+      'NEVER',
+      'ONE_DAY',
+      'HALF_DAY',
+      'ONE_HOUR',
+      'THREE_HOURS',
+    ]);
+
+    const expiration = randomExpirationGenerator();
+
+    if (expiration === 'ONE_DAY') return addDays(today, 1);
+    if (expiration === 'HALF_DAY') return addHours(today, 12);
+    if (expiration === 'ONE_HOUR') return addHours(today, 1);
+    if (expiration === 'THREE_HOURS') return addHours(today, 3);
+
+    return null;
   }
 }

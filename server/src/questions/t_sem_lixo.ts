@@ -5,7 +5,6 @@ export const tSemLixoQuestions: Quest[] = [
     category: 'trash',
     description:
       'Quando pensamos nos tipos de materiais descartados, a coleta seletiva é a melhor alternativa. Para tanto, os contentores são divididos por cores, os quais indicam o tipo de lixo a ser depositado. Quais cores dos contentores estão corretas?',
-    expires_at: 'ONE_HOUR',
     name: 'A respeito da coleta seletiva',
     steps: [
       {
