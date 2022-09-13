@@ -79,7 +79,6 @@ export class AppService {
     const today = new Date();
 
     const randomExpirationGenerator = uniqueRandomArray([
-      'NEVER',
       'ONE_DAY',
       'HALF_DAY',
       'ONE_HOUR',
