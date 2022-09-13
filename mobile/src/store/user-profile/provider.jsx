@@ -5,6 +5,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import { Linking } from "react-native";
 import AsyncAlert from "../../components/utils/AsyncAlert";
 import { useUserAuth } from "../auth/provider";
 import { useSupabase } from "../supabase/provider";
@@ -35,6 +36,7 @@ export default function UserProfileProvider({ children }) {
   );
 
   const supabase = useSupabase();
+
   const {
     state: { session },
     actions: { logout },
@@ -112,6 +114,32 @@ export default function UserProfileProvider({ children }) {
   }
 
   async function updateOwnedNfts({ nft }) {
+    if (!state.wallet) {
+      await AsyncAlert(
+        "ops... não conseguimos enviar seu NFT! 😢",
+        "",
+        (resolve, _) => [
+          {
+            text: "OK",
+            onPress: () => {
+              resolve();
+            },
+          },
+          {
+            text: "Ir ao site e configurar",
+            onPress: async () => {
+              const dapp = "tg2-scyg-front.herokuapp.com/";
+              const url = `metamask://dapp/${dapp}`;
+              const supported = await Linking.canOpenURL(url);
+              await Linking.openURL(supported ? url : `https://${dapp}`);
+              resolve();
+            },
+          },
+        ]
+      );
+      return;
+    }
+
     const { data, error } = await supabase
       .from("profiles")
       .update(

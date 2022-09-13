@@ -134,17 +134,15 @@ export default function Quest({ route }) {
 
       completeQuest(updated);
       setSelectedOptions(NOTHING_SELECTED);
-    } else {
-      if (!toast.isActive(TOAST_STEP_ANSWER_ID)) {
-        toast.show({
-          id: TOAST_STEP_ANSWER_ID,
-          title: "ops... algo não está certo! 😔",
-          description: "Por favor, tente novamente!",
-          collapsable: true,
-          duration: 3000,
-          bg: "danger.500",
-        });
-      }
+    } else if (!toast.isActive(TOAST_STEP_ANSWER_ID)) {
+      toast.show({
+        id: TOAST_STEP_ANSWER_ID,
+        title: "ops... esta não é a resposta! 😔",
+        description: "Por favor, tente novamente!",
+        collapsable: true,
+        duration: 3000,
+        bg: "danger.500",
+      });
     }
   }
 

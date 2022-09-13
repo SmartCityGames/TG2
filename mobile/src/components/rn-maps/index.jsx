@@ -145,7 +145,7 @@ export default function RnMaps({ polygons, quests }) {
 
   async function center() {
     const loc = await getUserPosition();
-    mapRef.current.animateToRegion(loc, 1500);
+    mapRef?.current?.animateToRegion(loc, 1500);
   }
 
   if (!location) return <CenterLoading />;
