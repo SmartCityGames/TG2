@@ -70,6 +70,7 @@ export default function Home() {
           updateCollectedNfts(taken);
         }}
         colorScheme="purple"
+        isDisabled={!nftsToGet.length}
       >
         Tente resgatá-los
       </Button>
