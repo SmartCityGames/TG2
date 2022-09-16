@@ -9,7 +9,6 @@ import { toggleLoading } from "../../utils/actions/start-loading";
 import { useSupabase } from "../supabase/provider";
 import { indicatorReducer } from "./reducer";
 import { INDICATORS_LABELS } from "./utils/indicators-labels";
-import { minMaxNormalization } from "./utils/min-max-normal";
 
 const indicatorInitialState = {
   indicators: undefined,
@@ -51,23 +50,15 @@ export default function IndicatorsProvider({ children }) {
         .reduce((acc, curr) => ({ ...acc, [curr]: i[curr] }), {}),
     }));
 
-    const indicatorskeys = Object.keys(indicators[0]).filter(
-      (j) => !!INDICATORS_LABELS[j]
-    );
-
-    const indicatorsNormalized = indicatorskeys.reduce((acc, key) => {
-      const key_normal = minMaxNormalization(indicators.map((i) => i[key]));
-      return acc.map((i, idx) => ({
-        ...i,
-        [`${key}_normal`]: key_normal[idx],
-      }));
-    }, indicators);
-
     dispatch({
       type: "LOAD_IVS_INDICATORS",
       payload: {
-        data: indicatorsNormalized,
+        data: indicators,
       },
+    });
+
+    dispatch({
+      type: "NORMALIZE_INDICATORS",
     });
   }
 
@@ -90,6 +81,10 @@ export default function IndicatorsProvider({ children }) {
     dispatch({
       type: "INCREMENT_INDICATORS",
       payload: values,
+    });
+
+    dispatch({
+      type: "NORMALIZE_INDICATORS",
     });
   }
 
