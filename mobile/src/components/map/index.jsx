@@ -107,18 +107,14 @@ export default function Map({ polygons, quests }) {
           geojson={p}
           tappable={true}
           strokeWidth={2}
-          onPress={() => {
-            state.showIndicatorForm
-              ? dispatch({
-                  type: "TOGGLE_INDICATOR_FORM",
-                })
-              : navigate("Indicadores", {
-                  district: p.features[0].properties.NM_SUBDIST,
-                });
-          }}
+          onPress={() =>
+            navigate("Indicadores", {
+              district: p.features[0].properties.NM_SUBDIST,
+            })
+          }
         />
       )),
-    [polygons, state.showIndicatorForm]
+    [polygons]
   );
 
   const scale = useMemo(() => {
@@ -184,7 +180,12 @@ export default function Map({ polygons, quests }) {
             });
         }}
       >
-        <UrlTile urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <UrlTile
+          urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          tileCacheMaxAge={3600}
+          tileSize={256}
+          doubleTileSize={true}
+        />
         {state.showQuests && questsInfo.markers}
         {state.showQuests && questsInfo.shapes}
         {state.showDistricts && polygonsShapes}

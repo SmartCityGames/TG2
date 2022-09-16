@@ -40,7 +40,7 @@ export class AppService {
 
     const { signedURL } = await client.storage
       .from('assets')
-      .createSignedUrl('geojson/polygon-subdistrict-2017.geojson', 60);
+      .createSignedUrl('geojson/subdistritos-2010.geojson', 60);
 
     return firstValueFrom(
       this.httpService.get<Geojson>(signedURL).pipe(map(({ data }) => data)),
@@ -51,10 +51,13 @@ export class AppService {
     const geojson = await this.getGeojson();
 
     const randomQuestGenerator = uniqueRandomArray(questions);
+    const randomNumQuestsGenerator = uniqueRandomArray([1, 2, 3]);
 
     return geojson.features
       .map((feature) =>
-        (randomPointsInPolygons(1, feature) as Point[]).map((point) => {
+        (
+          randomPointsInPolygons(randomNumQuestsGenerator(), feature) as Point[]
+        ).map((point) => {
           const quest = randomQuestGenerator();
           return {
             id: uuidv4(),

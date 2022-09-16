@@ -64,7 +64,7 @@ export default function UserLocationProvider({ children }) {
 
       const { signedURL } = await supabase.storage
         .from("assets")
-        .createSignedUrl("geojson/polygon-subdistrict-2017.geojson", 60);
+        .createSignedUrl("geojson/subdistritos-2010.geojson", 60);
 
       const [geojsonFile, { data: udhs }] = await Promise.all([
         fetch(signedURL).then((response) => response.json()),

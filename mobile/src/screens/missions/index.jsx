@@ -135,7 +135,7 @@ export default function MissionsScreen() {
                 <Text fontSize={28} bold textAlign="center">
                   {item.name}
                 </Text>
-                <Text fontSize={20} fontWeight="semibold">
+                <Text fontSize={20} fontWeight="semibold" textTransform="capitalize">
                   {getPolygonWhichGeometryLies({
                     coordinates: [item.shape.center.lng, item.shape.center.lat],
                     type: "Point",
