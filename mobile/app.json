@@ -28,14 +28,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yuriserka.tg2mobile"
+      "bundleIdentifier": "com.scygames.tg2mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo-scyg.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yuriserka.tg2mobile",
+      "package": "com.scygames.tg2mobile",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDtbPnRIXbOOpsvEQ-a6nrLnZSjofObpXc"
