@@ -2,15 +2,13 @@
 
 ## Monografia
 
-O Documento pode ser acessado em [Estudo sobre a Utilização de Criptomoedas como
-Sistema de Recompensa para a Observação Ativa do
-Território](https://www.overleaf.com/read/mhvrdqmzwzzh)
+O Documento pode ser acessado em [Estudo sobre a Utilização de Criptoativos como Sistema de Recompensa para a Observação Participante do Território](https://www.overleaf.com/read/mhvrdqmzwzzh)
 
 ## Estrutura
 
 ### **Blockchain**
 
-Módulo responsável pela criação da blockchain que será utilizada, criação/build/deploy de contratos e testes unitários para os mesmos. 
+Módulo responsável pela criação/build/deploy de smart contracts e testes unitários para os mesmos. 
 
 ### **Data**
 
@@ -26,7 +24,7 @@ Módulo responsável pela criação de imagens (NFTs) únicas que servirão de r
 
 ### **Server**
 
-Módulo responsável pela execução de tarefas agendadas, como inserção de missões diárias, e servir estáticamente o PWA.
+Módulo responsável pela execução de tarefas agendadas, como inserção de missões diárias.
 
 ### **Web**
 
