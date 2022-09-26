@@ -2,7 +2,7 @@
 
 ## Monografia
 
-O Documento pode ser acessado em [Estudo sobre a Utilização de Criptoativos como Sistema de Recompensa para a Observação Participante do Território](https://www.overleaf.com/read/mhvrdqmzwzzh)
+O Documento pode ser acessado em [SmartCityGame: uma Arquitetura de Sistemas de Software para Melhoria da Inteligência Territorial](https://www.overleaf.com/read/mhvrdqmzwzzh)
 
 ## Estrutura
 
