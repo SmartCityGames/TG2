@@ -8,7 +8,7 @@ O Documento pode ser acessado em [SmartCityGame: uma Arquitetura de Sistemas de 
 
 ### **Blockchain**
 
-Módulo responsável pela criação/build/deploy de smart contracts e testes unitários para os mesmos. 
+Módulo responsável pela criação/build/deploy de smart contracts e testes unitários para os mesmos.
 
 ### **Data**
 
@@ -18,7 +18,7 @@ Módulo responsável pela extração e manipulação dos dados de indicadores pr
 
 Módulo responsável pela criação da aplicação para dispositivos móveis e deploy do aplicativo.
 
-### **NFT-SCG-Generator**
+### **SCYG-NFT-generator**
 
 Módulo responsável pela criação de imagens (NFTs) únicas que servirão de recompensa para missões.
 
