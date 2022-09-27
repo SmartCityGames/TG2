@@ -127,7 +127,7 @@ export default function Quest({ route }) {
           title: "Parabéns! 😊",
           description: "Você acertou a questão!",
           collapsable: true,
-          duration: 2000,
+          duration: 5000,
           bg: "green.500",
         });
       }
@@ -140,7 +140,7 @@ export default function Quest({ route }) {
         title: "ops... esta não é a resposta! 😔",
         description: "Por favor, tente novamente!",
         collapsable: true,
-        duration: 3000,
+        duration: 5000,
         bg: "danger.500",
       });
     }

@@ -17,7 +17,7 @@ export const authInitialState = {
   loading: false,
 };
 
-const UserAuthContext = createContext({ state: authInitialState });
+const UserAuthContext = createContext({ state: { ...authInitialState } });
 
 export const useUserAuth = () => useContext(UserAuthContext);
 

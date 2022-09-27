@@ -1,4 +1,4 @@
-import { isBefore } from "date-fns";
+import { addDays, format, isBefore } from "date-fns";
 import { useToast } from "native-base";
 import {
   createContext,
@@ -59,7 +59,12 @@ export default function QuestsProvider({ children }) {
   async function retrieveQuests() {
     toggleLoading(dispatch);
 
-    let { data } = await supabase.from("quests").select("*");
+    const today = new Date();
+
+    let { data } = await supabase
+      .from("quests")
+      .select("*")
+      .filter("created_at", "gte", format(addDays(today, -1), "yyyy-MM-dd"));
 
     if (completed_quests.length > 0) {
       data = data.filter((quest) => !completed_quests.includes(quest.id));
@@ -67,7 +72,7 @@ export default function QuestsProvider({ children }) {
 
     data = data.filter(
       (quest) =>
-        !quest.expires_at || isBefore(new Date(), new Date(quest.expires_at))
+        !quest.expires_at || isBefore(today, new Date(quest.expires_at))
     );
 
     dispatch({
@@ -109,7 +114,8 @@ export default function QuestsProvider({ children }) {
           description:
             "Continue completando missões para ganhar mais XP e outras recompensas!",
           collapsable: true,
-          duration: 2000,
+          duration: 5000,
+          bg: "green.500",
         });
       }
     } else {

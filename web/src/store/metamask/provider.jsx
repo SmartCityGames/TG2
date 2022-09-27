@@ -31,7 +31,7 @@ export const metamaskInitialState = {
   },
 };
 
-const MetamaskContext = createContext({ state: metamaskInitialState });
+const MetamaskContext = createContext({ state: { ...metamaskInitialState } });
 
 export const useMetamask = () => useContext(MetamaskContext);
 
