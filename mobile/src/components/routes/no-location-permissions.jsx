@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function NoLocationPermissions() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Center flex={1} bg="purple.200">
+      <Center flex={1} bg="purple.200" px="3">
         <VStack space={5}>
           <VStack space={3}>
             <Text bold fontSize="xl" color="gray.900">
